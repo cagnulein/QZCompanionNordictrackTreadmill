@@ -89,7 +89,7 @@ public class QZService extends Service {
                 while(running){
                     byte[] buf = new byte[256];
 
-                    String fileName = "/sdcard.wolflogs/" + pickLatestFileFromDownloads();
+                    String fileName = "/sdcard/.wolflogs/" + pickLatestFileFromDownloads();
                     try {
                         RandomAccessFile bufferedReader = new RandomAccessFile( fileName, "r"
                         );
@@ -164,7 +164,7 @@ public class QZService extends Service {
 }
     public String pickLatestFileFromDownloads() {
 
-        File dir = new File("/sdcard.wolflogs");
+        File dir = new File("/sdcard/.wolflogs");
         File[] files = dir.listFiles();
         if (files == null || files.length == 0) {
             Log.i(TAG,"There is no file in the folder");
