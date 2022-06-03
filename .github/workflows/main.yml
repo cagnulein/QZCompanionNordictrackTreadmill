@@ -22,6 +22,10 @@ jobs:
       with:
           java-version: 1.8
 
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
     - name: Build debug apk
       run: chmod a+x gradlew && ./gradlew clean assembleDebug
 
@@ -30,7 +34,7 @@ jobs:
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v1.0.0
+        tag_name: ${{ steps.get_version.outputs.VERSION }}
         asset_path: app/build/outputs/apk/debug/app-debug.apk
-        asset_name: Example.apk
+        asset_name: QZCompanionNordictrackTreadmill.apk
         asset_content_type: application/zip
