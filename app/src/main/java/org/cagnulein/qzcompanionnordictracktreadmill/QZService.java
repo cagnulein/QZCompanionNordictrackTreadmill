@@ -5,10 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.StrictMode;
-import android.provider.SyncStateContract;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,11 +17,10 @@ import java.io.RandomAccessFile;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketAddress;
 import java.net.SocketException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static android.content.ContentValues.TAG;
 
@@ -28,17 +28,111 @@ public class QZService extends Service {
     int startMode;       // indicates how to behave if the service is killed
     IBinder binder;      // interface for clients that bind
     boolean allowRebind; // indicates whether onRebind should be used
+    String path = "/sdcard/.wolflogs/";
+    int serverPort = 8002;
+    Handler handler = new Handler();
+    Runnable runnable = null;
+    DatagramSocket socket = null;
+    AtomicLong filePointer = new AtomicLong();
+    String fileName = "";
+    RandomAccessFile bufferedReader;
 
     @Override
     public void onCreate() {
         // The service is being created
+        Toast.makeText(this, "Service created!", Toast.LENGTH_LONG).show();
+
+        try {
+            socket = new DatagramSocket(serverPort);
+            runnable = new Runnable() {
+                @Override
+                public void run() {
+                    parse();
+                }
+            };
+        } catch (SocketException e) {
+            e.printStackTrace();
+        } finally {
+            if(socket != null){
+                socket.close();
+                Log.e(TAG, "socket.close()");
+            }
+        }
+
+        if(runnable != null)
+            handler.postDelayed(runnable, 500);
     }
+
+    private void parse() {
+        if(fileName.compareTo(path + pickLatestFileFromDownloads()) != 0) {
+            fileName = path + pickLatestFileFromDownloads();
+            filePointer.set(0);
+            try {
+                bufferedReader = new RandomAccessFile(fileName, "r");
+            } catch ( IOException  e ) {
+                e.printStackTrace();
+            }
+        }
+        Toast.makeText(getApplicationContext(), "Service is still running", Toast.LENGTH_LONG).show();
+        handler.postDelayed(runnable, 500);
+
+        try {
+            while(true) {
+                final String string = bufferedReader.readLine();
+
+                if (string != null) {
+                    sendBroadcast(string);
+                    System.out.println(string);
+                } else {
+                    filePointer.set(bufferedReader.getFilePointer());
+                    bufferedReader.close();
+                    bufferedReader = new RandomAccessFile(fileName, "r");
+                    bufferedReader.seek(filePointer.get());
+                    break;
+                }
+            }
+        } catch ( IOException  e ) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendBroadcast(String messageStr) {
+        StrictMode.ThreadPolicy policy = new   StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+        try {
+
+            DatagramSocket socket = new DatagramSocket();
+            socket.setBroadcast(true);
+            byte[] sendData = messageStr.getBytes();
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, getBroadcastAddress(), this.serverPort);
+            socket.send(sendPacket);
+            System.out.println(getClass().getName() + "Broadcast packet sent to: " + getBroadcastAddress().getHostAddress());
+        } catch (IOException e) {
+            Log.e(TAG, "IOException: " + e.getMessage());
+        }
+    }
+    InetAddress getBroadcastAddress() throws IOException {
+        WifiManager wifi = (WifiManager)    getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        DhcpInfo dhcp = null;
+        try {
+            dhcp = wifi.getDhcpInfo();
+            int broadcast = (dhcp.ipAddress & dhcp.netmask) | ~dhcp.netmask;
+            byte[] quads = new byte[4];
+            for (int k = 0; k < 4; k++)
+                quads[k] = (byte) ((broadcast >> k * 8) & 0xFF);
+            return InetAddress.getByAddress(quads);
+        } catch (Exception e) {
+            Log.e(TAG, "IOException: " + e.getMessage());
+        }
+        byte[] quads = new byte[4];
+        return InetAddress.getByAddress(quads);
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // The service is starting, due to a call to startService()
-        UdpServerThread server = new UdpServerThread(8002);
-        server.start();
-        return startMode;
+        return START_STICKY;
     }
     @Override
     public IBinder onBind(Intent intent) {
@@ -60,111 +154,9 @@ public class QZService extends Service {
         // The service is no longer used and is being destroyed
     }
 
-    private class UdpServerThread extends Thread{
-
-        int serverPort;
-        DatagramSocket socket;
-
-        boolean running;
-
-        public UdpServerThread(int serverPort) {
-            super();
-            this.serverPort = serverPort;
-        }
-
-        public void setRunning(boolean running){
-            this.running = running;
-        }
-
-        @Override
-        public void run() {
-
-            running = true;
-
-            try {
-                socket = new DatagramSocket(serverPort);
-
-                Log.e(TAG, "UDP Server is running");
-
-                while(running){
-                    byte[] buf = new byte[256];
-
-                    String fileName = "/sdcard/.wolflogs/" + pickLatestFileFromDownloads();
-                    try {
-                        RandomAccessFile bufferedReader = new RandomAccessFile( fileName, "r"
-                        );
-
-                        long filePointer;
-                        while ( true ) {
-                            final String string = bufferedReader.readLine();
-
-                            if(string != null) {
-                                sendBroadcast(string);
-                            }
-
-                            if ( string != null )
-                                System.out.println( string );
-                            else {
-                                filePointer = bufferedReader.getFilePointer();
-                                bufferedReader.close();
-                                bufferedReader = new RandomAccessFile( fileName, "r" );
-                                bufferedReader.seek( filePointer );
-                            }
-
-                        }
-                    } catch ( IOException  e ) {
-                        e.printStackTrace();
-                    }
-                }
-
-                Log.e(TAG, "UDP Server ended");
-
-            } catch (SocketException e) {
-                e.printStackTrace();
-            } finally {
-                if(socket != null){
-                    socket.close();
-                    Log.e(TAG, "socket.close()");
-                }
-            }
-        }
-
-        public void sendBroadcast(String messageStr) {
-            StrictMode.ThreadPolicy policy = new   StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-
-            try {
-
-                DatagramSocket socket = new DatagramSocket();
-                socket.setBroadcast(true);
-                byte[] sendData = messageStr.getBytes();
-                DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, getBroadcastAddress(), this.serverPort);
-                socket.send(sendPacket);
-                System.out.println(getClass().getName() + "Broadcast packet sent to: " + getBroadcastAddress().getHostAddress());
-            } catch (IOException e) {
-                Log.e(TAG, "IOException: " + e.getMessage());
-            }
-        }
-        InetAddress getBroadcastAddress() throws IOException {
-            WifiManager wifi = (WifiManager)    getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-            DhcpInfo dhcp = null;
-            try {
-                dhcp = wifi.getDhcpInfo();
-                int broadcast = (dhcp.ipAddress & dhcp.netmask) | ~dhcp.netmask;
-                byte[] quads = new byte[4];
-                for (int k = 0; k < 4; k++)
-                    quads[k] = (byte) ((broadcast >> k * 8) & 0xFF);
-                return InetAddress.getByAddress(quads);
-            } catch (Exception e) {
-                Log.e(TAG, "IOException: " + e.getMessage());
-            }
-            byte[] quads = new byte[4];
-            return InetAddress.getByAddress(quads);
-    }
-}
     public String pickLatestFileFromDownloads() {
 
-        File dir = new File("/sdcard/.wolflogs");
+        File dir = new File(path);
         File[] files = dir.listFiles();
         if (files == null || files.length == 0) {
             Log.i(TAG,"There is no file in the folder");
