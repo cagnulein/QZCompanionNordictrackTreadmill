@@ -36,6 +36,7 @@ public class QZService extends Service {
     AtomicLong filePointer = new AtomicLong();
     String fileName = "";
     RandomAccessFile bufferedReader;
+    boolean firstTime = false;
 
     @Override
     public void onCreate() {
@@ -80,10 +81,11 @@ public class QZService extends Service {
             while(true) {
                 final String string = bufferedReader.readLine();
 
-                if (string != null) {
+                if (string != null && firstTime == true) {
                     sendBroadcast(string);
                     System.out.println(string);
                 } else {
+                    firstTime = true;
                     filePointer.set(bufferedReader.getFilePointer());
                     bufferedReader.close();
                     bufferedReader = new RandomAccessFile(fileName, "r");
