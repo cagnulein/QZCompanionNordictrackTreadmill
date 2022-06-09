@@ -41,7 +41,7 @@ public class QZService extends Service {
     @Override
     public void onCreate() {
         // The service is being created
-        Toast.makeText(this, "Service created!", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Service created!", Toast.LENGTH_LONG).show();
 
         try {
             socket = new DatagramSocket(serverPort);
@@ -74,14 +74,13 @@ public class QZService extends Service {
                 e.printStackTrace();
             }
         }
-        Toast.makeText(getApplicationContext(), "Service is still running", Toast.LENGTH_LONG).show();
-        handler.postDelayed(runnable, 500);
+        //Toast.makeText(getApplicationContext(), "Service is still running", Toast.LENGTH_LONG).show();
 
         try {
             while(true) {
                 final String string = bufferedReader.readLine();
 
-                if (string != null && firstTime == true) {
+                if (string != null && (firstTime == true || string.contains("Changed KPH") || string.contains("Changed Grade"))) {
                     sendBroadcast(string);
                     System.out.println(string);
                 } else {
@@ -96,6 +95,8 @@ public class QZService extends Service {
         } catch ( IOException  e ) {
             e.printStackTrace();
         }
+
+        handler.postDelayed(runnable, 500);
     }
 
     public void sendBroadcast(String messageStr) {
