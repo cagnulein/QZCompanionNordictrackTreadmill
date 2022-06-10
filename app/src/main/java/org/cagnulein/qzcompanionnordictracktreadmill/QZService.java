@@ -35,7 +35,7 @@ public class QZService extends Service {
     DatagramSocket socket = null;
     AtomicLong filePointer = new AtomicLong();
     String fileName = "";
-    RandomAccessFile bufferedReader;
+    RandomAccessFile bufferedReader = null;
     boolean firstTime = false;
     String lastSpeed = "";
     String lastInclination = "";
@@ -81,42 +81,43 @@ public class QZService extends Service {
         try {
             boolean speedSent = false;
             boolean inclinationSent = false;
-            while(true) {
-                final String string = bufferedReader.readLine();
+            if (bufferedReader != null) {
+                while (true) {
+                    final String string = bufferedReader.readLine();
 
-                boolean speedPresent = false;
-                boolean inclinationPresent = false;
+                    boolean speedPresent = false;
+                    boolean inclinationPresent = false;
 
-                if(string != null) {
-                    speedPresent = string.contains("Changed KPH");
-                    inclinationPresent = string.contains("Changed Grade");
-                }
+                    if (string != null) {
+                        speedPresent = string.contains("Changed KPH");
+                        inclinationPresent = string.contains("Changed Grade");
+                    }
 
-                if(speedPresent) {
-                    speedSent = true;
-                    lastSpeed = string;
-                }
-                else if(inclinationPresent) {
-                    inclinationSent = true;
-                    lastInclination = string;
-                }
+                    if (speedPresent) {
+                        speedSent = true;
+                        lastSpeed = string;
+                    } else if (inclinationPresent) {
+                        inclinationSent = true;
+                        lastInclination = string;
+                    }
 
-                if (string != null && (firstTime == true || speedPresent || inclinationPresent)) {
-                    sendBroadcast(string);
-                } else {
-                    if(speedSent == false && lastSpeed.length() > 0)
-                        sendBroadcast(lastSpeed);
-                    if(inclinationSent == false && lastInclination.length() > 0)
-                        sendBroadcast(lastInclination);
-                    firstTime = true;
-                    filePointer.set(bufferedReader.getFilePointer());
-                    bufferedReader.close();
-                    bufferedReader = new RandomAccessFile(fileName, "r");
-                    bufferedReader.seek(filePointer.get());
-                    break;
+                    if (string != null && (firstTime == true || speedPresent || inclinationPresent)) {
+                        sendBroadcast(string);
+                    } else {
+                        if (speedSent == false && lastSpeed.length() > 0)
+                            sendBroadcast(lastSpeed);
+                        if (inclinationSent == false && lastInclination.length() > 0)
+                            sendBroadcast(lastInclination);
+                        firstTime = true;
+                        filePointer.set(bufferedReader.getFilePointer());
+                        bufferedReader.close();
+                        bufferedReader = new RandomAccessFile(fileName, "r");
+                        bufferedReader.seek(filePointer.get());
+                        break;
+                    }
                 }
             }
-        } catch ( IOException  e ) {
+        } catch(IOException e ){
             e.printStackTrace();
         }
 
@@ -134,7 +135,7 @@ public class QZService extends Service {
             byte[] sendData = messageStr.getBytes();
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, getBroadcastAddress(), this.serverPort);
             socket.send(sendPacket);
-            System.out.println(getClass().getName() + "Broadcast packet sent to: " + getBroadcastAddress().getHostAddress());
+            System.out.println(messageStr);
         } catch (IOException e) {
             Log.e(TAG, "IOException: " + e.getMessage());
         }
@@ -187,6 +188,7 @@ public class QZService extends Service {
         File[] files = dir.listFiles();
         if (files == null || files.length == 0) {
             Log.i(TAG,"There is no file in the folder");
+            return "";
         }
 
         File lastModifiedFile = files[0];
