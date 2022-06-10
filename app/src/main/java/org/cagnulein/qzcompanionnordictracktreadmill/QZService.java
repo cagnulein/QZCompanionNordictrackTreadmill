@@ -37,6 +37,8 @@ public class QZService extends Service {
     String fileName = "";
     RandomAccessFile bufferedReader;
     boolean firstTime = false;
+    String lastSpeed = "";
+    String lastInclination = "";
 
     @Override
     public void onCreate() {
@@ -77,13 +79,30 @@ public class QZService extends Service {
         //Toast.makeText(getApplicationContext(), "Service is still running", Toast.LENGTH_LONG).show();
 
         try {
+            boolean speedSent = false;
+            boolean inclinationSent = false;
             while(true) {
                 final String string = bufferedReader.readLine();
 
-                if (string != null && (firstTime == true || string.contains("Changed KPH") || string.contains("Changed Grade"))) {
+                boolean speedPresent = string.contains("Changed KPH");
+                boolean inclinationPresent = string.contains("Changed Grade");
+
+                if(speedPresent) {
+                    speedSent = true;
+                    lastSpeed = string;
+                }
+                else if(inclinationPresent) {
+                    inclinationSent = true;
+                    lastInclination = string;
+                }
+
+                if (string != null && (firstTime == true || speedPresent || inclinationPresent)) {
                     sendBroadcast(string);
-                    System.out.println(string);
                 } else {
+                    if(speedSent == false && lastSpeed.length() > 0)
+                        sendBroadcast(lastSpeed);
+                    if(inclinationSent == false && lastInclination.length() > 0)
+                        sendBroadcast(lastInclination);
                     firstTime = true;
                     filePointer.set(bufferedReader.getFilePointer());
                     bufferedReader.close();
