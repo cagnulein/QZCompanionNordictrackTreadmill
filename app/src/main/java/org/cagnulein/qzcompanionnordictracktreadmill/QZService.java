@@ -84,8 +84,13 @@ public class QZService extends Service {
             while(true) {
                 final String string = bufferedReader.readLine();
 
-                boolean speedPresent = string.contains("Changed KPH");
-                boolean inclinationPresent = string.contains("Changed Grade");
+                boolean speedPresent = false;
+                boolean inclinationPresent = false;
+
+                if(string != null) {
+                    speedPresent = string.contains("Changed KPH");
+                    inclinationPresent = string.contains("Changed Grade");
+                }
 
                 if(speedPresent) {
                     speedSent = true;
