@@ -102,7 +102,7 @@ public class QZService extends Service {
                     }
 
                     if (string != null && (firstTime == true || speedPresent || inclinationPresent)) {
-                        System.out.println(string);
+                        //System.out.println(string);
                     } else {
                         if (lastSpeed.length() > 0)
                             sendBroadcast(lastSpeed);
