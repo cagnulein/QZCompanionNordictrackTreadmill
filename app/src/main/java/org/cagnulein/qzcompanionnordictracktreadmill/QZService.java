@@ -1,5 +1,8 @@
 package org.cagnulein.qzcompanionnordictracktreadmill;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +13,8 @@ import android.os.IBinder;
 import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.core.app.NotificationCompat;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -42,6 +47,7 @@ public class QZService extends Service {
     boolean firstTime = false;
     String lastSpeed = "";
     String lastInclination = "";
+    NotificationManager mManager;
 
     @Override
     public void onCreate() {
@@ -64,6 +70,10 @@ public class QZService extends Service {
                 Log.e(TAG, "socket.close()");
             }
         }
+
+        mManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationChannel mChannel = new NotificationChannel("1001", "QZ", NotificationManager.IMPORTANCE_LOW);
+        mManager.createNotificationChannel(mChannel);
 
         if(runnable != null)
             handler.postDelayed(runnable, 500);
@@ -109,6 +119,16 @@ public class QZService extends Service {
     }
 
     public void sendBroadcast(String messageStr) {
+
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "1001")
+                .setContentTitle("QZ Companion")
+                .setContentText("Updating..." + messageStr)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        builder.setOnlyAlertOnce(true);
+        mManager.notify("QZ", 1,  builder.build());
+
         StrictMode.ThreadPolicy policy = new   StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
