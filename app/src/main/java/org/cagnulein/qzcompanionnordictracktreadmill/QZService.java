@@ -11,8 +11,11 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -66,59 +69,40 @@ public class QZService extends Service {
             handler.postDelayed(runnable, 500);
     }
 
-    private void parse() {
-        if(fileName.compareTo(path + pickLatestFileFromDownloads()) != 0) {
-            fileName = path + pickLatestFileFromDownloads();
-            filePointer.set(0);
-            try {
-                bufferedReader = new RandomAccessFile(fileName, "r");
-            } catch ( IOException  e ) {
-                e.printStackTrace();
-            }
+    private void speed(InputStream in) throws IOException {
+        BufferedReader is = new BufferedReader(new InputStreamReader(in));
+        String line;
+        while ((line = is.readLine()) != null) {
+            System.out.println(line);
+            lastSpeed = line;
+            sendBroadcast(line);
         }
-        //Toast.makeText(getApplicationContext(), "Service is still running", Toast.LENGTH_LONG).show();
+    }
 
-        try {
-            boolean speedSent = false;
-            boolean inclinationSent = false;
-            if (bufferedReader != null) {
-                while (true) {
-                    final String string = bufferedReader.readLine();
+    private void incline(InputStream in) throws IOException {
+        BufferedReader is = new BufferedReader(new InputStreamReader(in));
+        String line;
+        while ((line = is.readLine()) != null) {
+            lastInclination = line;
+            sendBroadcast(line);
+        }
+    }
 
-                    boolean speedPresent = false;
-                    boolean inclinationPresent = false;
+    private void parse() {
 
-                    if (string != null) {
-                        speedPresent = string.contains("Changed KPH");
-                        inclinationPresent = string.contains("Changed Grade");
-                    }
-
-                    if (speedPresent) {
-                        speedSent = true;
-                        lastSpeed = string;
-                    } else if (inclinationPresent) {
-                        inclinationSent = true;
-                        lastInclination = string;
-                    }
-
-                    if (string != null && (firstTime == true || speedPresent || inclinationPresent)) {
-                        //System.out.println(string);
-                    } else {
-                        if (lastSpeed.length() > 0)
-                            sendBroadcast(lastSpeed);
-                        if (lastInclination.length() > 0)
-                            sendBroadcast(lastInclination);
-                        firstTime = true;
-                        filePointer.set(bufferedReader.getFilePointer());
-                        bufferedReader.close();
-                        bufferedReader = new RandomAccessFile(fileName, "r");
-                        bufferedReader.seek(filePointer.get());
-                        break;
-                    }
-                }
+        String file = pickLatestFileFromDownloads();
+        if(file != "") {
+            try {
+                Runtime rt = Runtime.getRuntime();
+                String[] cmd = {"/bin/sh", "-c", " grep -a \"Changed KPH\" " + path + file + "  | tail -n1"};
+                Process proc = rt.exec(cmd);
+                speed(proc.getInputStream());
+                String[] cmdIncline = {"/bin/sh", "-c", " grep -a \"Changed Grade\" " + path + file + "  | tail -n1"};
+                Process procIncline = rt.exec(cmdIncline);
+                incline(procIncline.getInputStream());
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-        } catch(IOException e ){
-            e.printStackTrace();
         }
 
         handler.postDelayed(runnable, 500);
