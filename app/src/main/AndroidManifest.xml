@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -17,7 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.QZCompanionNordictrackTreadmill">
-        <service android:name=".QZService" />
+        <service android:name=".QZService"/>
+        <receiver android:name=".AlarmReceiver" android:process=":remote" />
         <receiver android:enabled="true" android:name=".BootUpReceiver"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
             <intent-filter>

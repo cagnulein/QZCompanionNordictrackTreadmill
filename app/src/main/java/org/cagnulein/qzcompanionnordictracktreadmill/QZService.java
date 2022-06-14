@@ -47,36 +47,11 @@ public class QZService extends Service {
     boolean firstTime = false;
     String lastSpeed = "";
     String lastInclination = "";
-    NotificationManager mManager;
 
     @Override
     public void onCreate() {
-        // The service is being created
-        //Toast.makeText(this, "Service created!", Toast.LENGTH_LONG).show();
-
-        try {
-            socket = new DatagramSocket(serverPort);
-            runnable = new Runnable() {
-                @Override
-                public void run() {
-                    parse();
-                }
-            };
-        } catch (SocketException e) {
-            e.printStackTrace();
-        } finally {
-            if(socket != null){
-                socket.close();
-                Log.e(TAG, "socket.close()");
-            }
-        }
-
-        mManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationChannel mChannel = new NotificationChannel("1001", "QZ", NotificationManager.IMPORTANCE_LOW);
-        mManager.createNotificationChannel(mChannel);
-
-        if(runnable != null)
-            handler.postDelayed(runnable, 500);
+        parse();
+        this.stopSelf();
     }
 
     private void speed(InputStream in) throws IOException {
@@ -119,15 +94,6 @@ public class QZService extends Service {
     }
 
     public void sendBroadcast(String messageStr) {
-
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "1001")
-                .setContentTitle("QZ Companion")
-                .setContentText("Updating..." + messageStr)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        builder.setOnlyAlertOnce(true);
-        mManager.notify("QZ", 1,  builder.build());
 
         StrictMode.ThreadPolicy policy = new   StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
