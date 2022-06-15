@@ -1,8 +1,5 @@
 package org.cagnulein.qzcompanionnordictracktreadmill;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -13,8 +10,6 @@ import android.os.IBinder;
 import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Toast;
-
-import androidx.core.app.NotificationCompat;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -50,8 +45,28 @@ public class QZService extends Service {
 
     @Override
     public void onCreate() {
-        parse();
-        this.stopSelf();
+        // The service is being created
+        //Toast.makeText(this, "Service created!", Toast.LENGTH_LONG).show();
+
+        try {
+            socket = new DatagramSocket(serverPort);
+            runnable = new Runnable() {
+                @Override
+                public void run() {
+                    parse();
+                }
+            };
+        } catch (SocketException e) {
+            e.printStackTrace();
+        } finally {
+            if(socket != null){
+                socket.close();
+                Log.e(TAG, "socket.close()");
+            }
+        }
+
+        if(runnable != null)
+            handler.postDelayed(runnable, 500);
     }
 
     private void speed(InputStream in) throws IOException {
@@ -94,7 +109,6 @@ public class QZService extends Service {
     }
 
     public void sendBroadcast(String messageStr) {
-
         StrictMode.ThreadPolicy policy = new   StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
