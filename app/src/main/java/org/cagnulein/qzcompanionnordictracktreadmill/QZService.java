@@ -69,23 +69,27 @@ public class QZService extends Service {
             handler.postDelayed(runnable, 500);
     }
 
-    private void speed(InputStream in) throws IOException {
+    private boolean speed(InputStream in) throws IOException {
         BufferedReader is = new BufferedReader(new InputStreamReader(in));
         String line;
         while ((line = is.readLine()) != null) {
             System.out.println(line);
             lastSpeed = line;
             sendBroadcast(line);
+            return true;
         }
+        return  false;
     }
 
-    private void incline(InputStream in) throws IOException {
+    private boolean incline(InputStream in) throws IOException {
         BufferedReader is = new BufferedReader(new InputStreamReader(in));
         String line;
         while ((line = is.readLine()) != null) {
             lastInclination = line;
             sendBroadcast(line);
+            return true;
         }
+        return  false;
     }
 
     private void parse() {
@@ -94,12 +98,20 @@ public class QZService extends Service {
         if(file != "") {
             try {
                 Runtime rt = Runtime.getRuntime();
-                String[] cmd = {"/bin/sh", "-c", " grep -a \"Changed KPH\" " + path + file + "  | tail -n1"};
+                String[] cmd = {"/bin/sh", "-c", " tail -n5000 | grep -a \"Changed KPH\" " + path + file + "  | tail -n1"};
                 Process proc = rt.exec(cmd);
-                speed(proc.getInputStream());
-                String[] cmdIncline = {"/bin/sh", "-c", " grep -a \"Changed Grade\" " + path + file + "  | tail -n1"};
+                if(!speed(proc.getInputStream())) {
+                    String[] cmd2 = {"/bin/sh", "-c", " grep -a \"Changed KPH\" " + path + file + "  | tail -n1"};
+                    Process proc2 = rt.exec(cmd2);
+                    speed(proc2.getInputStream());
+                }
+                String[] cmdIncline = {"/bin/sh", "-c", " tail -n5000 | grep -a \"Changed Grade\" " + path + file + "  | tail -n1"};
                 Process procIncline = rt.exec(cmdIncline);
-                incline(procIncline.getInputStream());
+                if(!incline(procIncline.getInputStream())) {
+                    String[] cmdIncline2 = {"/bin/sh", "-c", " grep -a \"Changed Grade\" " + path + file + "  | tail -n1"};
+                    Process procIncline2 = rt.exec(cmdIncline2);
+                    incline(procIncline2.getInputStream());
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
