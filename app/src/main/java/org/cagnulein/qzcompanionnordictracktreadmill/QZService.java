@@ -99,7 +99,7 @@ public class QZService extends Service {
         if(file != "") {
             try {
                 Runtime rt = Runtime.getRuntime();
-                String[] cmd = {"/bin/sh", "-c", " tail -n5000 " + path + file + " | grep -a \"Changed KPH\" | tail -n1"};
+                String[] cmd = {"/bin/sh", "-c", " tail -n500 " + path + file + " | grep -a \"Changed KPH\" | tail -n1"};
                 Process proc = rt.exec(cmd);
                 if(!speed(proc.getInputStream())) {
                     String[] cmd2 = {"/bin/sh", "-c", " grep -a \"Changed KPH\" " + path + file + "  | tail -n1"};
@@ -108,7 +108,7 @@ public class QZService extends Service {
                         sendBroadcast(lastSpeed);
                     }
                 }
-                String[] cmdIncline = {"/bin/sh", "-c", " tail -n5000 " + path + file + " | grep -a \"Changed Grade\" | tail -n1"};
+                String[] cmdIncline = {"/bin/sh", "-c", " tail -n500 " + path + file + " | grep -a \"Changed Grade\" | tail -n1"};
                 Process procIncline = rt.exec(cmdIncline);
                 if(!incline(procIncline.getInputStream())) {
                     String[] cmdIncline2 = {"/bin/sh", "-c", " grep -a \"Changed Grade\" " + path + file + "  | tail -n1"};
