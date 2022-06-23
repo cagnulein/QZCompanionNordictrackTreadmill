@@ -42,6 +42,7 @@ public class QZService extends Service {
     boolean firstTime = false;
     String lastSpeed = "";
     String lastInclination = "";
+    int counterTruncate = 0;
 
     @Override
     public void onCreate() {
@@ -103,14 +104,24 @@ public class QZService extends Service {
                 if(!speed(proc.getInputStream())) {
                     String[] cmd2 = {"/bin/sh", "-c", " grep -a \"Changed KPH\" " + path + file + "  | tail -n1"};
                     Process proc2 = rt.exec(cmd2);
-                    speed(proc2.getInputStream());
+                    if(!speed(proc2.getInputStream())) {
+                        sendBroadcast(lastSpeed);
+                    }
                 }
                 String[] cmdIncline = {"/bin/sh", "-c", " tail -n5000 " + path + file + " | grep -a \"Changed Grade\" | tail -n1"};
                 Process procIncline = rt.exec(cmdIncline);
                 if(!incline(procIncline.getInputStream())) {
                     String[] cmdIncline2 = {"/bin/sh", "-c", " grep -a \"Changed Grade\" " + path + file + "  | tail -n1"};
                     Process procIncline2 = rt.exec(cmdIncline2);
-                    incline(procIncline2.getInputStream());
+                    if(!incline(procIncline2.getInputStream())) {
+                        sendBroadcast(lastInclination);
+                    }
+                }
+                if(counterTruncate++ > 1200) {
+                    counterTruncate = 0;
+                    String[] cmdTruncate = {"/bin/sh", "-c", " truncate -s0 " + path + file};
+                    Process procTruncate = rt.exec(cmdTruncate);
+                    Log.d(TAG, "Truncating file...");
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
