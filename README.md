@@ -204,8 +204,6 @@ Start a Zwift workout and control speed from your treadmill
 -   Uninstall-QZ-Companion.bat (batch script used to uninstall/remove QZ
     Companion).
 
--   QZ Companion Installation.pdf (this document)
-
 -   All other files (adb.exe, AdbWinApi.dll, tee.exe) are required for
     the scripts. Do not delete them).
 
