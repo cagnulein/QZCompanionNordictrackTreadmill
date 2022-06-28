@@ -49,7 +49,7 @@ works consistently on Windows and iOS, but not Android.
     structure and can be easily removed via an uninstall script or by
     doing a treadmill factory reset.
 
-**Disclaimer**: I have currently only tested this solution on my
+**Disclaimer**: I have only tested this solution on a
 NordicTrack Commercial 2950 (2021 model) treadmill with a built-in 22"
 touchscreen. However, it should work on any iFit-enabled/iFit-embedded
 NordicTrack or Pro-Form treadmill with built-in Android tablet. Refer to
@@ -80,7 +80,7 @@ and know your treadmills IP, you can skip to step 4.
     Unfortunately, the reset button and power switch are far apart and
     may require two people to coordinate the reset. After the 10 second
     reset, the console will display the reset and progress animation.
-    The reset usually takes about 5 -- 7 minutes on my treadmill. When
+    The reset usually takes about 5 -7 minutes on my treadmill. When
     it is done, iFit will prompt you do login and select your Wifi
     network.
 
@@ -113,7 +113,7 @@ with medium confidence](media/image2.png)
 Enable USB Debugging on your treadmill
 
 4.  Install the QZ Companion app on your treadmill. Download the QZ
-    Companion installation package (qz-companion.zip) and unzip/extract
+    Companion installation package from this Github repository and extract
     it to your Windows PC. Go into the extracted folder and run
     qz-companion.bat by either double-clicking it or running it from the
     command-line. When prompted to enter the treadmills IP address,
@@ -129,10 +129,10 @@ Enable USB Debugging on your treadmill
 
 Run QZ-Companion.bat on a Wifi connected Windows PC
 
-5.  Configure QZ to communicate with QZ Companion. On your 2^nd^ QZ
+5.  Configure QZ to communicate with QZ Companion. On your 2nd QZ
     device (Windows PC or laptop, Android phone or tablet, or iOS iPhone
     or iPad), open QZ and go to Settings. Expand Treadmill Options,
-    Proform/NordicTrack Options, enter the treadmills IP address under
+    Proform/NordicTrack Options, and enter the treadmills IP address under
     NordicTrack 2950 IP and hit OK. Exit and relaunch QZ to activate the
     change. If done correctly, QZ will display live data tiles to
     indicate it is communicating directly with QZ Companion on the
