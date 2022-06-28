@@ -219,7 +219,7 @@ Start a Zwift workout and control speed from your treadmill
     troubleshoot the connection.
 
 -   When executed, the QZ-Companion.bat installation script will
-    generate a log file -- QZ-Companion-log.txt. If communication fails
+    generate a log file named QZ-Companion-log.txt. If communication fails
     or the app fails to install on your treadmill, refer to this log to
-    troubleshoot specific errors. You may be required to share this file
+    troubleshoot specific errors. You may be required to share this log
     to obtain technical support.
