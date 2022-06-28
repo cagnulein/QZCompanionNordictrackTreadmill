@@ -48,6 +48,12 @@ works consistently on Windows and iOS, but not Android.
     Windows PC. It makes no changes to the underlying Android or iFit
     structure and can be easily removed via an uninstall script or by
     doing a treadmill factory reset.
+    
+**About QZ (QZ Fitness)**:
+
+-   QZ is a cross-platform app (iOS, Android, Raspberry, Windows, and Mac) that acts as a native bluetooth protocol bridge for many exercise machines (spin bikes, treadmills, trainer, rowers and ellipticals) to FTMS bluetooth for direct connection to Zwift and other compatible apps.
+
+-   Wahoo Direct Connect (DIRCON) protocol was recently added to QZ in order to bypass Bluetooth connection drop-outs that are common during a bike or running race (Wifi/ethernet is considerably more stable than Bluetooth).
 
 **Disclaimer**: I have only tested this solution on a
 NordicTrack Commercial 2950 (2021 model) treadmill with a built-in 22"
