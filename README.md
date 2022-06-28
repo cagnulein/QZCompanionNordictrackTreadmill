@@ -63,8 +63,7 @@ Please let us know if you get this to work on your treadmill so we can
 compile a list of compatible machines.
 
 ![A picture containing sport, exercise device Description automatically
-generated](media/image1.jpg){width="3.3897637795275593in"
-height="3.1496062992125986in"}
+generated](media/image1.jpg)
 
 NordicTrack Commercial 2950 (2021 model)
 
@@ -113,8 +112,7 @@ and know your treadmills IP, you can skip to step 4.
     debugging' prompt appears.
 
 ![Graphical user interface, text Description automatically generated
-with medium confidence](media/image2.png){width="6.5in"
-height="3.65625in"}
+with medium confidence](media/image2.png)
 
 > Enable USB Debugging on your treadmill
 
@@ -131,7 +129,7 @@ height="3.65625in"}
     QZ Companion is running in the background and is ready to transmit
     treadmill speed and incline data to QZ.
 
-> ![](media/image3.png){width="6.5in" height="3.65625in"}
+> ![](media/image3.png)
 >
 > Run QZ-Companion.bat on a Wifi connected Windows PC
 
@@ -148,17 +146,17 @@ height="3.65625in"}
     direct connect will now transmit the treadmills speed and incline
     data to Zwift via Bluetooth.
 
-> ![](media/image4.png){width="6.5in" height="3.65625in"}
+> ![](media/image4.png)
 >
 > Enter your treadmill IP address in QZ
 
 ![Graphical user interface, text, application Description automatically
-generated](media/image5.png){width="6.5in" height="3.65625in"}
+generated](media/image5.png)
 
 > Turn on Enable Virtual Device, Virtual Device Bluetooth in QZ
 
 ![Graphical user interface, text, application Description automatically
-generated](media/image6.png){width="6.5in" height="3.65625in"}
+generated](media/image6.png)
 
 > Turn on Wahoo Direct Connect in QZ
 
@@ -170,11 +168,11 @@ generated](media/image6.png){width="6.5in" height="3.65625in"}
     while working out or simply use it to transmit data to Zwift.
 
 > ![Diagram Description automatically
-> generated](media/image7.png){width="6.5in" height="3.65625in"}
+> generated](media/image7.png)
 >
 > Start an iFit manual workout
 >
-> ![](media/image8.png){width="6.5in" height="3.65625in"}
+> ![](media/image8.png)
 >
 > QZ receiving live speed and incline from QZ Companion
 
@@ -187,12 +185,12 @@ generated](media/image6.png){width="6.5in" height="3.65625in"}
     will receive live speed and incline data from your treadmill via QZ
     and QZ Companion data link.
 
-> ![](media/image9.png){width="6.5in" height="3.65625in"}
+> ![](media/image9.png)
 >
 > Select Wahoo Tread device as Run Device in Zwift
 >
 > ![Graphical user interface Description automatically
-> generated](media/image10.png){width="6.5in" height="3.65625in"}
+> generated](media/image10.png)
 >
 > Start a Zwift workout and control speed from your treadmill
 
