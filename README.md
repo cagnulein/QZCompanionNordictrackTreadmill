@@ -26,8 +26,7 @@ works consistently on Windows and iOS, but not Android.
 **About QZ Companion**:
 
 -   This solution works on iFit-enabled/iFit-embedded treadmills -- it
-    transmits speed and inclination directly to Zwift. What other stats
-    are sent, can be sent, calculated, etc \...?
+    transmits speed and inclination directly to Zwift.
 
 -   The QZ Companion app always runs in the background on your
     treadmill, using minimal memory and CPU.
@@ -39,9 +38,6 @@ works consistently on Windows and iOS, but not Android.
 -   QZ Companion is not affected by Android or iFit updates. It
     continues to auto-start and run in the background after all iFit and
     Android updates.
-
--   QZ Companion communicates directly with QZ, so you can use it with
-    Zwift but also with QZs many unique features - such as \...
 
 -   You can use flexible equipment startup sequences - e.g. start your
     treadmill first, HRM monitor second, QZ app third, Zwift last, or
