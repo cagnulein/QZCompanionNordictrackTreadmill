@@ -110,7 +110,7 @@ and know your treadmills IP, you can skip to step 4.
 ![Graphical user interface, text Description automatically generated
 with medium confidence](media/image2.png)
 
-> Enable USB Debugging on your treadmill
+Enable USB Debugging on your treadmill
 
 4.  Install the QZ Companion app on your treadmill. Download the QZ
     Companion installation package (qz-companion.zip) and unzip/extract
