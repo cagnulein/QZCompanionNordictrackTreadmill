@@ -17,15 +17,15 @@ QZ on Facebook - <https://www.facebook.com/groups/149984563348738>
 treadmill, communicates live speed and inclination to the QZ program
 running on another device (e.g. Windows PC or laptop, Android phone or
 tablet, or iOS iPhone or iPad). QZ then communicates this information to
-Zwift running on a 3^rd^ device (e.g. Windows PC or laptop, Android
+Zwift running on a 3rd device (e.g. Windows PC or laptop, Android
 phone or tablet, or iOS iPhone or iPad). A 2nd device could be used to
-run both QZ and Zwift, eliminating the need for a 3^rd^ device, as long
-as QZ in the background while Zwift is in the foreground. This only
+run both QZ and Zwift, eliminating the need for a 3rd device, as long
+as QZ runs in the background while Zwift runs in the foreground. This only
 works consistently on Windows and iOS, but not Android.
 
 **About QZ Companion**:
 
--   This solution works on iFit-enabled/iFit-embedded treadmills -- it
+-   This solution works on iFit-enabled/iFit-embedded treadmills. It
     transmits speed and inclination directly to Zwift.
 
 -   The QZ Companion app always runs in the background on your
@@ -36,7 +36,7 @@ works consistently on Windows and iOS, but not Android.
     installation.
 
 -   QZ Companion is not affected by Android or iFit updates. It
-    continues to auto-start and run in the background after all iFit and
+    continues to auto-start and run in the background after iFit and
     Android updates.
 
 -   You can use flexible equipment startup sequences - e.g. start your
@@ -55,7 +55,7 @@ touchscreen. However, it should work on any iFit-enabled/iFit-embedded
 NordicTrack or Pro-Form treadmill with built-in Android tablet. Refer to
 <https://www.ifit.com/equipment/treadmills> for more details.
 
-Please let us know if you get this to work on your treadmill so we can
+**Important**: Please let us know if you get this to work on your treadmill so we can
 compile a list of compatible machines.
 
 ![A picture containing sport, exercise device Description automatically
