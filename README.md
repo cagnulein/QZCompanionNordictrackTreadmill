@@ -14,7 +14,7 @@ QZ and QZ Companion software development: Roberto Viola
 QZ on Facebook - <https://www.facebook.com/groups/149984563348738>
 
 **Technical Overview:** The new QZ Companion app, when installed on your
-treadmill, communicates live speed and inclination to the QZ program
+treadmill, communicates live speed and inclination to the QZ app
 running on another device (e.g. Windows PC or laptop, Android phone or
 tablet, or iOS iPhone or iPad). QZ then communicates this information to
 Zwift running on a 3rd device (e.g. Windows PC or laptop, Android
@@ -51,9 +51,9 @@ works consistently on Windows and iOS, but not Android.
     
 **About QZ (QZ Fitness)**:
 
--   QZ is a cross-platform app (iOS, Android, Raspberry, Windows, and Mac) that acts as a native bluetooth protocol bridge for many exercise machines (spin bikes, treadmills, trainer, rowers and ellipticals) to FTMS bluetooth for direct connection to Zwift and other compatible apps.
+-   QZ is a cross-platform app (iOS, Android, Raspberry, Windows, and Mac) that acts as a native Bluetooth protocol bridge for many exercise machines (spin bikes, treadmills, bike trainers, rowers, and ellipticals) to FTMS (FiTness Machine Service protocol) Bluetooth for direct connection to Zwift and other compatible apps.
 
--   Wahoo Direct Connect (DIRCON) protocol was recently added to QZ in order to bypass Bluetooth connection drop-outs that are common during a bike or running race (Wifi/ethernet is considerably more stable than Bluetooth).
+-   Wahoo Direct Connect (DIRCON) protocol was recently added to QZ in order to bypass Bluetooth connection drop-outs that are common during a bike or running race (Wifi and Ethernet is considerably more stable than Bluetooth).
 
 **Disclaimer**: I have only tested this solution on a
 NordicTrack Commercial 2950 (2021 model) treadmill with a built-in 22"
