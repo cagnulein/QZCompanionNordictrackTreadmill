@@ -14,7 +14,7 @@ QZ and QZ Companion software development: Roberto Viola
 QZ on Facebook - <https://www.facebook.com/groups/149984563348738>
 
 **Technical Overview:** The new QZ Companion app, when installed on your
-treadmill, communicates live speed and inclination to the QZ program
+treadmill, communicates live speed and inclination to the QZ app
 running on another device (e.g. Windows PC or laptop, Android phone or
 tablet, or iOS iPhone or iPad). QZ then communicates this information to
 Zwift running on a 3rd device (e.g. Windows PC or laptop, Android
@@ -48,8 +48,14 @@ works consistently on Windows and iOS, but not Android.
     Windows PC. It makes no changes to the underlying Android or iFit
     structure and can be easily removed via an uninstall script or by
     doing a treadmill factory reset.
+    
+**About QZ (QZ Fitness)**:
 
-**Disclaimer**: I have currently only tested this solution on my
+-   QZ is a cross-platform app (iOS, Android, Raspberry, Windows, and Mac) that acts as a native Bluetooth protocol bridge for many exercise machines (spin bikes, treadmills, bike trainers, rowers, and ellipticals) to FTMS (FiTness Machine Service protocol) Bluetooth for direct connection to Zwift and other compatible apps.
+
+-   Wahoo Direct Connect (DIRCON) protocol was recently added to QZ in order to bypass Bluetooth connection drop-outs that are common during a bike or running race (Wifi and Ethernet is considerably more stable than Bluetooth).
+
+**Disclaimer**: I have only tested this solution on a
 NordicTrack Commercial 2950 (2021 model) treadmill with a built-in 22"
 touchscreen. However, it should work on any iFit-enabled/iFit-embedded
 NordicTrack or Pro-Form treadmill with built-in Android tablet. Refer to
@@ -80,7 +86,7 @@ and know your treadmills IP, you can skip to step 4.
     Unfortunately, the reset button and power switch are far apart and
     may require two people to coordinate the reset. After the 10 second
     reset, the console will display the reset and progress animation.
-    The reset usually takes about 5 -- 7 minutes on my treadmill. When
+    The reset usually takes about 5 -7 minutes on my treadmill. When
     it is done, iFit will prompt you do login and select your Wifi
     network.
 
@@ -113,7 +119,7 @@ with medium confidence](media/image2.png)
 Enable USB Debugging on your treadmill
 
 4.  Install the QZ Companion app on your treadmill. Download the QZ
-    Companion installation package (qz-companion.zip) and unzip/extract
+    Companion installation package from this Github repository and extract
     it to your Windows PC. Go into the extracted folder and run
     qz-companion.bat by either double-clicking it or running it from the
     command-line. When prompted to enter the treadmills IP address,
@@ -129,10 +135,10 @@ Enable USB Debugging on your treadmill
 
 Run QZ-Companion.bat on a Wifi connected Windows PC
 
-5.  Configure QZ to communicate with QZ Companion. On your 2^nd^ QZ
+5.  Configure QZ to communicate with QZ Companion. On your 2nd QZ
     device (Windows PC or laptop, Android phone or tablet, or iOS iPhone
     or iPad), open QZ and go to Settings. Expand Treadmill Options,
-    Proform/NordicTrack Options, enter the treadmills IP address under
+    Proform/NordicTrack Options, and enter the treadmills IP address under
     NordicTrack 2950 IP and hit OK. Exit and relaunch QZ to activate the
     change. If done correctly, QZ will display live data tiles to
     indicate it is communicating directly with QZ Companion on the
@@ -217,7 +223,7 @@ Start a Zwift workout and control speed from your treadmill
     troubleshoot the connection.
 
 -   When executed, the QZ-Companion.bat installation script will
-    generate a log file -- QZ-Companion-log.txt. If communication fails
+    generate a log file named QZ-Companion-log.txt. If communication fails
     or the app fails to install on your treadmill, refer to this log to
-    troubleshoot specific errors. You may be required to share this file
+    troubleshoot specific errors. You may be required to share this log
     to obtain technical support.
