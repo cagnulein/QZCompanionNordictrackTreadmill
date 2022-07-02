@@ -30,9 +30,10 @@ timeout 5
 adb shell monkey -p org.cagnulein.qzcompanionnordictracktreadmill 1
 timeout 5
 
-QZ Companion is installed. Treadmill reboot is required. 
+adb shell monkey -p com.ifit.standalone 1
+timeout 5
 
-pause
+pause > nul | set/p = QZ Companion is installed. Press any key to reboot treadmill . . .
 
 adb reboot
 
