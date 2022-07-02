@@ -24,9 +24,7 @@ timeout 5
 adb uninstall org.cagnulein.qzcompanionnordictracktreadmill
 timeout 5
 
-QZ Companion is uninstalled. Treadmill reboot is required. 
-
-pause
+pause > nul | set/p = QZ Companion is uninstalled. Press any key to reboot treadmill . . .
 
 adb reboot
 
