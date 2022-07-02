@@ -68,15 +68,15 @@ echo. >> QZ-Companion-log.txt
 adb shell monkey -p org.cagnulein.qzcompanionnordictracktreadmill 1 >> QZ-Companion-log.txt 2>&1
 timeout 5
 
-::echo. | tee -a QZ-Companion-log.txt
-::echo Launching iFit ... | tee -a QZ-Companion-log.txt
-::echo. >> QZ-Companion-log.txt
-::adb shell monkey -p com.ifit.standalone 1 >> QZ-Companion-log.txt 2>&1
+echo. | tee -a QZ-Companion-log.txt
+echo Launching iFit ... | tee -a QZ-Companion-log.txt
+echo. >> QZ-Companion-log.txt
+adb shell monkey -p com.ifit.standalone 1 >> QZ-Companion-log.txt 2>&1
+timeout 5
 
 echo. | tee -a QZ-Companion-log.txt
+pause > nul | set/p = QZ Companion is installed. Press any key to reboot treadmill . . .
 echo Rebooting treadmill ... | tee -a QZ-Companion-log.txt
-
-pause
 
 adb reboot
 
