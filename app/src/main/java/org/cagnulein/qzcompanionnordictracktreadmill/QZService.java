@@ -174,7 +174,7 @@ public class QZService extends Service {
                                 y1Speed = y2;  //set new vertical position of speed slider
                                 lastReqSpeed = reqSpeed;
                             }
-                            if(reqInclination != -1 && lastReqInclination != reqInclination) {
+                            if(reqInclination != -100 && lastReqInclination != reqInclination) {
                                 int x1 = 75;     //middle of slider
                                 y1Inclination = 722;    //vertical position of slider at 0.0
                                 int y2 = y1Inclination - (int)((lastReqInclination - reqInclination) * 29.9);  //calculate vertical pixel position for new incline
