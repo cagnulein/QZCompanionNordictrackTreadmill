@@ -31,8 +31,14 @@ timeout 5
 echo. | tee -a QZ-Companion-log.txt
 echo Connecting to treadmill via ADB ... | tee -a QZ-Companion-log.txt
 echo. >> QZ-Companion-log.txt
-adb disconnect >> QZ-Companion-log.txt
-adb kill-server >> QZ-Companion-log.txt
+
+:: fix for 'failed to authenticate to {IP:port}'
+adb disconnect >nul 2>&1 
+adb kill-server >nul 2>&1 
+adb connect %TMIP% >nul 2>&1
+
+adb disconnect >> QZ-Companion-log.txt 2>&1
+adb kill-server >> QZ-Companion-log.txt 2>&1
 adb connect %TMIP% >> QZ-Companion-log.txt 2>&1
 adb connect %TMIP% | findstr /r /c:"connected to" >nul
 if %errorlevel% == 0 (
@@ -41,9 +47,16 @@ if %errorlevel% == 0 (
   echo Cannot establish ADB connection.
   goto end
 )
-echo. | tee -a QZ-Companion-log.txt
+echo. >> QZ-Companion-log.txt
 adb devices -l >> QZ-Companion-log.txt
 timeout 5
+
+:: report Android and SDK version
+echo Android version: >> QZ-Companion-log.txt
+adb shell getprop ro.build.version.release >> QZ-Companion-log.txt
+echo SDK version: >> QZ-Companion-log.txt
+adb shell getprop ro.build.version.sdk >> QZ-Companion-log.txt
+echo. >> QZ-Companion-log.txt
 
 echo Checking for previous installation ... | tee -a QZ-Companion-log.txt
 echo. >> QZ-Companion-log.txt
