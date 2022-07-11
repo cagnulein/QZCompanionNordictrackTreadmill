@@ -22,6 +22,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.ExecutorService;
@@ -36,11 +37,9 @@ public class QZService extends Service {
     boolean allowRebind; // indicates whether onRebind should be used
     String path = "/sdcard/.wolflogs/";
     int clientPort = 8002;
-    int serverPort = 8003;
     Handler handler = new Handler();
     Runnable runnable = null;
     DatagramSocket socket = null;
-    DatagramSocket socketServer = null;
 
     byte[] lmessage = new byte[1024];
     DatagramPacket packet = new DatagramPacket(lmessage, lmessage.length);
@@ -63,17 +62,12 @@ public class QZService extends Service {
         //Toast.makeText(this, "Service created!", Toast.LENGTH_LONG).show();
 
         try {
-            socket = new DatagramSocket(clientPort);
-            socketServer = new DatagramSocket(serverPort);
-            socketServer.setSoTimeout(100);
             runnable = new Runnable() {
                 @Override
                 public void run() {
                     parse();
                 }
             };
-        } catch (SocketException e) {
-            e.printStackTrace();
         } finally {
             if(socket != null){
                 socket.close();
@@ -113,6 +107,10 @@ public class QZService extends Service {
         String file = pickLatestFileFromDownloads();
         if(file != "") {
             try {
+                socket = new DatagramSocket();
+                socket.setBroadcast(true);
+                socket.setSoTimeout(100);
+
                 Runtime rt = Runtime.getRuntime();
                 String[] cmd = {"/bin/sh", "-c", " tail -n500 " + path + file + " | grep -a \"Changed KPH\" | tail -n1"};
                 Process proc = rt.exec(cmd);
@@ -141,63 +139,57 @@ public class QZService extends Service {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
 
-        new Thread(new Runnable() {
+            Boolean receiving = true;
+            while(receiving) {
+                try {
+                    socket.receive(packet);
+                    String message = new String(lmessage, 0, packet.getLength());
+                    String[] amessage = message.split(";");
+                    Log.d(TAG, message);
+                    if(amessage.length == 2) {
+                        String rSpeed = amessage[0];
+                        String rInclination = amessage[1];
+                        float reqSpeed = Float.parseFloat(rSpeed);
+                        float reqInclination = Float.parseFloat(rInclination);
 
-            @Override
-            public void run() {
-                try  {
-                    try {
-                        socketServer.receive(packet);
-                        String message = new String(lmessage, 0, packet.getLength());
-                        String[] amessage = message.split(";");
-                        Log.d(TAG, message);
-                        if(amessage.length == 2) {
-                            String rSpeed = amessage[0];
-                            String rInclination = amessage[1];
-                            float reqSpeed = Float.parseFloat(rSpeed);
-                            float reqInclination = Float.parseFloat(rInclination);
+                        Log.d(TAG, "requestSpeed: " + reqSpeed);
+                        Log.d(TAG, "requestInclination: " + reqInclination);
+                        if(reqSpeed != -1 && lastReqSpeed != reqSpeed) {
+                            int x1 = 1845;     //middle of slider
+                            //set speed slider to target position
+                            int y2 = (int) (y1Speed - (int)((lastReqSpeed - reqSpeed) * 29.78)); //calculate vertical pixel position for new speed
 
-                            Log.d(TAG, "requestSpeed: " + reqSpeed);
-                            Log.d(TAG, "requestInclination: " + reqInclination);
-                            if(reqSpeed != -1 && lastReqSpeed != reqSpeed) {
-                                int x1 = 1845;     //middle of slider
-                                //set speed slider to target position
-                                int y2 = (int) (y1Speed - (int)((lastReqSpeed - reqSpeed) * 29.78)); //calculate vertical pixel position for new speed
+                            Runtime rt = Runtime.getRuntime();
+                            String[] cmdReqSpeed = {"/bin/sh", "-c", " input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200"};
+                            Process procReqSpeed = rt.exec(cmdReqSpeed);
+                            Log.d(TAG, cmdReqSpeed[2]);
 
-                                Runtime rt = Runtime.getRuntime();
-                                String[] cmdReqSpeed = {"/bin/sh", "-c", " input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200"};
-                                Process procReqSpeed = rt.exec(cmdReqSpeed);
-                                Log.d(TAG, cmdReqSpeed[2]);
-
-                                y1Speed = y2;  //set new vertical position of speed slider
-                                lastReqSpeed = reqSpeed;
-                            }
-                            if(reqInclination != -100 && lastReqInclination != reqInclination) {
-                                int x1 = 75;     //middle of slider
-                                y1Inclination = 722;    //vertical position of slider at 0.0
-                                int y2 = y1Inclination - (int)((lastReqInclination - reqInclination) * 29.9);  //calculate vertical pixel position for new incline
-
-                                Runtime rt = Runtime.getRuntime();
-                                String[] cmdReqInclination = {"/bin/sh", "-c", " input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200"};
-                                Process procReqInclination = rt.exec(cmdReqInclination);
-                                Log.d(TAG, cmdReqInclination[2]);
-
-                                y1Inclination = y2;  //set new vertical position of speed slider
-                                lastReqInclination = reqInclination;
-                            }
+                            y1Speed = y2;  //set new vertical position of speed slider
+                            lastReqSpeed = reqSpeed;
                         }
-                    } catch (SocketTimeoutException e){
+                        if(reqInclination != -100 && lastReqInclination != reqInclination) {
+                            int x1 = 75;     //middle of slider
+                            y1Inclination = 722;    //vertical position of slider at 0.0
+                            int y2 = y1Inclination - (int)((lastReqInclination - reqInclination) * 29.9);  //calculate vertical pixel position for new incline
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                            Runtime rt = Runtime.getRuntime();
+                            String[] cmdReqInclination = {"/bin/sh", "-c", " input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200"};
+                            Process procReqInclination = rt.exec(cmdReqInclination);
+                            Log.d(TAG, cmdReqInclination[2]);
+
+                            y1Inclination = y2;  //set new vertical position of speed slider
+                            lastReqInclination = reqInclination;
+                        }
                     }
-                } catch (Exception e) {
+                } catch (SocketTimeoutException e){
+                    receiving = false;
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-        }).start();
+            socket.close();
+        }
 
         handler.postDelayed(runnable, 500);
     }
@@ -208,8 +200,6 @@ public class QZService extends Service {
 
         try {
 
-            DatagramSocket socket = new DatagramSocket();
-            socket.setBroadcast(true);
             byte[] sendData = messageStr.getBytes();
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, getBroadcastAddress(), this.clientPort);
             socket.send(sendPacket);
