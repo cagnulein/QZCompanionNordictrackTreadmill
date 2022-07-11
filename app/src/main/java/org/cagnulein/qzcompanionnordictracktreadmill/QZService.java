@@ -21,6 +21,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.ExecutorService;
@@ -56,61 +57,6 @@ public class QZService extends Service {
     int y1Inclination = 722;    //vertical position of slider at 0.0
     int counterTruncate = 0;
 
-    Thread thread = new Thread(new Runnable() {
-
-        @Override
-        public void run() {
-            try  {
-                try {
-                    socketServer.receive(packet);
-                    String message = new String(lmessage, 0, packet.getLength());
-                    String[] amessage = message.split(";");
-                    Log.d(TAG, message);
-                    if(amessage.length == 2) {
-                        String rSpeed = amessage[0];
-                        String rInclination = amessage[1];
-                        float reqSpeed = Float.parseFloat(rSpeed);
-                        float reqInclination = Float.parseFloat(rInclination);
-
-                        Log.d(TAG, "requestSpeed: " + reqSpeed);
-                        Log.d(TAG, "requestInclination: " + reqInclination);
-                        if(reqSpeed != -1 && lastReqSpeed != reqSpeed) {
-                            int x1 = 1845;     //middle of slider
-                            //set speed slider to target position
-                            int y2 = (int) (y1Speed - (int)((lastReqSpeed - reqSpeed) * 29.78)); //calculate vertical pixel position for new speed
-
-                            Runtime rt = Runtime.getRuntime();
-                            String[] cmdReqSpeed = {"/bin/sh", "-c", " input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200"};
-                            Process procReqSpeed = rt.exec(cmdReqSpeed);
-                            Log.d(TAG, cmdReqSpeed[2]);
-
-                            y1Speed = y2;  //set new vertical position of speed slider
-                            lastReqSpeed = reqSpeed;
-                        }
-                        if(reqInclination != -1 && lastReqInclination != reqInclination) {
-                            int x1 = 75;     //middle of slider
-                            y1Inclination = 722;    //vertical position of slider at 0.0
-                            int y2 = y1Inclination - (int)((lastReqInclination - reqInclination) * 29.9);  //calculate vertical pixel position for new incline
-
-                            Runtime rt = Runtime.getRuntime();
-                            String[] cmdReqInclination = {"/bin/sh", "-c", " input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200"};
-                            Process procReqInclination = rt.exec(cmdReqInclination);
-                            Log.d(TAG, cmdReqInclination[2]);
-
-                            y1Inclination = y2;  //set new vertical position of speed slider
-                            lastReqInclination = reqInclination;
-                        }
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    });
-
     @Override
     public void onCreate() {
         // The service is being created
@@ -119,6 +65,7 @@ public class QZService extends Service {
         try {
             socket = new DatagramSocket(clientPort);
             socketServer = new DatagramSocket(serverPort);
+            socketServer.setSoTimeout(100);
             runnable = new Runnable() {
                 @Override
                 public void run() {
@@ -196,8 +143,61 @@ public class QZService extends Service {
             }
         }
 
-        if(!thread.isAlive())
-            thread.start();
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try  {
+                    try {
+                        socketServer.receive(packet);
+                        String message = new String(lmessage, 0, packet.getLength());
+                        String[] amessage = message.split(";");
+                        Log.d(TAG, message);
+                        if(amessage.length == 2) {
+                            String rSpeed = amessage[0];
+                            String rInclination = amessage[1];
+                            float reqSpeed = Float.parseFloat(rSpeed);
+                            float reqInclination = Float.parseFloat(rInclination);
+
+                            Log.d(TAG, "requestSpeed: " + reqSpeed);
+                            Log.d(TAG, "requestInclination: " + reqInclination);
+                            if(reqSpeed != -1 && lastReqSpeed != reqSpeed) {
+                                int x1 = 1845;     //middle of slider
+                                //set speed slider to target position
+                                int y2 = (int) (y1Speed - (int)((lastReqSpeed - reqSpeed) * 29.78)); //calculate vertical pixel position for new speed
+
+                                Runtime rt = Runtime.getRuntime();
+                                String[] cmdReqSpeed = {"/bin/sh", "-c", " input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200"};
+                                Process procReqSpeed = rt.exec(cmdReqSpeed);
+                                Log.d(TAG, cmdReqSpeed[2]);
+
+                                y1Speed = y2;  //set new vertical position of speed slider
+                                lastReqSpeed = reqSpeed;
+                            }
+                            if(reqInclination != -1 && lastReqInclination != reqInclination) {
+                                int x1 = 75;     //middle of slider
+                                y1Inclination = 722;    //vertical position of slider at 0.0
+                                int y2 = y1Inclination - (int)((lastReqInclination - reqInclination) * 29.9);  //calculate vertical pixel position for new incline
+
+                                Runtime rt = Runtime.getRuntime();
+                                String[] cmdReqInclination = {"/bin/sh", "-c", " input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200"};
+                                Process procReqInclination = rt.exec(cmdReqInclination);
+                                Log.d(TAG, cmdReqInclination[2]);
+
+                                y1Inclination = y2;  //set new vertical position of speed slider
+                                lastReqInclination = reqInclination;
+                            }
+                        }
+                    } catch (SocketTimeoutException e){
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
 
         handler.postDelayed(runnable, 500);
     }
