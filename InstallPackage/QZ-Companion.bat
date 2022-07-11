@@ -51,6 +51,13 @@ echo. >> QZ-Companion-log.txt
 adb devices -l >> QZ-Companion-log.txt
 timeout 5
 
+:: report Android and SDK version
+echo Android version: >> QZ-Companion-log.txt
+adb shell getprop ro.build.version.release >> QZ-Companion-log.txt
+echo SDK version: >> QZ-Companion-log.txt
+adb shell getprop ro.build.version.sdk >> QZ-Companion-log.txt
+echo. >> QZ-Companion-log.txt
+
 echo Checking for previous installation ... | tee -a QZ-Companion-log.txt
 echo. >> QZ-Companion-log.txt
 adb shell pidof org.cagnulein.qzcompanionnordictracktreadmill | findstr /r /c:"[0-9]*" >nul
