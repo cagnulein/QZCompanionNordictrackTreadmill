@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="org.cagnulein.qzcompanionnordictracktreadmill"  android:versionName="2.0.4" android:versionCode="7" >
+    package="org.cagnulein.qzcompanionnordictracktreadmill"  android:versionName="2.0.5" android:versionCode="8" >
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -20,6 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QZCompanionNordictrackTreadmill">
         <service android:name=".QZService"/>
+        <service android:name=".UDPListenerService"/>
         <receiver android:name=".AlarmReceiver" android:process=":remote" />
         <receiver android:enabled="true" android:name=".BootUpReceiver"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED">

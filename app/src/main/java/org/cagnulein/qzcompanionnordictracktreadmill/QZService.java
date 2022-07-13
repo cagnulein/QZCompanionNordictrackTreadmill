@@ -50,10 +50,6 @@ public class QZService extends Service {
     boolean firstTime = false;
     String lastSpeed = "";
     String lastInclination = "";
-    float lastReqSpeed = 2;
-    int y1Speed = 782;      //vertical position of slider at 2.0
-    float lastReqInclination = -1;
-    int y1Inclination = 722;    //vertical position of slider at 0.0
     int counterTruncate = 0;
 
     @Override
@@ -105,11 +101,13 @@ public class QZService extends Service {
     private void parse() {
 
         String file = pickLatestFileFromDownloads();
+        DatagramSocket socketServer = null;
         if(file != "") {
             try {
+                socketServer = new DatagramSocket(clientPort);
+                socketServer.setSoTimeout(300);
                 socket = new DatagramSocket();
                 socket.setBroadcast(true);
-                socket.setSoTimeout(100);
 
                 Runtime rt = Runtime.getRuntime();
                 String[] cmd = {"/bin/sh", "-c", " tail -n500 " + path + file + " | grep -a \"Changed KPH\" | tail -n1"};
@@ -138,55 +136,7 @@ public class QZService extends Service {
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
-            }
-
-            Boolean receiving = true;
-            while(receiving) {
-                try {
-                    socket.receive(packet);
-                    String message = new String(lmessage, 0, packet.getLength());
-                    String[] amessage = message.split(";");
-                    Log.d(TAG, message);
-                    if(amessage.length == 2) {
-                        String rSpeed = amessage[0];
-                        String rInclination = amessage[1];
-                        float reqSpeed = Float.parseFloat(rSpeed);
-                        float reqInclination = Float.parseFloat(rInclination);
-
-                        Log.d(TAG, "requestSpeed: " + reqSpeed);
-                        Log.d(TAG, "requestInclination: " + reqInclination);
-                        if(reqSpeed != -1 && lastReqSpeed != reqSpeed) {
-                            int x1 = 1845;     //middle of slider
-                            //set speed slider to target position
-                            int y2 = (int) (y1Speed - (int)((lastReqSpeed - reqSpeed) * 29.78)); //calculate vertical pixel position for new speed
-
-                            Runtime rt = Runtime.getRuntime();
-                            String[] cmdReqSpeed = {"/bin/sh", "-c", " input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200"};
-                            Process procReqSpeed = rt.exec(cmdReqSpeed);
-                            Log.d(TAG, cmdReqSpeed[2]);
-
-                            y1Speed = y2;  //set new vertical position of speed slider
-                            lastReqSpeed = reqSpeed;
-                        }
-                        if(reqInclination != -100 && lastReqInclination != reqInclination) {
-                            int x1 = 75;     //middle of slider
-                            y1Inclination = 722;    //vertical position of slider at 0.0
-                            int y2 = y1Inclination - (int)((lastReqInclination - reqInclination) * 29.9);  //calculate vertical pixel position for new incline
-
-                            Runtime rt = Runtime.getRuntime();
-                            String[] cmdReqInclination = {"/bin/sh", "-c", " input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200"};
-                            Process procReqInclination = rt.exec(cmdReqInclination);
-                            Log.d(TAG, cmdReqInclination[2]);
-
-                            y1Inclination = y2;  //set new vertical position of speed slider
-                            lastReqInclination = reqInclination;
-                        }
-                    }
-                } catch (SocketTimeoutException e){
-                    receiving = false;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                return;
             }
             socket.close();
         }

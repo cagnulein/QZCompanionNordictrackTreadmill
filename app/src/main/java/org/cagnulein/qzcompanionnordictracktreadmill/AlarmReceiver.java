@@ -13,6 +13,8 @@ public class AlarmReceiver extends BroadcastReceiver
     {
         Intent in = new Intent(context, QZService.class);
         context.startService(in);
+        Intent inServer = new Intent(context, UDPListenerService.class);
+        context.startService(inServer);
         setAlarm(context);
     }
 
