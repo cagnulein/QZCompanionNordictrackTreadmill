@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.StrictMode;
@@ -104,8 +105,6 @@ public class QZService extends Service {
         DatagramSocket socketServer = null;
         if(file != "") {
             try {
-                socketServer = new DatagramSocket(clientPort);
-                socketServer.setSoTimeout(300);
                 socket = new DatagramSocket();
                 socket.setBroadcast(true);
 

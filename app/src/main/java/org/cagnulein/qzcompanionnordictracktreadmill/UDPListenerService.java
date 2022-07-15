@@ -24,7 +24,7 @@ public class UDPListenerService extends Service {
     static String UDP_BROADCAST = "UDPBroadcast";
 
     //Boolean shouldListenForUDPBroadcast = false;
-    DatagramSocket socket;
+    static DatagramSocket socket;
 
     float lastReqSpeed = 2;
     int y1Speed = 782;      //vertical position of slider at 2.0
@@ -34,7 +34,7 @@ public class UDPListenerService extends Service {
     private void listenAndWaitAndThrowIntent(InetAddress broadcastIP, Integer port) throws Exception {
         byte[] recvBuf = new byte[15000];
         if (socket == null || socket.isClosed()) {
-            socket = new DatagramSocket(port, broadcastIP);
+            socket = new DatagramSocket(port);
             socket.setBroadcast(true);
         }
         //socket.setSoTimeout(1000);
@@ -120,7 +120,7 @@ public class UDPListenerService extends Service {
             public void run() {
                 try {
                     InetAddress broadcastIP = getBroadcastAddress();
-                    Integer port = 8002;
+                    Integer port = 8003;
                     while (shouldRestartSocketListen) {
                         listenAndWaitAndThrowIntent(broadcastIP, port);
                     }
