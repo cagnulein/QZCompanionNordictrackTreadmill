@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.util.Log;
 
 import static android.content.ContentValues.TAG;
@@ -32,6 +33,11 @@ public class UDPListenerService extends Service {
     int y1Inclination = 722;    //vertical position of slider at 0.0
 
     private void listenAndWaitAndThrowIntent(InetAddress broadcastIP, Integer port) throws Exception {
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                "MyApp::MyWakelockTag");
+        wakeLock.acquire();
+
         byte[] recvBuf = new byte[15000];
         if (socket == null || socket.isClosed()) {
             socket = new DatagramSocket(port);
