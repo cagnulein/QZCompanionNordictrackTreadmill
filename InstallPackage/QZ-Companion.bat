@@ -87,8 +87,12 @@ echo. >> QZ-Companion-log.txt
 adb shell monkey -p com.ifit.standalone 1 >> QZ-Companion-log.txt 2>&1
 timeout 5
 
+:: save ADB log
+adb logcat -d > logcat.txt
+
 echo. | tee -a QZ-Companion-log.txt
 pause > nul | set/p = QZ Companion is installed. Press any key to reboot treadmill . . .
+echo.
 echo Rebooting treadmill ... | tee -a QZ-Companion-log.txt
 
 adb reboot
