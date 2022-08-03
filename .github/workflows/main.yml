@@ -39,6 +39,7 @@ jobs:
       with:    
          add: './InstallPackage/QZCompanionNordictrackTreadmill.apk'
          message: 'Updating InstallPackage'
+         push: origin HEAD:master
 
     - name: Create release and upload apk
       uses: underwindfall/create-release-with-debugapk@v2.0.0
