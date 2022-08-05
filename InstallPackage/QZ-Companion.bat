@@ -1,6 +1,6 @@
 :: QZ-Companion App Installer
 :: Author: Al Udell
-:: Date: June 28, 2022
+:: Updated: August 4, 2022
 :: QZ on Facebook - https://www.facebook.com/groups/149984563348738
 
 @echo off
@@ -87,8 +87,19 @@ echo. >> QZ-Companion-log.txt
 adb shell monkey -p com.ifit.standalone 1 >> QZ-Companion-log.txt 2>&1
 timeout 5
 
+:: save ADB log
+adb logcat -d > logcat.txt
+
+:: save dumpsys package
+echo. >> QZ-Companion-log.txt
+echo Dumpsys package ... >> QZ-Companion-log.txt
+echo. >> QZ-Companion-log.txt
+adb shell dumpsys package org.cagnulein.qzcompanionnordictracktreadmill >> QZ-Companion-log.txt
+echo. >> QZ-Companion-log.txt
+
 echo. | tee -a QZ-Companion-log.txt
 pause > nul | set/p = QZ Companion is installed. Press any key to reboot treadmill . . .
+echo.
 echo Rebooting treadmill ... | tee -a QZ-Companion-log.txt
 
 adb reboot
