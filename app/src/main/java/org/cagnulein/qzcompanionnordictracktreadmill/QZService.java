@@ -24,8 +24,6 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
@@ -217,9 +215,7 @@ public class QZService extends Service {
         String k = lastModifiedFile.toString();
 
         System.out.println(lastModifiedFile);
-        Path p = Paths.get(k);
-        String file = p.getFileName().toString();
-        return file;
+        return k;
 
     }
 }
