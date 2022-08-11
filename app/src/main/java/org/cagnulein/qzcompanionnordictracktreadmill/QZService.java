@@ -101,25 +101,33 @@ public class QZService extends Service {
 
         String file = pickLatestFileFromDownloads();
         DatagramSocket socketServer = null;
+        String sysbin = "/bin/"
+        File dir = new File(sysbin);
+        File[] files = dir.listFiles();
+        if (files == null || files.length == 0) {
+            System.out.println(sysbin + " not found, trying /system/bin/ instead");
+            sysbin = "/system/bin/"
+        }
+
         if(file != "") {
             try {
                 socket = new DatagramSocket();
                 socket.setBroadcast(true);
 
                 Runtime rt = Runtime.getRuntime();
-                String[] cmd = {"/bin/sh", "-c", " tail -n500 " + path + file + " | grep -a \"Changed KPH\" | tail -n1"};
+                String[] cmd = {sysbin + "sh", "-c", " tail -n500 " + path + file + " | grep -a \"Changed KPH\" | tail -n1"};
                 Process proc = rt.exec(cmd);
                 if(!speed(proc.getInputStream())) {
-                    String[] cmd2 = {"/bin/sh", "-c", " grep -a \"Changed KPH\" " + path + file + "  | tail -n1"};
+                    String[] cmd2 = {sysbin + "sh", "-c", " grep -a \"Changed KPH\" " + path + file + "  | tail -n1"};
                     Process proc2 = rt.exec(cmd2);
                     if(!speed(proc2.getInputStream())) {
                         sendBroadcast(lastSpeed);
                     }
                 }
-                String[] cmdIncline = {"/bin/sh", "-c", " tail -n500 " + path + file + " | grep -a \"Changed Grade\" | tail -n1"};
+                String[] cmdIncline = {sysbin + "sh", "-c", " tail -n500 " + path + file + " | grep -a \"Changed Grade\" | tail -n1"};
                 Process procIncline = rt.exec(cmdIncline);
                 if(!incline(procIncline.getInputStream())) {
-                    String[] cmdIncline2 = {"/bin/sh", "-c", " grep -a \"Changed Grade\" " + path + file + "  | tail -n1"};
+                    String[] cmdIncline2 = {sysbin + "sh", "-c", " grep -a \"Changed Grade\" " + path + file + "  | tail -n1"};
                     Process procIncline2 = rt.exec(cmdIncline2);
                     if(!incline(procIncline2.getInputStream())) {
                         sendBroadcast(lastInclination);
@@ -127,7 +135,7 @@ public class QZService extends Service {
                 }
                 if(counterTruncate++ > 1200) {
                     counterTruncate = 0;
-                    String[] cmdTruncate = {"/bin/sh", "-c", " truncate -s0 " + path + file};
+                    String[] cmdTruncate = {sysbin + "sh", "-c", " truncate -s0 " + path + file};
                     Process procTruncate = rt.exec(cmdTruncate);
                     Log.d(TAG, "Truncating file...");
                 }
