@@ -101,12 +101,12 @@ public class QZService extends Service {
 
         String file = pickLatestFileFromDownloads();
         DatagramSocket socketServer = null;
-        String sysbin = "/bin/"
+        String sysbin = "/bin/";
         File dir = new File(sysbin);
         File[] files = dir.listFiles();
         if (files == null || files.length == 0) {
             System.out.println(sysbin + " not found, trying /system/bin/ instead");
-            sysbin = "/system/bin/"
+            sysbin = "/system/bin/";
         }
 
         if(file != "") {
