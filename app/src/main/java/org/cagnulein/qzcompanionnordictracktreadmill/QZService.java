@@ -51,23 +51,10 @@ public class QZService extends Service {
     String lastInclination = "";
     int counterTruncate = 0;
 
-    String sh = "/bin/sh";
-
     @Override
     public void onCreate() {
         // The service is being created
         //Toast.makeText(this, "Service created!", Toast.LENGTH_LONG).show();
-
-        try {
-            Runtime rt = Runtime.getRuntime();
-            String[] cmd = {sh, "-c", " ls"};
-            rt.exec(cmd);
-        } catch (Exception ex) {
-            sh = "/system/bin/sh";
-        }
-
-        System.out.println(sh + " is using");
-
         try {
             runnable = new Runnable() {
                 @Override
@@ -113,8 +100,23 @@ public class QZService extends Service {
 
         String file = pickLatestFileFromDownloads();
         DatagramSocket socketServer = null;
+        Log.d(TAG, "parsing " + file);
 
         if(file != "") {
+
+            String sh = "/bin/sh";
+
+            try {
+                Runtime rt = Runtime.getRuntime();
+                String[] cmd = {sh, "-c", " ls"};
+                rt.exec(cmd);
+            } catch (Exception ex) {
+                Log.d(TAG, ex.toString());
+                sh = "/system/bin/sh";
+            }
+
+            Log.d(TAG, sh + " is using");
+
             try {
                 socket = new DatagramSocket();
                 socket.setBroadcast(true);
