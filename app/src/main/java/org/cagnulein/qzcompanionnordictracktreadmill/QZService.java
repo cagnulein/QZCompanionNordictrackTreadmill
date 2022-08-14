@@ -100,7 +100,7 @@ public class QZService extends Service {
 
         String file = pickLatestFileFromDownloads();
         DatagramSocket socketServer = null;
-        Log.d(TAG, "parsing " + file);
+        System.out.println("parsing " + file);
 
         if(file != "") {
 
@@ -111,11 +111,11 @@ public class QZService extends Service {
                 String[] cmd = {sh, "-c", " ls"};
                 rt.exec(cmd);
             } catch (Exception ex) {
-                Log.d(TAG, ex.toString());
+                System.out.println(ex.toString());
                 sh = "/system/bin/sh";
             }
 
-            Log.d(TAG, sh + " is using");
+            System.out.println(sh + " is using");
 
             try {
                 socket = new DatagramSocket();
@@ -230,6 +230,7 @@ public class QZService extends Service {
         String k = lastModifiedFile.toString();
 
         System.out.println(lastModifiedFile);
+        System.out.println(k);
         return k;
 
     }
