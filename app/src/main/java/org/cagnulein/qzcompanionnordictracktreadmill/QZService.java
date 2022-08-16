@@ -229,8 +229,8 @@ public class QZService extends Service {
         }
         String k = lastModifiedFile.toString();
 
-        System.out.println(lastModifiedFile);
-        System.out.println(k);
+        System.out.println("lastModifiedFile " + lastModifiedFile);
+        System.out.println("string: " + k);
         return k;
 
     }
