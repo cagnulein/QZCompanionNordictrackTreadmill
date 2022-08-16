@@ -122,19 +122,19 @@ public class QZService extends Service {
                 socket.setBroadcast(true);
 
                 Runtime rt = Runtime.getRuntime();
-                String[] cmd = {sh, "-c", " tail -n500 " + path + file + " | grep -a \"Changed KPH\" | tail -n1"};
+                String[] cmd = {sh, "-c", " tail -n500 " + file + " | grep -a \"Changed KPH\" | tail -n1"};
                 Process proc = rt.exec(cmd);
                 if(!speed(proc.getInputStream())) {
-                    String[] cmd2 = {sh, "-c", " grep -a \"Changed KPH\" " + path + file + "  | tail -n1"};
+                    String[] cmd2 = {sh, "-c", " grep -a \"Changed KPH\" " + file + "  | tail -n1"};
                     Process proc2 = rt.exec(cmd2);
                     if(!speed(proc2.getInputStream())) {
                         sendBroadcast(lastSpeed);
                     }
                 }
-                String[] cmdIncline = {sh, "-c", " tail -n500 " + path + file + " | grep -a \"Changed Grade\" | tail -n1"};
+                String[] cmdIncline = {sh, "-c", " tail -n500 " + file + " | grep -a \"Changed Grade\" | tail -n1"};
                 Process procIncline = rt.exec(cmdIncline);
                 if(!incline(procIncline.getInputStream())) {
-                    String[] cmdIncline2 = {sh, "-c", " grep -a \"Changed Grade\" " + path + file + "  | tail -n1"};
+                    String[] cmdIncline2 = {sh, "-c", " grep -a \"Changed Grade\" " + file + "  | tail -n1"};
                     Process procIncline2 = rt.exec(cmdIncline2);
                     if(!incline(procIncline2.getInputStream())) {
                         sendBroadcast(lastInclination);
@@ -142,7 +142,7 @@ public class QZService extends Service {
                 }
                 if(counterTruncate++ > 1200) {
                     counterTruncate = 0;
-                    String[] cmdTruncate = {sh, "-c", " truncate -s0 " + path + file};
+                    String[] cmdTruncate = {sh, "-c", " truncate -s0 " + file};
                     Process procTruncate = rt.exec(cmdTruncate);
                     Log.d(TAG, "Truncating file...");
                 }
