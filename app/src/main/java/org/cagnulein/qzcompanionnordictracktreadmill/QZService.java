@@ -49,6 +49,11 @@ public class QZService extends Service {
     boolean firstTime = false;
     String lastSpeed = "";
     String lastInclination = "";
+    String lastWattage = "";
+    String lastCadence = "";
+    String lastResistance = "";
+    String lastGear = "";
+
     int counterTruncate = 0;
 
     @Override
@@ -90,6 +95,50 @@ public class QZService extends Service {
         String line;
         while ((line = is.readLine()) != null) {
             lastInclination = line;
+            sendBroadcast(line);
+            return true;
+        }
+        return  false;
+    }
+
+    private boolean watt(InputStream in) throws IOException {
+        BufferedReader is = new BufferedReader(new InputStreamReader(in));
+        String line;
+        while ((line = is.readLine()) != null) {
+            lastWattage = line;
+            sendBroadcast(line);
+            return true;
+        }
+        return  false;
+    }
+
+    private boolean cadence(InputStream in) throws IOException {
+        BufferedReader is = new BufferedReader(new InputStreamReader(in));
+        String line;
+        while ((line = is.readLine()) != null) {
+            lastCadence = line;
+            sendBroadcast(line);
+            return true;
+        }
+        return  false;
+    }
+
+    private boolean gear(InputStream in) throws IOException {
+        BufferedReader is = new BufferedReader(new InputStreamReader(in));
+        String line;
+        while ((line = is.readLine()) != null) {
+            lastGear = line;
+            sendBroadcast(line);
+            return true;
+        }
+        return  false;
+    }
+
+    private boolean resistance(InputStream in) throws IOException {
+        BufferedReader is = new BufferedReader(new InputStreamReader(in));
+        String line;
+        while ((line = is.readLine()) != null) {
+            lastResistance = line;
             sendBroadcast(line);
             return true;
         }
@@ -140,6 +189,43 @@ public class QZService extends Service {
                         sendBroadcast(lastInclination);
                     }
                 }
+                String[] cmdWatt = {sh, "-c", " tail -n500 " + file + " | grep -a \"Changed Watts\" | tail -n1"};
+                Process procWatt = rt.exec(cmdWatt);
+                if(!watt(procWatt.getInputStream())) {
+                    String[] cmdWatt2 = {sh, "-c", " grep -a \"Changed Watts\" " + file + "  | tail -n1"};
+                    Process procWatt2 = rt.exec(cmdWatt2);
+                    if(!watt(procWatt2.getInputStream())) {
+                        sendBroadcast(lastWattage);
+                    }
+                }
+                String[] cmdCadence = {sh, "-c", " tail -n500 " + file + " | grep -a \"Changed RPM\" | tail -n1"};
+                Process procCadence = rt.exec(cmdCadence);
+                if(!cadence(procCadence.getInputStream())) {
+                    String[] cmdCadence2 = {sh, "-c", " grep -a \"Changed RPM\" " + file + "  | tail -n1"};
+                    Process procCadence2 = rt.exec(cmdCadence2);
+                    if(!cadence(procCadence2.getInputStream())) {
+                        sendBroadcast(lastCadence);
+                    }
+                }
+                String[] cmdGear = {sh, "-c", " tail -n500 " + file + " | grep -a \"Changed CurrentGear\" | tail -n1"};
+                Process procGear = rt.exec(cmdGear);
+                if(!gear(procGear.getInputStream())) {
+                    String[] cmdGear2 = {sh, "-c", " grep -a \"Changed CurrentGear\" " + file + "  | tail -n1"};
+                    Process procGear2 = rt.exec(cmdGear2);
+                    if(!gear(procGear2.getInputStream())) {
+                        sendBroadcast(lastGear);
+                    }
+                }
+                String[] cmdResistance = {sh, "-c", " tail -n500 " + file + " | grep -a \"Changed Resistance\" | tail -n1"};
+                Process procResistance = rt.exec(cmdResistance);
+                if(!resistance(procResistance.getInputStream())) {
+                    String[] cmdResistance2 = {sh, "-c", " grep -a \"Changed Resistance\" " + file + "  | tail -n1"};
+                    Process procResistance2 = rt.exec(cmdResistance2);
+                    if(!resistance(procResistance2.getInputStream())) {
+                        sendBroadcast(lastResistance);
+                    }
+                }
+
                 if(counterTruncate++ > 1200) {
                     counterTruncate = 0;
                     String[] cmdTruncate = {sh, "-c", " truncate -s0 " + file};
