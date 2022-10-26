@@ -130,6 +130,8 @@ Enable USB Debugging on your treadmill
     treadmill. Once rebooted, proceed to login to iFit. At this point,
     QZ Companion is running in the background and is ready to transmit
     treadmill speed and incline data to QZ.
+    
+    If it reads all 0's, try going to the treadmill's Settings > Apps > QZ Companion app > Permissions, and enabling all permissions.
 
 ![](media/image3.png)
 
