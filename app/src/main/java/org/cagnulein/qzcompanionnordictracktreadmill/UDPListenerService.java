@@ -14,14 +14,13 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
 
-import static android.content.ContentValues.TAG;
-
-
 /*
  * Linux command to send UDP:
  * #socat - UDP-DATAGRAM:192.168.1.255:8002,broadcast,sp=8002
  */
 public class UDPListenerService extends Service {
+    private static final String LOG_TAG = "QZ:UDPListenerService";
+
     static String UDP_BROADCAST = "UDPBroadcast";
 
     //Boolean shouldListenForUDPBroadcast = false;
@@ -31,6 +30,8 @@ public class UDPListenerService extends Service {
     int y1Speed = 782;      //vertical position of slider at 2.0
     float lastReqInclination = -1;
     int y1Inclination = 722;    //vertical position of slider at 0.0
+
+    private final ShellRuntime shellRuntime = new ShellRuntime();
 
     private void listenAndWaitAndThrowIntent(InetAddress broadcastIP, Integer port) throws Exception {
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
@@ -45,46 +46,47 @@ public class UDPListenerService extends Service {
         }
         //socket.setSoTimeout(1000);
         DatagramPacket packet = new DatagramPacket(recvBuf, recvBuf.length);
-        Log.e("UDP", "Waiting for UDP broadcast");
+        Log.i(LOG_TAG, "Waiting for UDP broadcast");
         socket.receive(packet);
 
         String senderIP = packet.getAddress().getHostAddress();
         String message = new String(packet.getData()).trim();
 
-        Log.e("UDP", "Got UDB broadcast from " + senderIP + ", message: " + message);
+        Log.i(LOG_TAG, "Got UDB broadcast from " + senderIP + ", message: " + message);
 
+        Log.d(LOG_TAG, message);
         String[] amessage = message.split(";");
-        Log.d(TAG, message);
-        if(amessage.length == 2) {
+        if(amessage.length > 0) {
             String rSpeed = amessage[0];
-            String rInclination = amessage[1];
             float reqSpeed = Float.parseFloat(rSpeed);
-            float reqInclination = Float.parseFloat(rInclination);
+            Log.d(LOG_TAG, "requestSpeed: " + reqSpeed);
 
-            Log.d(TAG, "requestSpeed: " + reqSpeed);
-            Log.d(TAG, "requestInclination: " + reqInclination);
-            if(reqSpeed != -1 && lastReqSpeed != reqSpeed) {
+            if (reqSpeed != -1 && lastReqSpeed != reqSpeed) {
                 int x1 = 1845;     //middle of slider
                 //set speed slider to target position
-                int y2 = (int) (y1Speed - (int)((lastReqSpeed - reqSpeed) * 29.78)); //calculate vertical pixel position for new speed
+                int y2 = (int) (y1Speed - (int) ((lastReqSpeed - reqSpeed) * 29.78)); //calculate vertical pixel position for new speed
 
-                Runtime rt = Runtime.getRuntime();
-                String[] cmdReqSpeed = {"/bin/sh", "-c", " input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200"};
-                Process procReqSpeed = rt.exec(cmdReqSpeed);
-                Log.d(TAG, cmdReqSpeed[2]);
+                String command = "input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
+                shellRuntime.exec(command);
+                Log.d(LOG_TAG, command);
 
                 y1Speed = y2;  //set new vertical position of speed slider
                 lastReqSpeed = reqSpeed;
             }
+        }
+
+        if(amessage.length > 1) {
+            String rInclination = amessage[1];
+            float reqInclination = Float.parseFloat(rInclination);
+            Log.d(LOG_TAG, "requestInclination: " + reqInclination);
             if(reqInclination != -100 && lastReqInclination != reqInclination) {
                 int x1 = 75;     //middle of slider
                 y1Inclination = 722;    //vertical position of slider at 0.0
                 int y2 = y1Inclination - (int)((lastReqInclination - reqInclination) * 29.9);  //calculate vertical pixel position for new incline
 
-                Runtime rt = Runtime.getRuntime();
-                String[] cmdReqInclination = {"/bin/sh", "-c", " input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200"};
-                Process procReqInclination = rt.exec(cmdReqInclination);
-                Log.d(TAG, cmdReqInclination[2]);
+                String command = " input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
+                shellRuntime.exec(command);
+                Log.d(LOG_TAG, command);
 
                 y1Inclination = y2;  //set new vertical position of speed slider
                 lastReqInclination = reqInclination;
@@ -115,7 +117,7 @@ public class UDPListenerService extends Service {
                 quads[k] = (byte) ((broadcast >> k * 8) & 0xFF);
             return InetAddress.getByAddress(quads);
         } catch (Exception e) {
-            Log.e(TAG, "IOException: " + e.getMessage());
+            Log.e(LOG_TAG, "IOException: " + e.getMessage());
         }
         byte[] quads = new byte[4];
         return InetAddress.getByAddress(quads);
@@ -132,7 +134,7 @@ public class UDPListenerService extends Service {
                     }
                     //if (!shouldListenForUDPBroadcast) throw new ThreadDeath();
                 } catch (Exception e) {
-                    Log.i("UDP", "no longer listening for UDP broadcasts cause of error " + e.getMessage());
+                    Log.i(LOG_TAG, "no longer listening for UDP broadcasts cause of error " + e.getMessage());
                 }
             }
         });
@@ -148,8 +150,7 @@ public class UDPListenerService extends Service {
 
     @Override
     public void onCreate() {
-
-    };
+    }
 
     @Override
     public void onDestroy() {
@@ -161,7 +162,7 @@ public class UDPListenerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         shouldRestartSocketListen = true;
         startListenForUDPBroadcast();
-        Log.i("UDP", "Service started");
+        Log.i(LOG_TAG, "Service started");
         return START_STICKY;
     }
 

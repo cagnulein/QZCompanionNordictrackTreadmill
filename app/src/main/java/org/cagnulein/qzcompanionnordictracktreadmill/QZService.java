@@ -5,12 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.StrictMode;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,16 +19,10 @@ import java.io.RandomAccessFile;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static android.content.ContentValues.TAG;
-
 public class QZService extends Service {
+    private static final String LOG_TAG = "QZ:Service";
     int startMode;       // indicates how to behave if the service is killed
     IBinder binder;      // interface for clients that bind
     boolean allowRebind; // indicates whether onRebind should be used
@@ -56,6 +48,8 @@ public class QZService extends Service {
 
     int counterTruncate = 0;
 
+    private final ShellRuntime shellRuntime = new ShellRuntime();
+
     @Override
     public void onCreate() {
         // The service is being created
@@ -70,7 +64,7 @@ public class QZService extends Service {
         } finally {
             if(socket != null){
                 socket.close();
-                Log.e(TAG, "socket.close()");
+                Log.e(LOG_TAG, "socket.close()");
             }
         }
 
@@ -148,89 +142,60 @@ public class QZService extends Service {
     private void parse() {
 
         String file = pickLatestFileFromDownloads();
-        DatagramSocket socketServer = null;
-        System.out.println("parsing " + file);
+        Log.d(LOG_TAG,"Parsing " + file);
 
-        if(file != "") {
-
-            String sh = "/bin/sh";
-
-            try {
-                Runtime rt = Runtime.getRuntime();
-                String[] cmd = {sh, "-c", " ls"};
-                rt.exec(cmd);
-            } catch (Exception ex) {
-                System.out.println(ex.toString());
-                sh = "/system/bin/sh";
-            }
-
-            System.out.println(sh + " is using");
-
+        if(!file.equals("")) {
             try {
                 socket = new DatagramSocket();
                 socket.setBroadcast(true);
 
-                Runtime rt = Runtime.getRuntime();
-                String[] cmd = {sh, "-c", " tail -n500 " + file + " | grep -a \"Changed KPH\" | tail -n1"};
-                Process proc = rt.exec(cmd);
-                if(!speed(proc.getInputStream())) {
-                    String[] cmd2 = {sh, "-c", " grep -a \"Changed KPH\" " + file + "  | tail -n1"};
-                    Process proc2 = rt.exec(cmd2);
-                    if(!speed(proc2.getInputStream())) {
+                InputStream speedInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed KPH\" | tail -n1");
+                if(!speed(speedInputStream)) {
+                    InputStream speed2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed KPH\" " + file + "  | tail -n1");
+                    if(!speed(speed2InputStream)) {
                         sendBroadcast(lastSpeed);
                     }
                 }
-                String[] cmdIncline = {sh, "-c", " tail -n500 " + file + " | grep -a \"Changed Grade\" | tail -n1"};
-                Process procIncline = rt.exec(cmdIncline);
-                if(!incline(procIncline.getInputStream())) {
-                    String[] cmdIncline2 = {sh, "-c", " grep -a \"Changed Grade\" " + file + "  | tail -n1"};
-                    Process procIncline2 = rt.exec(cmdIncline2);
-                    if(!incline(procIncline2.getInputStream())) {
+                InputStream inclineInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed Grade\" | tail -n1");
+                if(!incline(inclineInputStream)) {
+                    InputStream incline2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed Grade\" " + file + "  | tail -n1");
+                    if(!incline(incline2InputStream)) {
                         sendBroadcast(lastInclination);
                     }
                 }
-                String[] cmdWatt = {sh, "-c", " tail -n500 " + file + " | grep -a \"Changed Watts\" | tail -n1"};
-                Process procWatt = rt.exec(cmdWatt);
-                if(!watt(procWatt.getInputStream())) {
-                    String[] cmdWatt2 = {sh, "-c", " grep -a \"Changed Watts\" " + file + "  | tail -n1"};
-                    Process procWatt2 = rt.exec(cmdWatt2);
-                    if(!watt(procWatt2.getInputStream())) {
+                InputStream procWattInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed Watts\" | tail -n1");
+                if(!watt(procWattInputStream)) {
+                    InputStream watt2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed Watts\" " + file + "  | tail -n1");
+                    if(!watt(watt2InputStream)) {
                         sendBroadcast(lastWattage);
                     }
                 }
-                String[] cmdCadence = {sh, "-c", " tail -n500 " + file + " | grep -a \"Changed RPM\" | tail -n1"};
-                Process procCadence = rt.exec(cmdCadence);
-                if(!cadence(procCadence.getInputStream())) {
-                    String[] cmdCadence2 = {sh, "-c", " grep -a \"Changed RPM\" " + file + "  | tail -n1"};
-                    Process procCadence2 = rt.exec(cmdCadence2);
-                    if(!cadence(procCadence2.getInputStream())) {
+                InputStream cadenceInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed RPM\" | tail -n1");
+                if(!cadence(cadenceInputStream)) {
+                    InputStream cadence2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed RPM\" " + file + "  | tail -n1");
+                    if(!cadence(cadence2InputStream)) {
                         sendBroadcast(lastCadence);
                     }
                 }
-                String[] cmdGear = {sh, "-c", " tail -n500 " + file + " | grep -a \"Changed CurrentGear\" | tail -n1"};
-                Process procGear = rt.exec(cmdGear);
-                if(!gear(procGear.getInputStream())) {
-                    String[] cmdGear2 = {sh, "-c", " grep -a \"Changed CurrentGear\" " + file + "  | tail -n1"};
-                    Process procGear2 = rt.exec(cmdGear2);
-                    if(!gear(procGear2.getInputStream())) {
+                InputStream gearInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed CurrentGear\" | tail -n1");
+                if(!gear(gearInputStream)) {
+                    InputStream gear2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed CurrentGear\" " + file + "  | tail -n1");
+                    if(!gear(gear2InputStream)) {
                         sendBroadcast(lastGear);
                     }
                 }
-                String[] cmdResistance = {sh, "-c", " tail -n500 " + file + " | grep -a \"Changed Resistance\" | tail -n1"};
-                Process procResistance = rt.exec(cmdResistance);
-                if(!resistance(procResistance.getInputStream())) {
-                    String[] cmdResistance2 = {sh, "-c", " grep -a \"Changed Resistance\" " + file + "  | tail -n1"};
-                    Process procResistance2 = rt.exec(cmdResistance2);
-                    if(!resistance(procResistance2.getInputStream())) {
+                InputStream resistanceInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed Resistance\" | tail -n1");
+                if(!resistance(resistanceInputStream)) {
+                    InputStream resistance2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed Resistance\" " + file + "  | tail -n1");
+                    if(!resistance(resistance2InputStream)) {
                         sendBroadcast(lastResistance);
                     }
                 }
 
                 if(counterTruncate++ > 1200) {
+                    Log.d(LOG_TAG, "Truncating file...");
                     counterTruncate = 0;
-                    String[] cmdTruncate = {sh, "-c", " truncate -s0 " + file};
-                    Process procTruncate = rt.exec(cmdTruncate);
-                    Log.d(TAG, "Truncating file...");
+                    shellRuntime.exec("truncate -s0 " + file);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -253,7 +218,7 @@ public class QZService extends Service {
             socket.send(sendPacket);
             System.out.println(messageStr);
         } catch (IOException e) {
-            Log.e(TAG, "IOException: " + e.getMessage());
+            Log.e(LOG_TAG, "IOException: " + e.getMessage());
         }
     }
     InetAddress getBroadcastAddress() throws IOException {
@@ -267,7 +232,7 @@ public class QZService extends Service {
                 quads[k] = (byte) ((broadcast >> k * 8) & 0xFF);
             return InetAddress.getByAddress(quads);
         } catch (Exception e) {
-            Log.e(TAG, "IOException: " + e.getMessage());
+            Log.e(LOG_TAG, "IOException: " + e.getMessage());
         }
         byte[] quads = new byte[4];
         return InetAddress.getByAddress(quads);
@@ -303,7 +268,7 @@ public class QZService extends Service {
         File dir = new File(path);
         File[] files = dir.listFiles();
         if (files == null || files.length == 0) {
-            Log.i(TAG,"There is no file in the folder");
+            Log.i(LOG_TAG,"There is no file in the folder");
             return "";
         }
 
@@ -315,8 +280,8 @@ public class QZService extends Service {
         }
         String k = lastModifiedFile.toString();
 
-        System.out.println("lastModifiedFile " + lastModifiedFile);
-        System.out.println("string: " + k);
+        Log.i(LOG_TAG, "lastModifiedFile " + lastModifiedFile);
+        Log.i(LOG_TAG, "string: " + k);
         return k;
 
     }
