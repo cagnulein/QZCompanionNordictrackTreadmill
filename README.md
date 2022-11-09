@@ -116,7 +116,7 @@ and know your treadmills IP, you can skip to step 4.
 with medium confidence](media/image2.png)
     Enable USB Debugging on your treadmill
 
-QZ Companion Installation Method 1:  Over Wifi via an ADB script run from a Windows PC. Choose this method if you can successfully establish an ADB connection between treadmill and Windows PC.
+**QZ Companion Installation Method 1:  Over Wifi via an ADB script run from a Windows PC. Choose this method if you can successfully establish an ADB connection between treadmill and Windows PC.**
 
 4.  Install the QZ Companion app on your treadmill. Download the QZ
     Companion installation package from this Github repository and extract
@@ -136,7 +136,7 @@ QZ Companion Installation Method 1:  Over Wifi via an ADB script run from a Wind
 ![](media/image3.png)
     Run QZ-Companion.bat on a Wifi connected Windows PC
 
-QZ Installation Method 2: Via the treadmill build-in web browser.
+**QZ Installation Method 2: Via the treadmill build-in web browser.**
 
 4.	To install the QZ Companion app on your treadmill via the treadmill built-in web browser, 
     from the treadmills Android desktop, swipe up from the bottom of the screen to open the installed apps screen. 
@@ -165,7 +165,7 @@ QZ Installation Method 2: Via the treadmill build-in web browser.
     When completed, you should reboot the treadmill by cycling the power switch. Once rebooted, proceed to login to iFit. 
     At this point, QZ Companion is running in the background and is ready to transmit treadmill speed and incline data to QZ.
 
-Now that QZ Companion is installed and running on your treadmill, it’s time to configure QZ to communicate with QZ Companion.
+**Now that QZ Companion is installed and running on your treadmill, it’s time to configure QZ to communicate with QZ Companion.**
 
 5.  Configure QZ to communicate with QZ Companion. On your 2nd QZ
     device (Windows PC or laptop, Android phone or tablet, or iOS iPhone
