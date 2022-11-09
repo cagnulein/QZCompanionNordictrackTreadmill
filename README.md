@@ -152,7 +152,11 @@ QZ Companion APK downloaded
 
 Next, select the APK to start installation. You will get a warning message stating your tablet is not allowed to install apps from unknown sources. Rest assured, QZ Companion is safe to install. Select “Settings” which will bring you to a screen where you can toggle on “allow from this source” and confirm “do you want to install this application?”. QZ Companion will proceed to install. You will get a confirmation screen when done.
 
-*** 4 screenshots here ***
+![3 - unknown app](https://user-images.githubusercontent.com/63697253/200886407-b7050778-7720-4ce8-897c-e8b8ea10e8f1.jpg)
+![4 - allow from this source](https://user-images.githubusercontent.com/63697253/200886432-9cbb4ba9-6ba7-4f52-abd8-421aa4bf196e.jpg)
+![5 - install confirmation](https://user-images.githubusercontent.com/63697253/200886460-77fd108f-45fb-465b-be9e-9e7af7ade9c1.jpg)
+![6 - app installed](https://user-images.githubusercontent.com/63697253/200886487-c8150e6a-ce0e-44bd-9b5a-a4696b986703.jpg)
+
 QZ Companion APK installation screens
 
 When completed, you should reboot the treadmill by cycling the power switch. Once rebooted, proceed to login to iFit. At this point, QZ Companion is running in the background and is ready to transmit treadmill speed and incline data to QZ.
