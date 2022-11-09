@@ -114,8 +114,7 @@ and know your treadmills IP, you can skip to step 4.
 
 ![Graphical user interface, text Description automatically generated
 with medium confidence](media/image2.png)
-
-Enable USB Debugging on your treadmill
+    Enable USB Debugging on your treadmill
 
 QZ Companion Installation Method 1:  Over Wifi via an ADB script run from a Windows PC. Choose this method if you can successfully establish an ADB connection between treadmill and Windows PC.
 
@@ -135,31 +134,36 @@ QZ Companion Installation Method 1:  Over Wifi via an ADB script run from a Wind
     If it reads all 0's, try going to the treadmill's Settings > Apps > QZ Companion app > Permissions, and enabling all permissions.
 
 ![](media/image3.png)
-
-Run QZ-Companion.bat on a Wifi connected Windows PC
+    Run QZ-Companion.bat on a Wifi connected Windows PC
 
 QZ Installation Method 2: Via the treadmill build-in web browser.
 
-4.	To install the QZ Companion app on your treadmill via the treadmill built-in web browser, from the treadmills Android desktop, swipe up from the bottom of the screen to open the installed apps screen. Select Browser.
+4.	To install the QZ Companion app on your treadmill via the treadmill built-in web browser, 
+    from the treadmills Android desktop, swipe up from the bottom of the screen to open the installed apps screen. 
+    Select Browser.
 
 ![1 - browser](https://user-images.githubusercontent.com/63697253/200885852-75909cbd-e084-4e99-8f71-8201fc4d4f1a.jpg)
-Open the treadmill build-in web browser
+    Open the treadmill build-in web browser
 
-Enter the following short URL address – https://tinyurl.com/qzcompanion. This link will download the latest QZ Companion APK to the browser download folder on your treadmill.
+    Enter the following short URL address – https://tinyurl.com/qzcompanion. This link will download the latest QZ Companion APK 
+    to the browser download folder on your treadmill.
 
 ![2 - apk downloaded](https://user-images.githubusercontent.com/63697253/200886187-19eb5515-54fb-4003-834c-1e587cab5976.jpg)
-QZ Companion APK downloaded
+    QZ Companion APK downloaded
 
-Next, select the APK to start installation. You will get a warning message stating your tablet is not allowed to install apps from unknown sources. Rest assured, QZ Companion is safe to install. Select “Settings” which will bring you to a screen where you can toggle on “allow from this source” and confirm “do you want to install this application?”. QZ Companion will proceed to install. You will get a confirmation screen when done.
+    Next, select the APK to start installation. You will get a warning message stating your tablet is not allowed to install 
+    apps from unknown sources. Rest assured, QZ Companion is safe to install. Select “Settings” which will bring you to a 
+    screen where you can toggle on “allow from this source” and confirm “do you want to install this application?”. 
+    QZ Companion will proceed to install. You will get a confirmation screen when done.
 
 ![3 - unknown app](https://user-images.githubusercontent.com/63697253/200886407-b7050778-7720-4ce8-897c-e8b8ea10e8f1.jpg)
 ![4 - allow from this source](https://user-images.githubusercontent.com/63697253/200886432-9cbb4ba9-6ba7-4f52-abd8-421aa4bf196e.jpg)
 ![5 - install confirmation](https://user-images.githubusercontent.com/63697253/200886460-77fd108f-45fb-465b-be9e-9e7af7ade9c1.jpg)
 ![6 - app installed](https://user-images.githubusercontent.com/63697253/200886487-c8150e6a-ce0e-44bd-9b5a-a4696b986703.jpg)
+    QZ Companion APK installation screens
 
-QZ Companion APK installation screens
-
-When completed, you should reboot the treadmill by cycling the power switch. Once rebooted, proceed to login to iFit. At this point, QZ Companion is running in the background and is ready to transmit treadmill speed and incline data to QZ.
+    When completed, you should reboot the treadmill by cycling the power switch. Once rebooted, proceed to login to iFit. 
+    At this point, QZ Companion is running in the background and is ready to transmit treadmill speed and incline data to QZ.
 
 Now that QZ Companion is installed and running on your treadmill, it’s time to configure QZ to communicate with QZ Companion.
 
@@ -177,8 +181,7 @@ Now that QZ Companion is installed and running on your treadmill, it’s time to
     data to Zwift via Bluetooth.
 
 ![](media/image4.png)
-
-Enter your treadmill IP address in QZ
+    Enter your treadmill IP address in QZ
 
 ![Graphical user interface, text, application Description automatically
 generated](media/image5.png)
@@ -187,8 +190,7 @@ Turn on Enable Virtual Device, Virtual Device Bluetooth in QZ
 
 ![Graphical user interface, text, application Description automatically
 generated](media/image6.png)
-
-Turn on Wahoo Direct Connect in QZ
+    Turn on Wahoo Direct Connect in QZ
 
 6.  Start an iFit manual workout to confirm QZ Companion communication.
     From the main iFit dashboard screen on your treadmill, select Manual
@@ -199,12 +201,10 @@ Turn on Wahoo Direct Connect in QZ
 
 ![Diagram Description automatically
  generated](media/image7.png)
-
-Start an iFit manual workout
+    Start an iFit manual workout
 
 ![](media/image8.png)
-
-QZ receiving live speed and incline from QZ Companion
+    QZ receiving live speed and incline from QZ Companion
 
 7.  Finally, launch and configure Zwift to use the QZ Bluetooth device.
     Now that QZ is receiving live treadmill data from QZ Companion,
@@ -216,13 +216,11 @@ QZ receiving live speed and incline from QZ Companion
     and QZ Companion data link.
 
 ![](media/image9.png)
-
-Select Wahoo Tread device as Run Device in Zwift
+    Select Wahoo Tread device as Run Device in Zwift
 
 ![Graphical user interface Description automatically
  generated](media/image10.png)
-
-Start a Zwift workout and control speed from your treadmill
+    Start a Zwift workout and control speed from your treadmill
 
 **The QZ Companion installation package (qz-companion.zip) contains**:
 
