@@ -7,7 +7,7 @@ Reference: https://github.com/cagnulein/qdomyos-zwift/issues/815
 
 Authors: Al Udell and Roberto Viola
 
-June 28, 2022
+Updated: November 9, 2022
 
 QZ and QZ Companion software development: Roberto Viola
 
@@ -43,11 +43,6 @@ works consistently on Windows and iOS, but not Android.
     treadmill first, HRM monitor second, QZ app third, Zwift last, or
     change the sequence. QZ will always communicate with QZ Companion
     regardless of your startup sequence.
-
--   QZ Companion is installed over Wifi via an ADB script run from a
-    Windows PC. It makes no changes to the underlying Android or iFit
-    structure and can be easily removed via an uninstall script or by
-    doing a treadmill factory reset.
     
 **About QZ (QZ Fitness)**:
 
@@ -73,7 +68,11 @@ NordicTrack Commercial 2950 (2021 model)
 your treadmill in order to use manual mode. However, you do not need an
 iFit subscription to use the treadmills manual mode.
 
-**Installation Instructions:** If you have USB debugging mode enabled
+**Installation Instructions:** 
+
+QZ Companion can be installed in one of two ways. Both methods make no changes to the underlying Android or iFit structure and can be easily removed via an uninstall script or by doing a treadmill factory reset.
+
+If you have USB debugging mode enabled
 and know your treadmills IP, you can skip to step 4.
 
 1.  Factory reset the treadmill. It is highly recommended that you
@@ -118,6 +117,8 @@ with medium confidence](media/image2.png)
 
 Enable USB Debugging on your treadmill
 
+QZ Companion Installation Method 1:  Over Wifi via an ADB script run from a Windows PC. Choose this method if you can successfully establish an ADB connection between treadmill and Windows PC.
+
 4.  Install the QZ Companion app on your treadmill. Download the QZ
     Companion installation package from this Github repository and extract
     it to your Windows PC. Go into the extracted folder and run
@@ -136,6 +137,27 @@ Enable USB Debugging on your treadmill
 ![](media/image3.png)
 
 Run QZ-Companion.bat on a Wifi connected Windows PC
+
+QZ Installation Method 2: Via the treadmill build-in web browser.
+
+4.	To install the QZ Companion app on your treadmill via the treadmill built-in web browser, from the treadmills Android desktop, swipe up from the bottom of the screen to open the installed apps screen. Select Browser.
+
+*** screenshot here ***
+Open the treadmill build-in web browser
+
+Enter the following short URL address – https://tinyurl.com/qzcompanion. This link will download the latest QZ Companion APK to the browser download folder on your treadmill.
+
+*** screenshot here ***
+QZ Companion APK downloaded
+
+Next, select the APK to start installation. You will get a warning message stating your tablet is not allowed to install apps from unknown sources. Rest assured, QZ Companion is safe to install. Select “Settings” which will bring you to a screen where you can toggle on “allow from this source” and confirm “do you want to install this application?”. QZ Companion will proceed to install. You will get a confirmation screen when done.
+
+*** 4 screenshots here ***
+QZ Companion APK installation screens
+
+When completed, you should reboot the treadmill by cycling the power switch. Once rebooted, proceed to login to iFit. At this point, QZ Companion is running in the background and is ready to transmit treadmill speed and incline data to QZ.
+
+Now that QZ Companion is installed and running on your treadmill, it’s time to configure QZ to communicate with QZ Companion.
 
 5.  Configure QZ to communicate with QZ Companion. On your 2nd QZ
     device (Windows PC or laptop, Android phone or tablet, or iOS iPhone
@@ -212,8 +234,7 @@ Start a Zwift workout and control speed from your treadmill
 -   Uninstall-QZ-Companion.bat (batch script used to uninstall/remove QZ
     Companion).
 
--   All other files (adb.exe, AdbWinApi.dll, tee.exe) are required for
-    the scripts. Do not delete them).
+-   All other files (adb.exe, AdbWinApi.dll, AdbWinUsbApi.dll, tee.exe) are required for the scripts. Do not delete them.
 
 **Troubleshooting**:
 
