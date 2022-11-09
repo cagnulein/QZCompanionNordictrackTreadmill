@@ -143,6 +143,7 @@ QZ Installation Method 2: Via the treadmill build-in web browser.
 4.	To install the QZ Companion app on your treadmill via the treadmill built-in web browser, from the treadmills Android desktop, swipe up from the bottom of the screen to open the installed apps screen. Select Browser.
 
 *** screenshot here ***
+![1 - browser](https://user-images.githubusercontent.com/63697253/200885852-75909cbd-e084-4e99-8f71-8201fc4d4f1a.jpg)
 Open the treadmill build-in web browser
 
 Enter the following short URL address – https://tinyurl.com/qzcompanion. This link will download the latest QZ Companion APK to the browser download folder on your treadmill.
