@@ -145,7 +145,7 @@ with medium confidence](media/image2.png)
 ![1 - browser](https://user-images.githubusercontent.com/63697253/200885852-75909cbd-e084-4e99-8f71-8201fc4d4f1a.jpg)
     Open the treadmill build-in web browser
 
-    Enter the following short URL address – https://tinyurl.com/qzcompanion. This link will download the latest QZ Companion APK to the browser download folder on your treadmill.
+Enter the following short URL address – https://tinyurl.com/qzcompanion. This link will download the latest QZ Companion APK to the browser download folder on your treadmill.
 
 ![2 - apk downloaded](https://user-images.githubusercontent.com/63697253/200886187-19eb5515-54fb-4003-834c-1e587cab5976.jpg)
     QZ Companion APK downloaded
