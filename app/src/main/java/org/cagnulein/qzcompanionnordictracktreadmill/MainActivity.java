@@ -22,6 +22,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(new Intent(getApplicationContext(), TcpServerService.class));
+        } else {
+            startService(new Intent(getApplicationContext(), TcpServerService.class));
+        }
+
         AlarmReceiver alarm = new AlarmReceiver();
         alarm.setAlarm(this);
 
