@@ -4,11 +4,9 @@ package com.cgutman.androidremotedebugger.service;
 import java.util.HashMap;
 
 import com.cgutman.adblib.AdbCrypto;
-import com.cgutman.androidremotedebugger.AdbShell;
 import com.cgutman.androidremotedebugger.console.ConsoleBuffer;
 import com.cgutman.androidremotedebugger.devconn.DeviceConnection;
 import com.cgutman.androidremotedebugger.devconn.DeviceConnectionListener;
-import com.cgutman.androidremotedebugger.R;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -116,7 +114,7 @@ public class ShellService extends Service implements DeviceConnectionListener {
 		super.onCreate();
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			NotificationChannel channel = new NotificationChannel(CHANNEL_ID, getString(R.string.channel_name), NotificationManager.IMPORTANCE_DEFAULT);
+			NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Connection Info", NotificationManager.IMPORTANCE_DEFAULT);
 			NotificationManager notificationManager = getSystemService(NotificationManager.class);
 			notificationManager.createNotificationChannel(channel);
 		}
@@ -147,46 +145,13 @@ public class ShellService extends Service implements DeviceConnectionListener {
 	private int getConnectedNotificationId(DeviceConnection devConn) {
 		return CONN_BASE + getConnectionString(devConn).hashCode();
 	}
-	
-	private PendingIntent createPendingIntentForConnection(DeviceConnection devConn) {
-		Context appContext = getApplicationContext();
-		
-		Intent i = new Intent(appContext, AdbShell.class);
-		i.putExtra("IP", devConn.getHost());
-		i.putExtra("Port", devConn.getPort());
-		i.setAction(getConnectionString(devConn));
-
-		int flags = PendingIntent.FLAG_UPDATE_CURRENT;
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			flags |= PendingIntent.FLAG_IMMUTABLE;
-		}
-
-		return PendingIntent.getActivity(appContext, 0, i, flags);
-	}
-
-	private PendingIntent createPendingIntentToLaunchShellActivity() {
-		Context appContext = getApplicationContext();
-
-		Intent i = new Intent(appContext, AdbShell.class);
-
-		int flags = PendingIntent.FLAG_UPDATE_CURRENT;
-
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			flags |= PendingIntent.FLAG_IMMUTABLE;
-		}
-
-		return PendingIntent.getActivity(appContext, 0, i, flags);
-	}
 
 	private Notification createForegroundPlaceholderNotification() {
 		return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
-				.setSmallIcon(R.drawable.notificationicon)
 				.setOngoing(true)
 				.setSilent(true)
 				.setContentTitle("Remote ADB Shell")
 				.setContentText("Connecting...")
-				.setContentIntent(createPendingIntentToLaunchShellActivity())
 				.setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
 				.build();
 	}
@@ -206,14 +171,12 @@ public class ShellService extends Service implements DeviceConnectionListener {
 
 		return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
 				.setTicker("Remote ADB Shell - "+ticker)
-				.setSmallIcon(R.drawable.notificationicon)
 				.setOnlyAlertOnce(true)
 				.setOngoing(connected)
 				.setAutoCancel(!connected)
 				.setSilent(connected)
 				.setContentTitle("Remote ADB Shell")
 				.setContentText(message)
-				.setContentIntent(createPendingIntentForConnection(devConn))
 				.setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
 				.build();
 	}
@@ -222,21 +185,6 @@ public class ShellService extends Service implements DeviceConnectionListener {
 		NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		
 		removeNotification(devConn);
-
-		if (connected) {
-			if (foregroundId != 0) {
-				/* There's already a foreground notification, so use the normal notification framework */
-				nm.notify(getConnectedNotificationId(devConn), createConnectionNotification(devConn, connected));
-			}
-			else {
-				/* This is the first notification so make it the foreground one */
-				foregroundId = getConnectedNotificationId(devConn);
-				startForeground(foregroundId, createConnectionNotification(devConn, connected));
-			}
-		}
-		else if (!devConn.isForeground()) {
-			nm.notify(getFailedNotificationId(devConn), createConnectionNotification(devConn, connected));
-		}
 	}
 	
 	private void removeNotification(DeviceConnection devConn) {

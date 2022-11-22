@@ -18,11 +18,12 @@ import com.cgutman.androidremotedebugger.service.ShellService;
 
 public class AdbRemote implements DeviceConnectionListener {
     private static final String LOG_TAG = "QZ:AdbRemote";
-	private static String lastCommand = "";	
+	private static String lastCommand = "";
+	private ShellService.ShellServiceBinder binder;
 
     public void sendCommand(String command) {
 		
-		lastCommand = command
+		lastCommand = command;
 		
 				/* Create the connection object */
 		DeviceConnection conn = binder.createConnection("localhost", 5555);
@@ -36,7 +37,7 @@ public class AdbRemote implements DeviceConnectionListener {
 	
 	@Override
 	public void notifyConnectionEstablished(DeviceConnection devConn) {
-			private StringBuilder commandBuffer = new StringBuilder();
+			StringBuilder commandBuffer = new StringBuilder();
 		
 			commandBuffer.append(lastCommand);
 			
@@ -57,5 +58,30 @@ public class AdbRemote implements DeviceConnectionListener {
 
 	@Override
 	public void notifyStreamClosed(DeviceConnection devConn) {
+	}
+
+	@Override
+	public AdbCrypto loadAdbCrypto(DeviceConnection devConn) {
+		return null;
+	}
+
+	@Override
+	public boolean canReceiveData() {
+		return false;
+	}
+
+	@Override
+	public void receivedData(DeviceConnection devConn, byte[] data, int offset, int length) {
+
+	}
+
+	@Override
+	public boolean isConsole() {
+		return false;
+	}
+
+	@Override
+	public void consoleUpdated(DeviceConnection devConn, ConsoleBuffer console) {
+
 	}
 }
