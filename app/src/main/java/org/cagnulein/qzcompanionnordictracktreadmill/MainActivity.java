@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
         AlarmReceiver alarm = new AlarmReceiver();
         alarm.setAlarm(this);
-
+        AdbRemote r = new AdbRemote();
+        r.sendCommand("echo ciao > /tmp/");
     }
 }
