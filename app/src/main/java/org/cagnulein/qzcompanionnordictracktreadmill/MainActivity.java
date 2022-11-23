@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 
 import static android.content.ContentValues.TAG;
 
+import com.cgutman.androidremotedebugger.AdbUtils;
 import com.cgutman.androidremotedebugger.console.ConsoleBuffer;
 import com.cgutman.androidremotedebugger.devconn.DeviceConnection;
 import com.cgutman.androidremotedebugger.devconn.DeviceConnectionListener;
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 
     @Override
     public AdbCrypto loadAdbCrypto(DeviceConnection devConn) {
-        return null;
+        return AdbUtils.readCryptoConfig(getFilesDir());
     }
 
     @Override
@@ -143,6 +144,32 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 
         AlarmReceiver alarm = new AlarmReceiver();
         alarm.setAlarm(this);
+
+        /* If we have old RSA keys, just use them */
+        AdbCrypto crypto = AdbUtils.readCryptoConfig(getFilesDir());
+        if (crypto == null)
+        {
+            /* We need to make a new pair */
+            Log.i(LOG_TAG,
+                    "This will only be done once.");
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    AdbCrypto crypto;
+
+                    crypto = AdbUtils.writeNewCryptoConfig(getFilesDir());
+
+                    if (crypto == null)
+                    {
+                        Log.e(LOG_TAG,
+                                "Unable to generate and save RSA key pair");
+                        return;
+                    }
+
+                }
+            }).start();
+        }
 
         if (binder == null) {
             service = new Intent(this, ShellService.class);
