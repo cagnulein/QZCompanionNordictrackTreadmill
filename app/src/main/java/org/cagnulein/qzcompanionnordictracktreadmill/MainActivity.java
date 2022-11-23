@@ -2,20 +2,133 @@ package org.cagnulein.qzcompanionnordictracktreadmill;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Service;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.util.Log;
 
 import java.util.logging.Logger;
 
 import static android.content.ContentValues.TAG;
 
-public class MainActivity extends AppCompatActivity {
+import com.cgutman.androidremotedebugger.console.ConsoleBuffer;
+import com.cgutman.androidremotedebugger.devconn.DeviceConnection;
+import com.cgutman.androidremotedebugger.devconn.DeviceConnectionListener;
+import com.cgutman.androidremotedebugger.service.ShellService;
+import com.cgutman.adblib.AdbCrypto;
+
+public class MainActivity extends AppCompatActivity  implements DeviceConnectionListener {
+    private ShellService.ShellServiceBinder binder;
+    private DeviceConnection connection;
+    private Intent service;
+    private static final String LOG_TAG = "QZ:AdbRemote";
+    private static String lastCommand = "";
+
+
+    @Override
+    public void notifyConnectionEstablished(DeviceConnection devConn) {
+        Log.i(LOG_TAG, "notifyConnectionEstablished" + lastCommand);
+        StringBuilder commandBuffer = new StringBuilder();
+
+        commandBuffer.append(lastCommand);
+
+        /* Append a newline since it's not included in the command itself */
+        commandBuffer.append('\n');
+
+        /* Send it to the device */
+        devConn.queueCommand(commandBuffer.toString());
+    }
+
+    @Override
+    public void notifyConnectionFailed(DeviceConnection devConn, Exception e) {
+        Log.e(LOG_TAG, e.getMessage());
+    }
+
+    @Override
+    public void notifyStreamFailed(DeviceConnection devConn, Exception e) {
+        Log.e(LOG_TAG, e.getMessage());
+    }
+
+    @Override
+    public void notifyStreamClosed(DeviceConnection devConn) {
+    }
+
+    @Override
+    public AdbCrypto loadAdbCrypto(DeviceConnection devConn) {
+        return null;
+    }
+
+    @Override
+    public boolean canReceiveData() {
+        return true;
+    }
+
+    @Override
+    public void receivedData(DeviceConnection devConn, byte[] data, int offset, int length) {
+        Log.i(LOG_TAG, data.toString());
+    }
+
+    @Override
+    public boolean isConsole() {
+        return false;
+    }
+
+    @Override
+    public void consoleUpdated(DeviceConnection devConn, ConsoleBuffer console) {
+
+    }
+
+
+    private DeviceConnection startConnection(String host, int port) {
+        /* Create the connection object */
+        DeviceConnection conn = binder.createConnection(host, port);
+
+        /* Add this activity as a connection listener */
+        binder.addListener(conn, this);
+
+        /* Begin the async connection process */
+        conn.startConnect();
+
+        return conn;
+    }
+
+    private DeviceConnection connectOrLookupConnection(String host, int port) {
+        DeviceConnection conn = binder.findConnection(host, port);
+        if (conn == null) {
+            /* No existing connection, so start the connection process */
+            conn = startConnection(host, port);
+        }
+        else {
+            /* Add ourselves as a new listener of this connection */
+            binder.addListener(conn, this);
+        }
+        return conn;
+    }
+
+    private ServiceConnection serviceConn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName arg0, IBinder arg1) {
+            binder = (ShellService.ShellServiceBinder)arg1;
+            if (connection != null) {
+                binder.removeListener(connection, MainActivity.this);
+            }
+            connection = connectOrLookupConnection("127.0.0.1", 5555);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            binder = null;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +143,40 @@ public class MainActivity extends AppCompatActivity {
 
         AlarmReceiver alarm = new AlarmReceiver();
         alarm.setAlarm(this);
-        AdbRemote r = new AdbRemote();
-        r.sendCommand("echo ciao > /tmp/");
+
+        if (binder == null) {
+            service = new Intent(this, ShellService.class);
+
+            /* Bind the service if we're not bound already. After binding, the callback will
+             * perform the initial connection. */
+            getApplicationContext().bindService(service, serviceConn, Service.BIND_AUTO_CREATE);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(service);
+            }
+            else {
+                startService(service);
+            }
+        }
+        sendCommand("input swipe 75 782 75 722 200", getApplicationContext());
     }
+
+    public void sendCommand(String command, Context context) {
+        if (binder == null) {
+            service = new Intent(this, ShellService.class);
+
+            /* Bind the service if we're not bound already. After binding, the callback will
+             * perform the initial connection. */
+            context.bindService(service, serviceConn, Service.BIND_AUTO_CREATE);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(service);
+            }
+            else {
+                startService(service);
+            }
+        }
+        lastCommand = command;
+    }
+
 }
