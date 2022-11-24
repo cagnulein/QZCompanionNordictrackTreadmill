@@ -67,7 +67,8 @@ public class UDPListenerService extends Service {
                 int y2 = (int) (y1Speed - (int) ((lastReqSpeed - reqSpeed) * 29.78)); //calculate vertical pixel position for new speed
 
                 String command = "input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
-                shellRuntime.exec(command);
+                //shellRuntime.exec(command);
+                MainActivity.sendCommand(command);
                 Log.d(LOG_TAG, command);
 
                 y1Speed = y2;  //set new vertical position of speed slider
@@ -85,7 +86,8 @@ public class UDPListenerService extends Service {
                 int y2 = y1Inclination - (int)((lastReqInclination - reqInclination) * 29.9);  //calculate vertical pixel position for new incline
 
                 String command = " input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
-                shellRuntime.exec(command);
+                //shellRuntime.exec(command);
+                MainActivity.sendCommand(command);
                 Log.d(LOG_TAG, command);
 
                 y1Inclination = y2;  //set new vertical position of speed slider

@@ -29,38 +29,35 @@ import com.cgutman.adblib.AdbCrypto;
 
 public class MainActivity extends AppCompatActivity  implements DeviceConnectionListener {
     private ShellService.ShellServiceBinder binder;
-    private DeviceConnection connection;
+    private static DeviceConnection connection;
     private Intent service;
     private static final String LOG_TAG = "QZ:AdbRemote";
     private static String lastCommand = "";
+    private static boolean ADBConnected = false;
 
 
     @Override
     public void notifyConnectionEstablished(DeviceConnection devConn) {
+        ADBConnected = true;
         Log.i(LOG_TAG, "notifyConnectionEstablished" + lastCommand);
-        StringBuilder commandBuffer = new StringBuilder();
-
-        commandBuffer.append(lastCommand);
-
-        /* Append a newline since it's not included in the command itself */
-        commandBuffer.append('\n');
-
-        /* Send it to the device */
-        devConn.queueCommand(commandBuffer.toString());
     }
 
     @Override
     public void notifyConnectionFailed(DeviceConnection devConn, Exception e) {
+        ADBConnected = false;
         Log.e(LOG_TAG, e.getMessage());
     }
 
     @Override
     public void notifyStreamFailed(DeviceConnection devConn, Exception e) {
+        ADBConnected = false;
         Log.e(LOG_TAG, e.getMessage());
     }
 
     @Override
     public void notifyStreamClosed(DeviceConnection devConn) {
+        ADBConnected = false;
+        Log.e(LOG_TAG, "notifyStreamClosed");
     }
 
     @Override
@@ -185,25 +182,22 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                 startService(service);
             }
         }
-        sendCommand("input swipe 75 782 75 722 200", getApplicationContext());
     }
 
-    public void sendCommand(String command, Context context) {
-        if (binder == null) {
-            service = new Intent(this, ShellService.class);
+    static public void sendCommand(String command) {
+        if(ADBConnected) {
+            StringBuilder commandBuffer = new StringBuilder();
 
-            /* Bind the service if we're not bound already. After binding, the callback will
-             * perform the initial connection. */
-            context.bindService(service, serviceConn, Service.BIND_AUTO_CREATE);
+            commandBuffer.append(command);
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(service);
-            }
-            else {
-                startService(service);
-            }
+            /* Append a newline since it's not included in the command itself */
+            commandBuffer.append('\n');
+
+            /* Send it to the device */
+            devConn.queueCommand(commandBuffer.toString());
+        } else {
+            Log.e(LOG_TAG, "sendCommand ADB is not connected!")
         }
-        lastCommand = command;
     }
 
 }
