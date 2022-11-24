@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
             commandBuffer.append('\n');
 
             /* Send it to the device */
-            devConn.queueCommand(commandBuffer.toString());
+            connection.queueCommand(commandBuffer.toString());
         } else {
             Log.e(LOG_TAG, "sendCommand ADB is not connected!");
         }
