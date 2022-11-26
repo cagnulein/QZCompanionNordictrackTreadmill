@@ -31,6 +31,13 @@ public class UDPListenerService extends Service {
     float lastReqInclination = -1;
     int y1Inclination = 722;    //vertical position of slider at 0.0
 
+    private enum _device {
+        x11i,
+        other
+    }
+
+    _device device;
+
     private final ShellRuntime shellRuntime = new ShellRuntime();
 
     private void listenAndWaitAndThrowIntent(InetAddress broadcastIP, Integer port) throws Exception {
@@ -62,9 +69,16 @@ public class UDPListenerService extends Service {
             Log.d(LOG_TAG, "requestSpeed: " + reqSpeed);
 
             if (reqSpeed != -1 && lastReqSpeed != reqSpeed) {
-                int x1 = 1845;     //middle of slider
-                //set speed slider to target position
-                int y2 = (int) (y1Speed - (int) ((lastReqSpeed - reqSpeed) * 29.78)); //calculate vertical pixel position for new speed
+                int x1;
+                int y2;
+                if(device == _device.x11i) {
+                    x1 = 1207;
+                    y2 = (int) (621.997 - (21.785 * reqSpeed));
+                } else {
+                    x1 = 1845;     //middle of slider
+                    //set speed slider to target position
+                    y2 = (int) (y1Speed - (int) ((lastReqSpeed - reqSpeed) * 29.78)); //calculate vertical pixel position for new speed
+                }
 
                 String command = "input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
                 //shellRuntime.exec(command);
@@ -81,11 +95,18 @@ public class UDPListenerService extends Service {
             float reqInclination = Float.parseFloat(rInclination);
             Log.d(LOG_TAG, "requestInclination: " + reqInclination);
             if(reqInclination != -100 && lastReqInclination != reqInclination) {
-                int x1 = 75;     //middle of slider
-                y1Inclination = 722;    //vertical position of slider at 0.0
-                int y2 = y1Inclination - (int)((lastReqInclination - reqInclination) * 29.9);  //calculate vertical pixel position for new incline
+                int x1;
+                int y2;
+                if(device == _device.x11i) {
+                    x1 = 75;
+                    y2 = (int) (565.491 - (8.44 * reqInclination));
+                } else {
+                    x1 = 75;     //middle of slider
+                    y1Inclination = 722;    //vertical position of slider at 0.0
+                    y2 = y1Inclination - (int)((lastReqInclination - reqInclination) * 29.9);  //calculate vertical pixel position for new incline
+                }
 
-                String command = " input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
+                String command = " input swipe " + x1 + " " + y1Inclination + " " + x1 + " " + y2 + " 200";
                 //shellRuntime.exec(command);
                 MainActivity.sendCommand(command);
                 Log.d(LOG_TAG, command);
@@ -152,6 +173,18 @@ public class UDPListenerService extends Service {
 
     @Override
     public void onCreate() {
+        device = _device.x11i;
+        if(device == _device.x11i) {
+            lastReqSpeed = -1;
+            y1Speed = 600;      //vertical position of slider at 2.0
+            lastReqInclination = -1;
+            y1Inclination = 557;    //vertical position of slider at 0.0
+        } else {
+            lastReqSpeed = 2;
+            y1Speed = 782;      //vertical position of slider at 2.0
+            lastReqInclination = -1;
+            y1Inclination = 722;    //vertical position of slider at 0.0
+        }
     }
 
     @Override
