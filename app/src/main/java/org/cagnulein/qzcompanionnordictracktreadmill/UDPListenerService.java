@@ -31,13 +31,13 @@ public class UDPListenerService extends Service {
     float lastReqInclination = -1;
     int y1Inclination = 722;    //vertical position of slider at 0.0
 
-    private enum _device {
+    public enum _device {
         x11i,
         nordictrack_2950,
         other
     }
 
-    _device device;
+    static _device device;
 
     private final ShellRuntime shellRuntime = new ShellRuntime();
 
@@ -67,7 +67,7 @@ public class UDPListenerService extends Service {
         if(amessage.length > 0) {
             String rSpeed = amessage[0];
             float reqSpeed = Float.parseFloat(rSpeed);
-            Log.i(LOG_TAG, "requestSpeed: " + reqSpeed);
+            Log.i(LOG_TAG, "requestSpeed: " + reqSpeed + " " + lastReqSpeed);
 
             if (reqSpeed != -1 && lastReqSpeed != reqSpeed) {
                 int x1 = 0;
@@ -95,7 +95,7 @@ public class UDPListenerService extends Service {
         if(amessage.length > 1) {
             String rInclination = amessage[1];
             float reqInclination = Float.parseFloat(rInclination);
-            Log.i(LOG_TAG, "requestInclination: " + reqInclination);
+            Log.i(LOG_TAG, "requestInclination: " + reqInclination + " " + lastReqInclination);
             if(reqInclination != -100 && lastReqInclination != reqInclination) {
                 int x1 = 0;
                 int y2 = 0;

@@ -23,7 +23,7 @@ class TcpClientHandler(private val dataInputStream: DataInputStream, private val
                     if (amessage.size > 0) {
                         val rSpeed = amessage[0]
                         val reqSpeed = rSpeed.toFloat()
-                        Log.d(TAG, "requestSpeed: $reqSpeed")
+                        Log.i(TAG, "requestSpeed: $reqSpeed")
                         if (reqSpeed != -1f && lastReqSpeed != reqSpeed) {
                             val x1 = 1845 //middle of slider
                             //set speed slider to target position

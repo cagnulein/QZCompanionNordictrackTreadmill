@@ -8,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -17,6 +18,8 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import java.util.logging.Logger;
 
@@ -36,6 +39,10 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
     private static final String LOG_TAG = "QZ:AdbRemote";
     private static String lastCommand = "";
     private static boolean ADBConnected = false;
+
+    // on below line we are creating variables.
+    RadioGroup radioGroup;
+    SharedPreferences sharedPreferences;
 
     private boolean checkPermissions(){
         if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
@@ -145,6 +152,31 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         setContentView(R.layout.activity_main);
 
         checkPermissions();
+
+        sharedPreferences = getSharedPreferences("QZ",MODE_PRIVATE);
+        radioGroup = findViewById(R.id.radiogroupDevice);
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                RadioButton radioButton = findViewById(i);
+                if(i == R.id.x11i) {
+                    UDPListenerService.device = UDPListenerService._device.x11i;
+                } else if(i == R.id.nordictrack_2950) {
+                    UDPListenerService.device = UDPListenerService._device.nordictrack_2950;
+                } else {
+                    UDPListenerService.device = UDPListenerService._device.other;
+                }
+                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                myEdit.putInt("device", i);
+                myEdit.commit();
+            }
+        });
+
+        int device = sharedPreferences.getInt("device", R.id.other);
+        RadioButton radioButton;
+        radioButton = findViewById(device);
+        radioButton.setChecked(true);
 
         /*
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
