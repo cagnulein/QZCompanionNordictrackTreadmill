@@ -60,14 +60,14 @@ public class UDPListenerService extends Service {
         String senderIP = packet.getAddress().getHostAddress();
         String message = new String(packet.getData()).trim();
 
-        Log.i(LOG_TAG, "Got UDB broadcast from " + senderIP + ", message: " + message);
+        Log.i(LOG_TAG, "Got UDP broadcast from " + senderIP + ", message: " + message);
 
-        Log.d(LOG_TAG, message);
+        Log.i(LOG_TAG, message);
         String[] amessage = message.split(";");
         if(amessage.length > 0) {
             String rSpeed = amessage[0];
             float reqSpeed = Float.parseFloat(rSpeed);
-            Log.d(LOG_TAG, "requestSpeed: " + reqSpeed);
+            Log.i(LOG_TAG, "requestSpeed: " + reqSpeed);
 
             if (reqSpeed != -1 && lastReqSpeed != reqSpeed) {
                 int x1 = 0;
@@ -84,7 +84,7 @@ public class UDPListenerService extends Service {
 
                 String command = "input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
                 MainActivity.sendCommand(command);
-                Log.d(LOG_TAG, command);
+                Log.i(LOG_TAG, command);
 
                 if(device == _device.x11i)
                     y1Speed = y2;  //set new vertical position of speed slider
@@ -95,7 +95,7 @@ public class UDPListenerService extends Service {
         if(amessage.length > 1) {
             String rInclination = amessage[1];
             float reqInclination = Float.parseFloat(rInclination);
-            Log.d(LOG_TAG, "requestInclination: " + reqInclination);
+            Log.i(LOG_TAG, "requestInclination: " + reqInclination);
             if(reqInclination != -100 && lastReqInclination != reqInclination) {
                 int x1 = 0;
                 int y2 = 0;
@@ -111,7 +111,7 @@ public class UDPListenerService extends Service {
 
                 String command = " input swipe " + x1 + " " + y1Inclination + " " + x1 + " " + y2 + " 200";
                 MainActivity.sendCommand(command);
-                Log.d(LOG_TAG, command);
+                Log.i(LOG_TAG, command);
 
                 if(device == _device.x11i)
                     y1Inclination = y2;  //set new vertical position of speed slider
