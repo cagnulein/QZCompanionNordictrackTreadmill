@@ -33,6 +33,7 @@ public class UDPListenerService extends Service {
 
     private enum _device {
         x11i,
+        nordictrack_2950,
         other
     }
 
@@ -69,23 +70,24 @@ public class UDPListenerService extends Service {
             Log.d(LOG_TAG, "requestSpeed: " + reqSpeed);
 
             if (reqSpeed != -1 && lastReqSpeed != reqSpeed) {
-                int x1;
-                int y2;
+                int x1 = 0;
+                int y2 = 0;
                 if(device == _device.x11i) {
                     x1 = 1207;
                     y2 = (int) (621.997 - (21.785 * reqSpeed));
-                } else {
+                } else if(device == _device.nordictrack_2950) {
                     x1 = 1845;     //middle of slider
+                    y1Speed = 807 - (int)((Float.parseFloat(QZService.lastSpeed) - 1) * 29.78);
                     //set speed slider to target position
-                    y2 = (int) (y1Speed - (int) ((lastReqSpeed - reqSpeed) * 29.78)); //calculate vertical pixel position for new speed
+                    y2 = y1Speed - (int)((reqSpeed - Float.parseFloat(QZService.lastSpeed)) * 29.78);
                 }
 
                 String command = "input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
-                //shellRuntime.exec(command);
                 MainActivity.sendCommand(command);
                 Log.d(LOG_TAG, command);
 
-                y1Speed = y2;  //set new vertical position of speed slider
+                if(device == _device.x11i)
+                    y1Speed = y2;  //set new vertical position of speed slider
                 lastReqSpeed = reqSpeed;
             }
         }
@@ -95,23 +97,24 @@ public class UDPListenerService extends Service {
             float reqInclination = Float.parseFloat(rInclination);
             Log.d(LOG_TAG, "requestInclination: " + reqInclination);
             if(reqInclination != -100 && lastReqInclination != reqInclination) {
-                int x1;
-                int y2;
+                int x1 = 0;
+                int y2 = 0;
                 if(device == _device.x11i) {
                     x1 = 75;
                     y2 = (int) (565.491 - (8.44 * reqInclination));
-                } else {
+                } else if(device == _device.nordictrack_2950) {
                     x1 = 75;     //middle of slider
-                    y1Inclination = 722;    //vertical position of slider at 0.0
-                    y2 = y1Inclination - (int)((lastReqInclination - reqInclination) * 29.9);  //calculate vertical pixel position for new incline
+                    y1Inclination = 807 - (int)((Float.parseFloat(QZService.lastInclination) - 1) * 29.78);
+                    //set speed slider to target position
+                    y2 = y1Inclination - (int)((reqInclination - Float.parseFloat(QZService.lastInclination)) * 29.9);
                 }
 
                 String command = " input swipe " + x1 + " " + y1Inclination + " " + x1 + " " + y2 + " 200";
-                //shellRuntime.exec(command);
                 MainActivity.sendCommand(command);
                 Log.d(LOG_TAG, command);
 
-                y1Inclination = y2;  //set new vertical position of speed slider
+                if(device == _device.x11i)
+                    y1Inclination = y2;  //set new vertical position of speed slider
                 lastReqInclination = reqInclination;
             }
         }
@@ -179,11 +182,11 @@ public class UDPListenerService extends Service {
             y1Speed = 600;      //vertical position of slider at 2.0
             lastReqInclination = -1;
             y1Inclination = 557;    //vertical position of slider at 0.0
-        } else {
-            lastReqSpeed = 2;
-            y1Speed = 782;      //vertical position of slider at 2.0
+        } else if(device == _device.nordictrack_2950) {
+            lastReqSpeed = -1;
+            y1Speed = 807;      //vertical position of slider at 2.0
             lastReqInclination = -1;
-            y1Inclination = 722;    //vertical position of slider at 0.0
+            y1Inclination = 807;    //vertical position of slider at 0.0
         }
     }
 
