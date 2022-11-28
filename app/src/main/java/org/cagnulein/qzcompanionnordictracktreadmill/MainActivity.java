@@ -1,12 +1,14 @@
 package org.cagnulein.qzcompanionnordictracktreadmill;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,6 +37,15 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
     private static String lastCommand = "";
     private static boolean ADBConnected = false;
 
+    private boolean checkPermissions(){
+        if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }
+        else {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
+            return false;
+        }
+    }
 
     @Override
     public void notifyConnectionEstablished(DeviceConnection devConn) {
@@ -133,11 +144,14 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        checkPermissions();
+
+        /*
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(new Intent(getApplicationContext(), TcpServerService.class));
         } else {
             startService(new Intent(getApplicationContext(), TcpServerService.class));
-        }
+        }*/
 
         AlarmReceiver alarm = new AlarmReceiver();
         alarm.setAlarm(this);
