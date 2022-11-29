@@ -41,7 +41,7 @@ public class UDPListenerService extends Service {
 
     private final ShellRuntime shellRuntime = new ShellRuntime();
 
-    public static setDevice(_device device) {
+    public static void setDevice(_device device) {
         switch(device) {
             case x11i:
                 lastReqSpeed = 0;
