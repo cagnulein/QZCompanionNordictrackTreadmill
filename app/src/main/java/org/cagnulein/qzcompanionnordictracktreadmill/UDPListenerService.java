@@ -95,9 +95,9 @@ public class UDPListenerService extends Service {
                     y2 = (int) (621.997 - (21.785 * reqSpeed));
                 } else if(device == _device.nordictrack_2950) {
                     x1 = 1845;     //middle of slider
-                    y1Speed = 807 - (int)((Float.parseFloat(QZService.lastSpeed) - 1) * 29.78);
+                    y1Speed = 807 - (int)((Float.parseFloat(QZService.lastSpeedFloat) - 1) * 29.78);
                     //set speed slider to target position
-                    y2 = y1Speed - (int)((reqSpeed - Float.parseFloat(QZService.lastSpeed)) * 29.78);
+                    y2 = y1Speed - (int)((reqSpeed - Float.parseFloat(QZService.lastSpeedFloat)) * 29.78);
                 }
 
                 String command = "input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
@@ -122,9 +122,9 @@ public class UDPListenerService extends Service {
                     y2 = (int) (565.491 - (8.44 * reqInclination));
                 } else if(device == _device.nordictrack_2950) {
                     x1 = 75;     //middle of slider
-                    y1Inclination = 807 - (int)((Float.parseFloat(QZService.lastInclination) + 3) * 29.9);
+                    y1Inclination = 807 - (int)((Float.parseFloat(QZService.lastInclinationFloat) + 3) * 29.9);
                     //set speed slider to target position
-                    y2 = y1Inclination - (int)((reqInclination - Float.parseFloat(QZService.lastInclination)) * 29.9);
+                    y2 = y1Inclination - (int)((reqInclination - Float.parseFloat(QZService.lastInclinationFloat)) * 29.9);
                 }
 
                 String command = " input swipe " + x1 + " " + y1Inclination + " " + x1 + " " + y2 + " 200";

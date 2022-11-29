@@ -39,11 +39,14 @@ public class QZService extends Service {
     String fileName = "";
     RandomAccessFile bufferedReader = null;
     boolean firstTime = false;
-    static String lastSpeed = "0.0";
-    static String lastInclination = "0.0";
+    static float lastSpeedFloat = 0;
+    static float lastInclinationFloat = 0;
+    static float lastResistanceFloat = 0;
+    static String lastSpeed = "";
+    static String lastInclination = "";
     String lastWattage = "";
     String lastCadence = "";
-    static String lastResistance = "0.0";
+    static String lastResistance = "";
     String lastGear = "";
 
     int counterTruncate = 0;
@@ -78,6 +81,8 @@ public class QZService extends Service {
         while ((line = is.readLine()) != null) {
             System.out.println(line);
             lastSpeed = line;
+            String[] b = line.split(" ");
+            lastSpeedFloat = Float.parseFloat(b[b.length-1]);
             sendBroadcast(line);
             return true;
         }
@@ -89,6 +94,8 @@ public class QZService extends Service {
         String line;
         while ((line = is.readLine()) != null) {
             lastInclination = line;
+            String[] b = line.split(" ");
+            lastInclinationFloat = Float.parseFloat(b[b.length-1]);
             sendBroadcast(line);
             return true;
         }
@@ -133,6 +140,8 @@ public class QZService extends Service {
         String line;
         while ((line = is.readLine()) != null) {
             lastResistance = line;
+            String[] b = line.split(" ");
+            lastResistanceFloat = Float.parseFloat(b[b.length-1]);
             sendBroadcast(line);
             return true;
         }
