@@ -39,11 +39,11 @@ public class QZService extends Service {
     String fileName = "";
     RandomAccessFile bufferedReader = null;
     boolean firstTime = false;
-    static String lastSpeed = "";
-    static String lastInclination = "";
+    static String lastSpeed = "0.0";
+    static String lastInclination = "0.0";
     String lastWattage = "";
     String lastCadence = "";
-    static String lastResistance = "";
+    static String lastResistance = "0.0";
     String lastGear = "";
 
     int counterTruncate = 0;
