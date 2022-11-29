@@ -26,10 +26,10 @@ public class UDPListenerService extends Service {
     //Boolean shouldListenForUDPBroadcast = false;
     static DatagramSocket socket;
 
-    float lastReqSpeed = 2;
-    int y1Speed = 782;      //vertical position of slider at 2.0
-    float lastReqInclination = -1;
-    int y1Inclination = 722;    //vertical position of slider at 0.0
+    static float lastReqSpeed;
+    static int y1Speed;      //vertical position of slider at 2.0
+    static float lastReqInclination = 0;
+    static int y1Inclination;    //vertical position of slider at 0.0
 
     public enum _device {
         x11i,
@@ -37,9 +37,26 @@ public class UDPListenerService extends Service {
         other
     }
 
-    static _device device;
+    private static _device device;
 
     private final ShellRuntime shellRuntime = new ShellRuntime();
+
+    public static setDevice(_device device) {
+        switch(device) {
+            case x11i:
+                lastReqSpeed = 0;
+                y1Speed = 600;      //vertical position of slider at 2.0
+                y1Inclination = 557;    //vertical position of slider at 0.0
+                break;
+            case nordictrack_2950:
+                lastReqSpeed = 2;
+                y1Speed = 807;      //vertical position of slider at 2.0
+                y1Inclination = 717;    //vertical position of slider at 0.0
+                break;
+            default:
+                break;
+        }
+    }
 
     private void listenAndWaitAndThrowIntent(InetAddress broadcastIP, Integer port) throws Exception {
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
@@ -104,7 +121,7 @@ public class UDPListenerService extends Service {
                     y2 = (int) (565.491 - (8.44 * reqInclination));
                 } else if(device == _device.nordictrack_2950) {
                     x1 = 75;     //middle of slider
-                    y1Inclination = 807 - (int)((Float.parseFloat(QZService.lastInclination) - 1) * 29.78);
+                    y1Inclination = 807 - (int)((Float.parseFloat(QZService.lastInclination) + 3) * 29.9);
                     //set speed slider to target position
                     y2 = y1Inclination - (int)((reqInclination - Float.parseFloat(QZService.lastInclination)) * 29.9);
                 }
@@ -176,18 +193,6 @@ public class UDPListenerService extends Service {
 
     @Override
     public void onCreate() {
-        device = _device.x11i;
-        if(device == _device.x11i) {
-            lastReqSpeed = -1;
-            y1Speed = 600;      //vertical position of slider at 2.0
-            lastReqInclination = -1;
-            y1Inclination = 557;    //vertical position of slider at 0.0
-        } else if(device == _device.nordictrack_2950) {
-            lastReqSpeed = -1;
-            y1Speed = 807;      //vertical position of slider at 2.0
-            lastReqInclination = -1;
-            y1Inclination = 807;    //vertical position of slider at 0.0
-        }
     }
 
     @Override

@@ -161,11 +161,11 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 RadioButton radioButton = findViewById(i);
                 if(i == R.id.x11i) {
-                    UDPListenerService.device = UDPListenerService._device.x11i;
+                    UDPListenerService.setDevice(UDPListenerService._device.x11i);
                 } else if(i == R.id.nordictrack_2950) {
-                    UDPListenerService.device = UDPListenerService._device.nordictrack_2950;
+                    UDPListenerService.setDevice(UDPListenerService._device.nordictrack_2950);
                 } else {
-                    UDPListenerService.device = UDPListenerService._device.other;
+                    UDPListenerService.setDevice(UDPListenerService._device.other);
                 }
                 SharedPreferences.Editor myEdit = sharedPreferences.edit();
                 myEdit.putInt("device", i);
