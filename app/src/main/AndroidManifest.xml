@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="org.cagnulein.qzcompanionnordictracktreadmill"  android:versionName="2.1.2" android:versionCode="23" >
+    package="org.cagnulein.qzcompanionnordictracktreadmill"  android:versionName="3.0" android:versionCode="25" >
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -21,15 +21,28 @@
         android:theme="@style/Theme.QZCompanionNordictrackTreadmill">
         <service android:name=".QZService"/>
         <service android:name=".UDPListenerService"/>
+
+        <service
+            android:name=".TcpServerService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <service android:name="com.cgutman.androidremotedebugger.service.ShellService"
+            android:enabled="true"
+            android:exported="false" >
+        </service>
+
         <receiver android:name=".AlarmReceiver" android:process=":remote" />
         <receiver android:enabled="true" android:name=".BootUpReceiver"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

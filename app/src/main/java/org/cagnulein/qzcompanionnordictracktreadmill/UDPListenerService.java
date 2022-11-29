@@ -26,12 +26,37 @@ public class UDPListenerService extends Service {
     //Boolean shouldListenForUDPBroadcast = false;
     static DatagramSocket socket;
 
-    float lastReqSpeed = 2;
-    int y1Speed = 782;      //vertical position of slider at 2.0
-    float lastReqInclination = -1;
-    int y1Inclination = 722;    //vertical position of slider at 0.0
+    static float lastReqSpeed;
+    static int y1Speed;      //vertical position of slider at 2.0
+    static float lastReqInclination = 0;
+    static int y1Inclination;    //vertical position of slider at 0.0
+
+    public enum _device {
+        x11i,
+        nordictrack_2950,
+        other
+    }
+
+    private static _device device;
 
     private final ShellRuntime shellRuntime = new ShellRuntime();
+
+    public static void setDevice(_device device) {
+        switch(device) {
+            case x11i:
+                lastReqSpeed = 0;
+                y1Speed = 600;      //vertical position of slider at 2.0
+                y1Inclination = 557;    //vertical position of slider at 0.0
+                break;
+            case nordictrack_2950:
+                lastReqSpeed = 2;
+                y1Speed = 807;      //vertical position of slider at 2.0
+                y1Inclination = 717;    //vertical position of slider at 0.0
+                break;
+            default:
+                break;
+        }
+    }
 
     private void listenAndWaitAndThrowIntent(InetAddress broadcastIP, Integer port) throws Exception {
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
@@ -52,25 +77,34 @@ public class UDPListenerService extends Service {
         String senderIP = packet.getAddress().getHostAddress();
         String message = new String(packet.getData()).trim();
 
-        Log.i(LOG_TAG, "Got UDB broadcast from " + senderIP + ", message: " + message);
+        Log.i(LOG_TAG, "Got UDP broadcast from " + senderIP + ", message: " + message);
 
-        Log.d(LOG_TAG, message);
+        Log.i(LOG_TAG, message);
         String[] amessage = message.split(";");
         if(amessage.length > 0) {
             String rSpeed = amessage[0];
             float reqSpeed = Float.parseFloat(rSpeed);
-            Log.d(LOG_TAG, "requestSpeed: " + reqSpeed);
+            Log.i(LOG_TAG, "requestSpeed: " + reqSpeed + " " + lastReqSpeed);
 
             if (reqSpeed != -1 && lastReqSpeed != reqSpeed) {
-                int x1 = 1845;     //middle of slider
-                //set speed slider to target position
-                int y2 = (int) (y1Speed - (int) ((lastReqSpeed - reqSpeed) * 29.78)); //calculate vertical pixel position for new speed
+                int x1 = 0;
+                int y2 = 0;
+                if(device == _device.x11i) {
+                    x1 = 1207;
+                    y2 = (int) (621.997 - (21.785 * reqSpeed));
+                } else if(device == _device.nordictrack_2950) {
+                    x1 = 1845;     //middle of slider
+                    y1Speed = 807 - (int)((Float.parseFloat(QZService.lastSpeed) - 1) * 29.78);
+                    //set speed slider to target position
+                    y2 = y1Speed - (int)((reqSpeed - Float.parseFloat(QZService.lastSpeed)) * 29.78);
+                }
 
                 String command = "input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
-                shellRuntime.exec(command);
-                Log.d(LOG_TAG, command);
+                MainActivity.sendCommand(command);
+                Log.i(LOG_TAG, command);
 
-                y1Speed = y2;  //set new vertical position of speed slider
+                if(device == _device.x11i)
+                    y1Speed = y2;  //set new vertical position of speed slider
                 lastReqSpeed = reqSpeed;
             }
         }
@@ -78,17 +112,26 @@ public class UDPListenerService extends Service {
         if(amessage.length > 1) {
             String rInclination = amessage[1];
             float reqInclination = Float.parseFloat(rInclination);
-            Log.d(LOG_TAG, "requestInclination: " + reqInclination);
+            Log.i(LOG_TAG, "requestInclination: " + reqInclination + " " + lastReqInclination);
             if(reqInclination != -100 && lastReqInclination != reqInclination) {
-                int x1 = 75;     //middle of slider
-                y1Inclination = 722;    //vertical position of slider at 0.0
-                int y2 = y1Inclination - (int)((lastReqInclination - reqInclination) * 29.9);  //calculate vertical pixel position for new incline
+                int x1 = 0;
+                int y2 = 0;
+                if(device == _device.x11i) {
+                    x1 = 75;
+                    y2 = (int) (565.491 - (8.44 * reqInclination));
+                } else if(device == _device.nordictrack_2950) {
+                    x1 = 75;     //middle of slider
+                    y1Inclination = 807 - (int)((Float.parseFloat(QZService.lastInclination) + 3) * 29.9);
+                    //set speed slider to target position
+                    y2 = y1Inclination - (int)((reqInclination - Float.parseFloat(QZService.lastInclination)) * 29.9);
+                }
 
-                String command = " input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
-                shellRuntime.exec(command);
-                Log.d(LOG_TAG, command);
+                String command = " input swipe " + x1 + " " + y1Inclination + " " + x1 + " " + y2 + " 200";
+                MainActivity.sendCommand(command);
+                Log.i(LOG_TAG, command);
 
-                y1Inclination = y2;  //set new vertical position of speed slider
+                if(device == _device.x11i)
+                    y1Inclination = y2;  //set new vertical position of speed slider
                 lastReqInclination = reqInclination;
             }
         }
