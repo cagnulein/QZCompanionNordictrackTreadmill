@@ -41,8 +41,8 @@ public class UDPListenerService extends Service {
 
     private final ShellRuntime shellRuntime = new ShellRuntime();
 
-    public static void setDevice(_device device) {
-        switch(device) {
+    public static void setDevice(_device dev) {
+        switch(dev) {
             case x11i:
                 lastReqSpeed = 0;
                 y1Speed = 600;      //vertical position of slider at 2.0
@@ -56,6 +56,7 @@ public class UDPListenerService extends Service {
             default:
                 break;
         }
+        device = dev;
     }
 
     private void listenAndWaitAndThrowIntent(InetAddress broadcastIP, Integer port) throws Exception {
