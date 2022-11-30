@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.Calendar;
 
 import android.app.Service;
 import android.content.Context;
@@ -30,6 +31,8 @@ public class UDPListenerService extends Service {
     static int y1Speed;      //vertical position of slider at 2.0
     static float lastReqInclination = 0;
     static int y1Inclination;    //vertical position of slider at 0.0
+
+    static long lastSwipeMs = 0;
 
     public enum _device {
         x11i,
@@ -82,9 +85,10 @@ public class UDPListenerService extends Service {
 
         Log.i(LOG_TAG, message);
         String[] amessage = message.split(";");
-        if(amessage.length > 0) {
+        if(amessage.length > 0 && lastSwipeMs + 1000 < Calendar.getInstance().getTimeInMillis()) {
             String rSpeed = amessage[0];
-            float reqSpeed = Float.parseFloat(rSpeed);
+            double reqSpeed = Double.parseDouble(rSpeed);
+            reqSpeed = Math.round((reqSpeed) * 10) / 10.0;
             Log.i(LOG_TAG, "requestSpeed: " + reqSpeed + " " + lastReqSpeed);
 
             if (reqSpeed != -1 && lastReqSpeed != reqSpeed) {
@@ -107,10 +111,11 @@ public class UDPListenerService extends Service {
                 if(device == _device.x11i)
                     y1Speed = y2;  //set new vertical position of speed slider
                 lastReqSpeed = reqSpeed;
+                lastSwipeMs = Calendar.getInstance().getTimeInMillis();
             }
         }
 
-        if(amessage.length > 1) {
+        if(amessage.length > 1 && lastSwipeMs + 1000 < Calendar.getInstance().getTimeInMillis()) {
             String rInclination = amessage[1];
             float reqInclination = Float.parseFloat(rInclination);
             Log.i(LOG_TAG, "requestInclination: " + reqInclination + " " + lastReqInclination);
@@ -134,6 +139,7 @@ public class UDPListenerService extends Service {
                 if(device == _device.x11i)
                     y1Inclination = y2;  //set new vertical position of speed slider
                 lastReqInclination = reqInclination;
+                lastSwipeMs = Calendar.getInstance().getTimeInMillis();
             }
         }
 
