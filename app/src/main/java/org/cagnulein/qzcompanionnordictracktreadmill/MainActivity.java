@@ -18,6 +18,8 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -177,6 +179,16 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         RadioButton radioButton;
         radioButton = findViewById(device);
         radioButton.setChecked(true);
+
+        Button dumplog = findViewById(R.id.dumplog);
+        dumplog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String command = "adb logcat -d > /sdcard/logcat.log";
+                MainActivity.sendCommand(command);
+                Log.i(LOG_TAG, command);
+            }
+        });
 
         /*
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
