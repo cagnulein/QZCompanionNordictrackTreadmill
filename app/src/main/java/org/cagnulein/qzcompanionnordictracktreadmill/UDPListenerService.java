@@ -33,6 +33,8 @@ public class UDPListenerService extends Service {
     static int y1Inclination;    //vertical position of slider at 0.0
 
     static long lastSwipeMs = 0;
+    static double reqCachedSpeed = -1;
+    static float reqCachcedInclination = -1;
 
     public enum _device {
         x11i,
@@ -85,37 +87,45 @@ public class UDPListenerService extends Service {
 
         Log.i(LOG_TAG, message);
         String[] amessage = message.split(";");
-        if(amessage.length > 0 && lastSwipeMs + 1000 < Calendar.getInstance().getTimeInMillis()) {
+        if(amessage.length > 0) {
             String rSpeed = amessage[0];
             double reqSpeed = Double.parseDouble(rSpeed);
             reqSpeed = Math.round((reqSpeed) * 10) / 10.0;
             Log.i(LOG_TAG, "requestSpeed: " + reqSpeed + " " + lastReqSpeed);
 
-            if (reqSpeed != -1 && lastReqSpeed != reqSpeed) {
-                int x1 = 0;
-                int y2 = 0;
-                if(device == _device.x11i) {
-                    x1 = 1207;
-                    y2 = (int) (621.997 - (21.785 * reqSpeed));
-                } else if(device == _device.nordictrack_2950) {
-                    x1 = 1845;     //middle of slider
-                    y1Speed = 807 - (int)((QZService.lastSpeedFloat - 1) * 29.78);
-                    //set speed slider to target position
-                    y2 = y1Speed - (int)((reqSpeed - QZService.lastSpeedFloat) * 29.78);
+            if( lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) {
+                if (reqSpeed != -1 && lastReqSpeed != reqSpeed || reqCachedSpeed != -1) {
+                    if(reqCachedSpeed != -1) {
+                        reqSpeed = reqCachedSpeed;
+                    }
+                    int x1 = 0;
+                    int y2 = 0;
+                    if (device == _device.x11i) {
+                        x1 = 1207;
+                        y2 = (int) (621.997 - (21.785 * reqSpeed));
+                    } else if (device == _device.nordictrack_2950) {
+                        x1 = 1845;     //middle of slider
+                        y1Speed = 807 - (int) ((QZService.lastSpeedFloat - 1) * 29.78);
+                        //set speed slider to target position
+                        y2 = y1Speed - (int) ((reqSpeed - QZService.lastSpeedFloat) * 29.78);
+                    }
+
+                    String command = "input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
+                    MainActivity.sendCommand(command);
+                    Log.i(LOG_TAG, command);
+
+                    if (device == _device.x11i)
+                        y1Speed = y2;  //set new vertical position of speed slider
+                    lastReqSpeed = reqSpeed;
+                    lastSwipeMs = Calendar.getInstance().getTimeInMillis();
+                    reqCachedSpeed = -1;
                 }
-
-                String command = "input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
-                MainActivity.sendCommand(command);
-                Log.i(LOG_TAG, command);
-
-                if(device == _device.x11i)
-                    y1Speed = y2;  //set new vertical position of speed slider
-                lastReqSpeed = reqSpeed;
-                lastSwipeMs = Calendar.getInstance().getTimeInMillis();
+            } else {
+                reqCachedSpeed = reqSpeed;
             }
         }
 
-        if(amessage.length > 1 && lastSwipeMs + 1000 < Calendar.getInstance().getTimeInMillis()) {
+        if(amessage.length > 1 && lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) {
             String rInclination = amessage[1];
             float reqInclination = Float.parseFloat(rInclination);
             Log.i(LOG_TAG, "requestInclination: " + reqInclination + " " + lastReqInclination);

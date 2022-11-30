@@ -178,13 +178,14 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         int device = sharedPreferences.getInt("device", R.id.other);
         RadioButton radioButton;
         radioButton = findViewById(device);
-        radioButton.setChecked(true);
+        if(radioButton != null)
+            radioButton.setChecked(true);
 
         Button dumplog = findViewById(R.id.dumplog);
         dumplog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String command = "adb logcat -d > /sdcard/logcat.log";
+                String command = "logcat -d > /sdcard/logcat.log";
                 MainActivity.sendCommand(command);
                 Log.i(LOG_TAG, command);
             }
