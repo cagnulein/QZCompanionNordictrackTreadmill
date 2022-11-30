@@ -27,7 +27,7 @@ public class UDPListenerService extends Service {
     //Boolean shouldListenForUDPBroadcast = false;
     static DatagramSocket socket;
 
-    static float lastReqSpeed;
+    static double lastReqSpeed;
     static int y1Speed;      //vertical position of slider at 2.0
     static float lastReqInclination = 0;
     static int y1Inclination;    //vertical position of slider at 0.0
