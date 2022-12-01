@@ -29,7 +29,7 @@ public class UDPListenerService extends Service {
 
     static double lastReqSpeed;
     static int y1Speed;      //vertical position of slider at 2.0
-    static float lastReqInclination = 0;
+    static double lastReqInclination = 0;
     static int y1Inclination;    //vertical position of slider at 0.0
 
     static long lastSwipeMs = 0;
@@ -136,7 +136,7 @@ public class UDPListenerService extends Service {
 
         if(amessage.length > 1 && lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) {
             String rInclination = amessage[1];
-            float reqInclination = roundToHalf(Float.parseFloat(rInclination));
+            double reqInclination = roundToHalf(Double.parseDouble(rInclination));
             Log.i(LOG_TAG, "requestInclination: " + reqInclination + " " + lastReqInclination);
             if(reqInclination != -100 && lastReqInclination != reqInclination) {
                 int x1 = 0;
