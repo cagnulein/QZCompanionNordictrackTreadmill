@@ -136,7 +136,7 @@ public class UDPListenerService extends Service {
 
         if(amessage.length > 1 && lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) {
             String rInclination = amessage[1];
-            float reqInclination = Float.parseFloat(rInclination);
+            float reqInclination = roundToHalf(Float.parseFloat(rInclination));
             Log.i(LOG_TAG, "requestInclination: " + reqInclination + " " + lastReqInclination);
             if(reqInclination != -100 && lastReqInclination != reqInclination) {
                 int x1 = 0;
@@ -167,6 +167,10 @@ public class UDPListenerService extends Service {
 
         broadcastIntent(senderIP, message);
         socket.close();
+    }
+
+    private double roundToHalf(double d) {
+        return Math.round(d * 2) / 2.0;
     }
 
     private void broadcastIntent(String senderIP, String message) {
