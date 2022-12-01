@@ -39,7 +39,8 @@ public class UDPListenerService extends Service {
     public enum _device {
         x11i,
         nordictrack_2950,
-        other
+        other,
+        proform_2000
     }
 
     private static _device device;
@@ -57,6 +58,11 @@ public class UDPListenerService extends Service {
                 lastReqSpeed = 2;
                 y1Speed = 807;      //vertical position of slider at 2.0
                 y1Inclination = 717;    //vertical position of slider at 0.0
+                break;
+            case proform_2000:
+                lastReqSpeed = 1;
+                y1Speed = 598;      //vertical position of slider at 2.0
+                y1Inclination = 522;    //vertical position of slider at 0.0
                 break;
             default:
                 break;
@@ -108,13 +114,16 @@ public class UDPListenerService extends Service {
                         y1Speed = 807 - (int) ((QZService.lastSpeedFloat - 1) * 29.78);
                         //set speed slider to target position
                         y2 = y1Speed - (int) ((reqSpeed - QZService.lastSpeedFloat) * 29.78);
+                    } else if (device == _device.proform_2000) {
+                        x1 = 1195;     //middle of slider
+                        y2 = (int)((-20.665 * reqSpeed) + 648.06);
                     }
 
                     String command = "input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
                     MainActivity.sendCommand(command);
                     Log.i(LOG_TAG, command);
 
-                    if (device == _device.x11i)
+                    if (device == _device.x11i || device == _device.proform_2000)
                         y1Speed = y2;  //set new vertical position of speed slider
                     lastReqSpeed = reqSpeed;
                     lastSwipeMs = Calendar.getInstance().getTimeInMillis();
@@ -140,13 +149,16 @@ public class UDPListenerService extends Service {
                     y1Inclination = 807 - (int)((QZService.lastInclinationFloat + 3) * 29.9);
                     //set speed slider to target position
                     y2 = y1Inclination - (int)((reqInclination - QZService.lastInclinationFloat) * 29.9);
+                } else if(device == _device.proform_2000) {
+                    x1 = 79;
+                    y2 = (int) ((-21.804 * reqInclination) + 520.11);
                 }
 
                 String command = " input swipe " + x1 + " " + y1Inclination + " " + x1 + " " + y2 + " 200";
                 MainActivity.sendCommand(command);
                 Log.i(LOG_TAG, command);
 
-                if(device == _device.x11i)
+                if(device == _device.x11i || device == device.proform_2000)
                     y1Inclination = y2;  //set new vertical position of speed slider
                 lastReqInclination = reqInclination;
                 lastSwipeMs = Calendar.getInstance().getTimeInMillis();

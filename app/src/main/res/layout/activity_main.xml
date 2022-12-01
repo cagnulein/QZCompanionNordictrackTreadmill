@@ -34,6 +34,12 @@
                 android:text="Nordictrack 2950 Treadmill" />
 
             <RadioButton
+                android:id="@+id/proform_2000"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Proform 2000 Treadmill" />
+
+            <RadioButton
                 android:id="@+id/other"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
