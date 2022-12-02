@@ -60,7 +60,7 @@ public class UDPListenerService extends Service {
                 y1Inclination = 717;    //vertical position of slider at 0.0
                 break;
             case proform_2000:
-                lastReqSpeed = 1;
+                lastReqSpeed = 2;
                 y1Speed = 598;      //vertical position of slider at 2.0
                 y1Inclination = 522;    //vertical position of slider at 0.0
                 break;
@@ -115,8 +115,8 @@ public class UDPListenerService extends Service {
                         //set speed slider to target position
                         y2 = y1Speed - (int) ((reqSpeed - QZService.lastSpeedFloat) * 29.78);
                     } else if (device == _device.proform_2000) {
-                        x1 = 1195;     //middle of slider
-                        y2 = (int)((-20.665 * reqSpeed) + 648.06);
+                        x1 = 1205;     //middle of slider
+                        y2 = (int)((-19.921 * reqSpeed) + 631.03);
                     }
 
                     String command = "input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
