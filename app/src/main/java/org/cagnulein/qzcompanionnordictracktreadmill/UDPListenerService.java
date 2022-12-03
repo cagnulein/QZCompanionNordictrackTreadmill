@@ -70,7 +70,7 @@ public class UDPListenerService extends Service {
                 break;
             case s22i:
                 lastReqResistance = 0;
-                y1Resistance = 598;      //vertical position of slider at 2.0
+                y1Resistance = 618;
                 break;
             default:
                 break;
@@ -117,7 +117,7 @@ public class UDPListenerService extends Service {
                         int y2 = 0;
                         if (device == _device.s22i) {
                             x1 = 75;
-                            y2 = (int) (621.997 - (21.785 * reqResistance));
+                            y2 = (int) (616.18 - (17.223 * reqResistance));
                         }
 
                         String command = "input swipe " + x1 + " " + y1Resistance + " " + x1 + " " + y2 + " 200";
