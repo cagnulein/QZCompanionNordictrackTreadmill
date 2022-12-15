@@ -46,6 +46,12 @@
                 android:text="S22i Bike" />
 
             <RadioButton
+                android:id="@+id/tdf10"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tour De France 10.0 Bike" />
+
+            <RadioButton
                 android:id="@+id/other"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

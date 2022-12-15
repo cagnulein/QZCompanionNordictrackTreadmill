@@ -45,6 +45,7 @@ public class UDPListenerService extends Service {
         other,
         proform_2000,
         s22i,
+		tdf10,
     }
 
     private static _device device;
@@ -72,6 +73,10 @@ public class UDPListenerService extends Service {
                 lastReqResistance = 0;
                 y1Resistance = 618;
                 break;
+            case tdf10:
+                lastReqResistance = 1;
+                y1Resistance = 604;
+                break;				
             default:
                 break;
         }
@@ -101,7 +106,7 @@ public class UDPListenerService extends Service {
 
         Log.i(LOG_TAG, message);
         String[] amessage = message.split(";");
-        if(device == _device.s22i) {
+        if(device == _device.s22i || device == _device.tdf10) {
             if (amessage.length > 0) {
                 String rResistance = amessage[0];
                 double reqResistance = Double.parseDouble(rResistance);
@@ -118,13 +123,16 @@ public class UDPListenerService extends Service {
                         if (device == _device.s22i) {
                             x1 = 75;
                             y2 = (int) (616.18 - (17.223 * reqResistance));
-                        }
+                        } else if (device == _device.tdf10) {
+							x1 = 1205;
+                            y2 = (int) (623.26 - (19.263 * reqResistance));
+						}
 
                         String command = "input swipe " + x1 + " " + y1Resistance + " " + x1 + " " + y2 + " 200";
                         MainActivity.sendCommand(command);
                         Log.i(LOG_TAG, command);
 
-                        if (device == _device.s22i)
+                        if (device == _device.s22i || device == _device.tdf10)
                             y1Speed = y2;  //set new vertical position of speed slider
                         lastReqResistance = reqResistance;
                         lastSwipeMs = Calendar.getInstance().getTimeInMillis();
