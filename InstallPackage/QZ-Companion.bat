@@ -1,6 +1,6 @@
 :: QZ-Companion App Installer
 :: Author: Al Udell
-:: Updated: August 11, 2022
+:: Revised: December 15, 2022
 :: QZ on Facebook - https://www.facebook.com/groups/149984563348738
 
 @echo off
@@ -87,11 +87,10 @@ echo. >> QZ-Companion-log.txt
 adb shell monkey -p com.ifit.standalone 1 >> QZ-Companion-log.txt 2>&1
 timeout 5
 
-:: save ADB log
-adb logcat -d > logcat.txt
-
-:: save dumpsys package log
-adb shell dumpsys package org.cagnulein.qzcompanionnordictracktreadmill > dumpsys.log
+:: save debug files
+adb push .wolfDev /sdcard >nul 2>&1
+adb shell dumpsys package org.cagnulein.qzcompanionnordictracktreadmill > dumpsys.log 2>&1
+adb logcat -d > logcat.txt 2>&1
 
 echo. | tee -a QZ-Companion-log.txt
 pause > nul | set/p = QZ Companion is installed. Press any key to reboot treadmill . . .
