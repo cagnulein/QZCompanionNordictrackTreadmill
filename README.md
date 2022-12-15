@@ -7,13 +7,13 @@ Reference: https://github.com/cagnulein/qdomyos-zwift/issues/815
 
 Authors: Al Udell and Roberto Viola
 
-Updated: November 9, 2022
+Updated: December 15, 2022
 
 QZ and QZ Companion software development: Roberto Viola
 
 QZ on Facebook - <https://www.facebook.com/groups/149984563348738>
 
-**Technical Overview:** The new QZ Companion app, when installed on your
+**Technical Overview:** The QZ Companion app, when installed on your
 treadmill, communicates live speed and inclination to the QZ app
 running on another device (e.g. Windows PC or laptop, Android phone or
 tablet, or iOS iPhone or iPad). QZ then communicates this information to
@@ -22,6 +22,15 @@ phone or tablet, or iOS iPhone or iPad). A 2nd device could be used to
 run both QZ and Zwift, eliminating the need for a 3rd device, as long
 as QZ runs in the background while Zwift runs in the foreground. This only
 works consistently on Windows and iOS, but not Android.
+
+**New Feature:** QZ Companion now works with QZ to control the incline of your treadmill (auto-incline),
+and speed as well (auto-speed). For example, you can choose to have Zwift control your
+treadmill incline as you travel over the vurtual world terrain. Or, you can choose to load
+a GPX file in QZ and have the treadmill incline follow the GPX file.
+
+**New Feature:** We have just started implementing support for iFit-enabled/iFit-embedded
+NordicTrack or Pro-Form bikes with built-in Android tablet. We will update this document as
+bike models are tested and confirmed to work.
 
 **About QZ Companion**:
 
