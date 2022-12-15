@@ -28,14 +28,29 @@ and speed as well (auto-speed). For example, you can choose to have Zwift contro
 treadmill incline as you travel over the vurtual world terrain. Or, you can choose to load
 a GPX file in QZ and have the treadmill incline follow the GPX file.
 
-**New Feature:** We have just started implementing support for iFit-enabled/iFit-embedded
+**New Feature:** We have just started implementing QZ Companion support for iFit-enabled/iFit-embedded
 NordicTrack or Pro-Form bikes with built-in Android tablet. We will update this document as
 bike models are tested and confirmed to work.
+
+**Disclaimer**: We have only tested this solution on a
+few models of NordicTrack treadmills and bikes including the NordicTrack Commercial 2950 (2021 model) treadmill with a built-in 22"
+touchscreen. However, it should work on any iFit-enabled/iFit-embedded
+NordicTrack or Pro-Form treadmill with built-in Android tablet. Refer to
+<https://www.ifit.com/equipment/treadmills> for more details.
+
+**Important**: Please let us know if you get QZ Companion to work on your treadmill or bike so we can
+compile a list of compatible machines.
+
+![A picture containing sport, exercise device Description automatically
+generated](media/image1.jpg)
+
+NordicTrack Commercial 2950 (2021 model)
 
 **About QZ Companion**:
 
 -   This solution works on iFit-enabled/iFit-embedded treadmills. It
-    transmits speed and inclination directly to Zwift.
+    transmits speed and inclination directly to Zwift. Also, auto-inclination and speed
+    control works on some models of NordicTrack and ProForm treadmills.
 
 -   The QZ Companion app always runs in the background on your
     treadmill, using minimal memory and CPU.
@@ -59,20 +74,6 @@ bike models are tested and confirmed to work.
 
 -   Wahoo Direct Connect (DIRCON) protocol was recently added to QZ in order to bypass Bluetooth connection drop-outs that are common during a bike or running race (Wifi and Ethernet is considerably more stable than Bluetooth).
 
-**Disclaimer**: I have only tested this solution on a
-NordicTrack Commercial 2950 (2021 model) treadmill with a built-in 22"
-touchscreen. However, it should work on any iFit-enabled/iFit-embedded
-NordicTrack or Pro-Form treadmill with built-in Android tablet. Refer to
-<https://www.ifit.com/equipment/treadmills> for more details.
-
-**Important**: Please let us know if you get this to work on your treadmill so we can
-compile a list of compatible machines.
-
-![A picture containing sport, exercise device Description automatically
-generated](media/image1.jpg)
-
-NordicTrack Commercial 2950 (2021 model)
-
 **About iFit**: To workout in Zwift, you will need to logon to iFit on
 your treadmill in order to use manual mode. However, you do not need an
 iFit subscription to use the treadmills manual mode.
@@ -80,6 +81,9 @@ iFit subscription to use the treadmills manual mode.
 **Installation Instructions:** 
 
 QZ Companion can be installed in one of two ways. Both methods make no changes to the underlying Android or iFit structure and can be easily removed via an uninstall script or by doing a treadmill factory reset.
+
+**Note:** The first install method is strongly recommended if you can get an ADB connection established between a Windows PC 
+and your treadmill. The second method is provided for those who cannot get an ADB connection established, but is harder to troubleshoot if you encounter problems.
 
 If you have USB debugging mode enabled
 and know your treadmills IP, you can skip to step 4.
