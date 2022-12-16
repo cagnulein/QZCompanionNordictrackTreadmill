@@ -20,26 +20,25 @@ tablet, or iOS iPhone or iPad). QZ then communicates this information to
 Zwift running on a 3rd device (e.g. Windows PC or laptop, Android
 phone or tablet, or iOS iPhone or iPad). A 2nd device could be used to
 run both QZ and Zwift, eliminating the need for a 3rd device, as long
-as QZ runs in the background while Zwift runs in the foreground. This only
-works consistently on Windows and iOS, but not Android.
+as QZ runs in the background while Zwift runs in the foreground.
 
 **New Feature:** QZ Companion now works with QZ to control the incline of your treadmill (auto-incline),
 and speed as well (auto-speed). For example, you can choose to have Zwift control your
-treadmill incline as you travel over the vurtual world terrain. Or, you can choose to load
-a GPX file in QZ and have the treadmill incline follow the GPX file.
+treadmill incline as you run or bike over Zwift virtual terrain; or, you can choose to load
+a GPX file in QZ and have the treadmill follow the incline recorded in the file.
 
-**New Feature:** We have just started implementing QZ Companion support for iFit-enabled/iFit-embedded
-NordicTrack or Pro-Form bikes with built-in Android tablet. We will update this document as
-bike models are tested and confirmed to work.
+**New Feature:** We are adding QZ Companion support for more iFit-enabled/iFit-embedded
+NordicTrack or Pro-Form treadmills and bikes with built-in Android tablet and will update this document as
+models are tested and confirmed to work.
 
-**Disclaimer**: We have only tested this solution on a
-few models of NordicTrack treadmills and bikes including the NordicTrack Commercial 2950 (2021 model) treadmill with a built-in 22"
+**Disclaimer**: We have tested this solution on a
+few models of NordicTrack treadmills and bikes starting with the NordicTrack Commercial 2950 (2021 model) treadmill with a built-in 22"
 touchscreen. However, it should work on any iFit-enabled/iFit-embedded
 NordicTrack or Pro-Form treadmill with built-in Android tablet. Refer to
-<https://www.ifit.com/equipment/treadmills> for more details.
+<https://www.ifit.com/equipment/treadmills> and <https://www.ifit.com/equipment/bikes> for available models.
 
 **Important**: Please let us know if you get QZ Companion to work on your treadmill or bike so we can
-compile a list of compatible machines.
+add it to the list of compatible machines.
 
 ![A picture containing sport, exercise device Description automatically
 generated](media/image1.jpg)
