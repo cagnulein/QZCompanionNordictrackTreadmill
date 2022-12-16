@@ -27,15 +27,13 @@ and speed as well (auto-speed). For example, you can choose to have Zwift contro
 treadmill incline as you run or bike through virtual worlds; or, you can choose to load
 a GPX file in QZ and have the treadmill follow the incline recorded in the file.
 
-**New Feature:** We are adding QZ Companion support for more iFit-enabled/iFit-embedded
-NordicTrack or Pro-Form treadmills and bikes with built-in Android tablet and will update this document as
-models are tested and confirmed to work.
-
 **Disclaimer**: We have tested this solution on a
 few models of NordicTrack treadmills and bikes starting with the NordicTrack Commercial 2950 (2021 model) treadmill with a built-in 22"
 touchscreen. However, it should work on any iFit-enabled/iFit-embedded
 NordicTrack or Pro-Form treadmill with built-in Android tablet. Refer to
-<https://www.ifit.com/equipment/treadmills> and <https://www.ifit.com/equipment/bikes> for available models.
+<https://www.ifit.com/equipment/treadmills> and <https://www.ifit.com/equipment/bikes> for available models. We are adding QZ Companion support for more iFit-enabled/iFit-embedded
+NordicTrack or Pro-Form treadmills and bikes and will update this document as
+models are tested and confirmed to work.
 
 **Important**: Please let us know if you get QZ Companion to work on your treadmill or bike so we can
 add it to the list of compatible machines.
