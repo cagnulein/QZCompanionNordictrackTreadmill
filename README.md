@@ -24,7 +24,7 @@ as QZ runs in the background while Zwift runs in the foreground.
 
 **New Feature:** QZ Companion now works with QZ to control the incline of your treadmill (auto-incline),
 and speed as well (auto-speed). For example, you can choose to have Zwift control your
-treadmill incline as you run or bike over Zwift virtual terrain; or, you can choose to load
+treadmill incline as you run or bike through virtual worlds; or, you can choose to load
 a GPX file in QZ and have the treadmill follow the incline recorded in the file.
 
 **New Feature:** We are adding QZ Companion support for more iFit-enabled/iFit-embedded
