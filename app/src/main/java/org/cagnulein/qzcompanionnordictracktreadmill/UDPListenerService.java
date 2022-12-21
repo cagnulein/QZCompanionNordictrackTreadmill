@@ -125,7 +125,7 @@ public class UDPListenerService extends Service {
                             y2 = (int) (616.18 - (17.223 * reqResistance));
                         } else if (device == _device.tdf10) {
 							x1 = 1205;
-                            y2 = (int) (623.26 - (19.263 * reqResistance));
+                            y2 = (int) (619.91 - (15.913 * reqResistance));
 						}
 
                         String command = "input swipe " + x1 + " " + y1Resistance + " " + x1 + " " + y2 + " 200";
