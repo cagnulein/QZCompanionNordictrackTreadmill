@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         dumplog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String command = "logcat -d > /sdcard/logcat.log";
+                String command = "logcat -b all -d > /sdcard/logcat.log";
                 MainActivity.sendCommand(command);
                 Log.i(LOG_TAG, command);
             }
