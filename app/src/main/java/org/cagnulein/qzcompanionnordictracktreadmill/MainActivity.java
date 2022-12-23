@@ -164,6 +164,8 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                 RadioButton radioButton = findViewById(i);
                 if(i == R.id.x11i) {
                     UDPListenerService.setDevice(UDPListenerService._device.x11i);
+				} else if(i == R.id.t85s) {
+                    UDPListenerService.setDevice(UDPListenerService._device.t85s);					
                 } else if(i == R.id.nordictrack_2950) {
                     UDPListenerService.setDevice(UDPListenerService._device.nordictrack_2950);
                 } else if(i == R.id.proform_2000) {
