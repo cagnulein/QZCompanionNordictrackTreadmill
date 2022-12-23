@@ -165,7 +165,7 @@ public class UDPListenerService extends Service {
                         if (device == _device.x11i) {
                             x1 = 1207;
                             y2 = (int) (621.997 - (21.785 * reqSpeed));
-						else if (device == _device.t85s) {
+						} else if (device == _device.t85s) {
                             x1 = 1207;
                             y2 = (int) (629.81 - (20.81 * reqSpeed));	
                         } else if (device == _device.nordictrack_2950) {
@@ -203,7 +203,7 @@ public class UDPListenerService extends Service {
                     if (device == _device.x11i) {
                         x1 = 75;
                         y2 = (int) (565.491 - (8.44 * reqInclination));
-					else if (device == _device.t85s) {
+					} else if (device == _device.t85s) {
                         x1 = 75;
                         y2 = (int) (609 - (36.417 * reqInclination));	
                     } else if (device == _device.nordictrack_2950) {
