@@ -144,7 +144,7 @@ public class UDPListenerService extends Service {
                         Log.i(LOG_TAG, command);
 
                         if (device == _device.s22i || device == _device.tdf10)
-                            y1Speed = y2;  //set new vertical position of speed slider
+                            y1Resistance = y2;  //set new vertical position of speed slider
                         lastReqResistance = reqResistance;
                         lastSwipeMs = Calendar.getInstance().getTimeInMillis();
                         reqCachedResistance = -1;
