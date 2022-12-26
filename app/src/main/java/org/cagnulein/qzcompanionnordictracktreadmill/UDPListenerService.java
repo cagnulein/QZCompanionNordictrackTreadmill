@@ -47,6 +47,7 @@ public class UDPListenerService extends Service {
         s22i,
 		tdf10,
 		t85s,
+        s40,
     }
 
     private static _device device;
@@ -82,6 +83,10 @@ public class UDPListenerService extends Service {
                 lastReqSpeed = 0;
                 y1Speed = 609;      //vertical position of slider at 2.0
                 y1Inclination = 609;    //vertical position of slider at 0.0
+            case s40:
+                lastReqSpeed = 2;
+                y1Speed = 482;      //vertical position of slider at 2.0
+                y1Inclination = 490;    //vertical position of slider at 0.0
                 break;				
             default:
                 break;
@@ -167,7 +172,10 @@ public class UDPListenerService extends Service {
                             y2 = (int) (621.997 - (21.785 * reqSpeed));
 						} else if (device == _device.t85s) {
                             x1 = 1207;
-                            y2 = (int) (629.81 - (20.81 * reqSpeed));	
+                            y2 = (int) (629.81 - (20.81 * reqSpeed));
+                        } else if (device == _device.s40) {
+                            x1 = 949;
+                            y2 = (int) (507 - (12.5 * reqSpeed));
                         } else if (device == _device.nordictrack_2950) {
                             x1 = 1845;     //middle of slider
                             y1Speed = 807 - (int) ((QZService.lastSpeedFloat - 1) * 29.78);
@@ -182,7 +190,7 @@ public class UDPListenerService extends Service {
                         MainActivity.sendCommand(command);
                         Log.i(LOG_TAG, command);
 
-                        if (device == _device.x11i || device == _device.proform_2000 || device == _device.t85s)
+                        if (device == _device.x11i || device == _device.proform_2000 || device == _device.t85s || device == _device.s40)
                             y1Speed = y2;  //set new vertical position of speed slider
                         lastReqSpeed = reqSpeed;
                         lastSwipeMs = Calendar.getInstance().getTimeInMillis();
@@ -205,7 +213,10 @@ public class UDPListenerService extends Service {
                         y2 = (int) (565.491 - (8.44 * reqInclination));
 					} else if (device == _device.t85s) {
                         x1 = 75;
-                        y2 = (int) (609 - (36.417 * reqInclination));	
+                        y2 = (int) (609 - (36.417 * reqInclination));
+                    } else if (device == _device.s40) {
+                        x1 = 75;
+                        y2 = (int) (490 - (21.4 * reqInclination));
                     } else if (device == _device.nordictrack_2950) {
                         x1 = 75;     //middle of slider
                         y1Inclination = 807 - (int) ((QZService.lastInclinationFloat + 3) * 29.9);
@@ -220,7 +231,7 @@ public class UDPListenerService extends Service {
                     MainActivity.sendCommand(command);
                     Log.i(LOG_TAG, command);
 
-                    if (device == _device.x11i || device == device.proform_2000|| device == device.t85s)
+                    if (device == _device.x11i || device == device.proform_2000 || device == device.t85s || device == device.s40)
                         y1Inclination = y2;  //set new vertical position of speed slider
                     lastReqInclination = reqInclination;
                     lastSwipeMs = Calendar.getInstance().getTimeInMillis();

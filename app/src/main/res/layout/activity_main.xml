@@ -34,6 +34,12 @@
                 android:text="T8.5s Treadmill" />
 
             <RadioButton
+                android:id="@+id/s40"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="S40 Treadmill" />
+
+            <RadioButton
                 android:id="@+id/nordictrack_2950"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
