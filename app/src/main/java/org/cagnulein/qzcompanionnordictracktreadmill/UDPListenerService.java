@@ -91,8 +91,8 @@ public class UDPListenerService extends Service {
                 break;
             case exp7i:
                 lastReqSpeed = 0.5;
-                y1Speed = 428;      //vertical position of slider at 2.0
-                y1Inclination = 428;    //vertical position of slider at 0.0
+                y1Speed = 442;      //vertical position of slider at 2.0
+                y1Inclination = 442;    //vertical position of slider at 0.0
                 break;
             default:
                 break;
@@ -184,7 +184,7 @@ public class UDPListenerService extends Service {
                             y2 = (int) (507 - (12.5 * reqSpeed));
                         } else if (device == _device.exp7i) {
                             x1 = 950;
-                            y2 = (int) (423.24 - (19.254 * reqSpeed));
+                            y2 = (int) (453.014 - (22.702 * reqSpeed));
                         } else if (device == _device.nordictrack_2950) {
                             x1 = 1845;     //middle of slider
                             y1Speed = 807 - (int) ((QZService.lastSpeedFloat - 1) * 29.78);
@@ -228,7 +228,7 @@ public class UDPListenerService extends Service {
                         y2 = (int) (490 - (21.4 * reqInclination));
                     } else if (device == _device.exp7i) {
                         x1 = 74;
-                        y2 = (int) (429.7846 - (19.63 * reqInclination));
+                        y2 = (int) (441.813 - (21.802 * reqInclination));
                     } else if (device == _device.nordictrack_2950) {
                         x1 = 75;     //middle of slider
                         y1Inclination = 807 - (int) ((QZService.lastInclinationFloat + 3) * 29.9);
