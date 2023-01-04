@@ -164,6 +164,9 @@ public class UDPListenerService extends Service {
                 String rSpeed = amessage[0];
                 double reqSpeed = Double.parseDouble(rSpeed);
                 reqSpeed = Math.round((reqSpeed) * 10) / 10.0;
+                if(device == _device.exp7i) {
+                    reqSpeed = reqSpeed * 0.621371; // km to miles
+                }
                 Log.i(LOG_TAG, "requestSpeed: " + reqSpeed + " " + lastReqSpeed);
 
                 if (lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) {
