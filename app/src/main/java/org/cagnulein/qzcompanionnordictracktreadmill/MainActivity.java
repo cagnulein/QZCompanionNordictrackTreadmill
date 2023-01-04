@@ -213,44 +213,43 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         AlarmReceiver alarm = new AlarmReceiver();
         alarm.setAlarm(this);
 
-        /* If we have old RSA keys, just use them */
-        AdbCrypto crypto = AdbUtils.readCryptoConfig(getFilesDir());
-        if (crypto == null)
-        {
-            /* We need to make a new pair */
-            Log.i(LOG_TAG,
-                    "This will only be done once.");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            /* If we have old RSA keys, just use them */
+            AdbCrypto crypto = AdbUtils.readCryptoConfig(getFilesDir());
+            if (crypto == null) {
+                /* We need to make a new pair */
+                Log.i(LOG_TAG,
+                        "This will only be done once.");
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    AdbCrypto crypto;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        AdbCrypto crypto;
 
-                    crypto = AdbUtils.writeNewCryptoConfig(getFilesDir());
+                        crypto = AdbUtils.writeNewCryptoConfig(getFilesDir());
 
-                    if (crypto == null)
-                    {
-                        Log.e(LOG_TAG,
-                                "Unable to generate and save RSA key pair");
-                        return;
+                        if (crypto == null) {
+                            Log.e(LOG_TAG,
+                                    "Unable to generate and save RSA key pair");
+                            return;
+                        }
+
                     }
-
-                }
-            }).start();
-        }
-
-        if (binder == null) {
-            service = new Intent(this, ShellService.class);
-
-            /* Bind the service if we're not bound already. After binding, the callback will
-             * perform the initial connection. */
-            getApplicationContext().bindService(service, serviceConn, Service.BIND_AUTO_CREATE);
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(service);
+                }).start();
             }
-            else {
-                startService(service);
+
+            if (binder == null) {
+                service = new Intent(this, ShellService.class);
+
+                /* Bind the service if we're not bound already. After binding, the callback will
+                 * perform the initial connection. */
+                getApplicationContext().bindService(service, serviceConn, Service.BIND_AUTO_CREATE);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(service);
+                } else {
+                    startService(service);
+                }
             }
         }
     }
