@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 public class AlarmReceiver extends BroadcastReceiver
 {
@@ -24,6 +25,12 @@ public class AlarmReceiver extends BroadcastReceiver
         Intent i = new Intent(context, AlarmReceiver.class);
         PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
         assert am != null;
-        am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis() + 10000L), pi); //Next alarm in 10s
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            am.set(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis() + 10000L), pi);
+        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            am.setExact(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis() + 10000L), pi);
+        } else {
+            am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis() + 10000L), pi); //Next alarm in 10s
+        }
     }
 }
