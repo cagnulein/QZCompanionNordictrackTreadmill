@@ -13,8 +13,8 @@ adb connect %TMIP%
 adb devices -l
 timeout 5
 
-:: pull logcat generated from QZ Companion
-::adb logcat -d > logcat.txt
+:: pull live logcat and QZ Companion logcat
+adb logcat -d > logcat.txt
 adb pull /sdcard/logcat.log
 
 :: pull all wolflogs
@@ -22,7 +22,7 @@ adb pull /sdcard/.wolflogs/
 ::adb pull /sdcard/eru/
 
 echo.
-echo Debug files generated - logcat.log, and \.wolflogs
+echo Debug files generated - logcat.log, logcat.txt, and \.wolflogs
 echo.
 
 pause
