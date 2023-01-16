@@ -74,6 +74,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Other" />
+
+            <RadioButton
+                android:id="@+id/x32i"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="X32i Treadmill" />
         </RadioGroup>
 
         <Button

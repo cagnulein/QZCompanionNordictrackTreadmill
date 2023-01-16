@@ -49,6 +49,7 @@ public class UDPListenerService extends Service {
 		t85s,
         s40,
         exp7i,
+        x32i,
     }
 
     private static _device device;
@@ -94,6 +95,11 @@ public class UDPListenerService extends Service {
                 y1Speed = 442;      //vertical position of slider at 2.0
                 y1Inclination = 442;    //vertical position of slider at 0.0
                 break;
+            case x32i:
+                lastReqSpeed = 0;
+                y1Speed = 442;      //vertical position of slider at 2.0
+                y1Inclination = 442;    //vertical position of slider at 0.0
+            break;
             default:
                 break;
         }
@@ -179,6 +185,9 @@ public class UDPListenerService extends Service {
                         if (device == _device.x11i) {
                             x1 = 1207;
                             y2 = (int) (621.997 - (21.785 * reqSpeed));
+                        } else if (device == _device.x32i) {
+                            x1 = 1845;
+                            y2 = (int) (978.8794 - (25.9811 * reqSpeed));
 						} else if (device == _device.t85s) {
                             x1 = 1207;
                             y2 = (int) (629.81 - (20.81 * reqSpeed));
@@ -202,7 +211,7 @@ public class UDPListenerService extends Service {
                         MainActivity.sendCommand(command);
                         Log.i(LOG_TAG, command);
 
-                        if (device == _device.x11i || device == _device.proform_2000 || device == _device.t85s || device == _device.s40 || device == _device.exp7i)
+                        if (device == _device.x11i || device == _device.proform_2000 || device == _device.t85s || device == _device.s40 || device == _device.exp7i || device == _device.x32i)
                             y1Speed = y2;  //set new vertical position of speed slider
                         lastReqSpeed = reqSpeed;
                         lastSwipeMs = Calendar.getInstance().getTimeInMillis();
@@ -223,6 +232,9 @@ public class UDPListenerService extends Service {
                     if (device == _device.x11i) {
                         x1 = 75;
                         y2 = (int) (565.491 - (8.44 * reqInclination));
+                    } else if (device == _device.x32i) {
+                        x1 = 74;
+                        y2 = (int) (881.3421 - (11.8424 * reqInclination));
 					} else if (device == _device.t85s) {
                         x1 = 75;
                         y2 = (int) (609 - (36.417 * reqInclination));
@@ -246,7 +258,7 @@ public class UDPListenerService extends Service {
                     MainActivity.sendCommand(command);
                     Log.i(LOG_TAG, command);
 
-                    if (device == _device.x11i || device == device.proform_2000 || device == device.t85s || device == device.s40 || device == device.exp7i)
+                    if (device == _device.x11i || device == device.proform_2000 || device == device.t85s || device == device.s40 || device == device.exp7i || device == _device.x32i)
                         y1Inclination = y2;  //set new vertical position of speed slider
                     lastReqInclination = reqInclination;
                     lastSwipeMs = Calendar.getInstance().getTimeInMillis();
