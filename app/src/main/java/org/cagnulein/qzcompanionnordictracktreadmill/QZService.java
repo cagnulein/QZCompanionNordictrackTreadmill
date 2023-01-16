@@ -146,6 +146,7 @@ public class QZService extends Service {
                     if(!speed(speed2InputStream)) {
                         sendBroadcast(lastSpeed);
                     }
+                    speed2InputStream.close();
                 }
                 speedInputStream.close();
                 InputStream inclineInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed Grade\" | tail -n1");
@@ -154,6 +155,7 @@ public class QZService extends Service {
                     if(!incline(incline2InputStream)) {
                         sendBroadcast(lastInclination);
                     }
+                    incline2InputStream.close();
                 }
                 inclineInputStream.close();
                 InputStream procWattInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed Watts\" | tail -n1");
@@ -162,6 +164,7 @@ public class QZService extends Service {
                     if(!watt(watt2InputStream)) {
                         sendBroadcast(lastWattage);
                     }
+                    watt2InputStream.close();
                 }
                 procWattInputStream.close();
                 InputStream cadenceInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed RPM\" | tail -n1");
@@ -170,6 +173,7 @@ public class QZService extends Service {
                     if(!cadence(cadence2InputStream)) {
                         sendBroadcast(lastCadence);
                     }
+                    cadence2InputStream.close();
                 }
                 cadenceInputStream.close();
                 InputStream gearInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed CurrentGear\" | tail -n1");
@@ -178,6 +182,7 @@ public class QZService extends Service {
                     if(!gear(gear2InputStream)) {
                         sendBroadcast(lastGear);
                     }
+                    gear2InputStream.close();
                 }
                 gearInputStream.close();
                 InputStream resistanceInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed Resistance\" | tail -n1");
@@ -186,6 +191,7 @@ public class QZService extends Service {
                     if(!resistance(resistance2InputStream)) {
                         sendBroadcast(lastResistance);
                     }
+                    resistance2InputStream.close();
                 }
                 resistanceInputStream.close();
 
