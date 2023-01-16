@@ -57,11 +57,13 @@ public class QZService extends Service {
     public void onCreate() {
         // The service is being created
         //Toast.makeText(this, "Service created!", Toast.LENGTH_LONG).show();
+        Log.i(LOG_TAG, "Service onCreate");
+
         try {
             runnable = new Runnable() {
                 @Override
                 public void run() {
-                    parse();
+                    Log.i(LOG_TAG, "Service run"); parse();
                 }
             };
         } finally {
@@ -71,8 +73,10 @@ public class QZService extends Service {
             }
         }
 
-        if(runnable != null)
+        if(runnable != null) {
+            Log.i(LOG_TAG, "Service postDelayed");
             handler.postDelayed(runnable, 500);
+        }
     }
 
     private boolean speed(InputStream in) throws IOException {
@@ -249,6 +253,7 @@ public class QZService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i(LOG_TAG, "Service started");
         // The service is starting, due to a call to startService()
         return START_STICKY;
     }
