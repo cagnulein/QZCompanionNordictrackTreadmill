@@ -97,8 +97,8 @@ public class UDPListenerService extends Service {
                 break;
             case x32i:
                 lastReqSpeed = 0;
-                y1Speed = 442;      //vertical position of slider at 2.0
-                y1Inclination = 442;    //vertical position of slider at 0.0
+                y1Speed = 927;      //vertical position of slider at 2.0
+                y1Inclination = 881;    //vertical position of slider at 0.0
             break;
             default:
                 break;
@@ -259,7 +259,7 @@ public class UDPListenerService extends Service {
                     Log.i(LOG_TAG, command);
 
                     if (device == _device.x11i || device == device.proform_2000 || device == device.t85s || device == device.s40 || device == device.exp7i || device == _device.x32i)
-                        y1Inclination = y2;  //set new vertical position of speed slider
+                        y1Inclination = y2;  //set new vertical position of inclination slider
                     lastReqInclination = reqInclination;
                     lastSwipeMs = Calendar.getInstance().getTimeInMillis();
                 }
