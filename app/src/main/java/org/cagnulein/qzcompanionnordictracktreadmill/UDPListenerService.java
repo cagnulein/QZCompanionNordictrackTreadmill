@@ -300,16 +300,18 @@ public class UDPListenerService extends Service {
     void startListenForUDPBroadcast() {
         UDPBroadcastThread = new Thread(new Runnable() {
             public void run() {
-                try {
-                    InetAddress broadcastIP = getBroadcastAddress();
-                    Integer port = 8003;
-                    while (shouldRestartSocketListen) {
-                        listenAndWaitAndThrowIntent(broadcastIP, port);
-                    }
-                    //if (!shouldListenForUDPBroadcast) throw new ThreadDeath();
-                } catch (Exception e) {
-                    Log.i(LOG_TAG, "no longer listening for UDP broadcasts cause of error " + e.getMessage());
-                }
+				while(1) {					
+					try {
+						InetAddress broadcastIP = getBroadcastAddress();
+						Integer port = 8003;
+						while (shouldRestartSocketListen) {
+							listenAndWaitAndThrowIntent(broadcastIP, port);
+						}
+						//if (!shouldListenForUDPBroadcast) throw new ThreadDeath();
+					} catch (Exception e) {
+						Log.i(LOG_TAG, "no longer listening for UDP broadcasts cause of error " + e.getMessage());
+					}
+				}
             }
         });
         UDPBroadcastThread.start();
