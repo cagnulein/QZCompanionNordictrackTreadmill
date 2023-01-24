@@ -90,6 +90,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Dump Log" />
+			
+		<TextView 
+			android:id="@+id/dumplog_tv"
+			android:layout_width="fill_parent"
+			android:layout_height="300px"
+			android:textColor="#f00"
+			android:textSize="14px"
+			android:typeface="serif"/>
     </LinearLayout>
     </ScrollView>
 

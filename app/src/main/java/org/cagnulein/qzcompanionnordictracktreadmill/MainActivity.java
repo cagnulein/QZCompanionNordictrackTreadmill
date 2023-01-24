@@ -22,8 +22,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import java.util.logging.Logger;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 
 import static android.content.ContentValues.TAG;
 
@@ -202,6 +208,22 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                 String command = "logcat -b all -d > /sdcard/logcat.log";
                 MainActivity.sendCommand(command);
                 Log.i(LOG_TAG, command);
+
+				try {
+				  Process process = Runtime.getRuntime().exec("logcat -d");
+				  BufferedReader bufferedReader = new BufferedReader(
+					   new InputStreamReader(process.getInputStream()));
+
+				  StringBuilder log=new StringBuilder();
+				  String line = ""; 
+				  while ((line = bufferedReader.readLine()) != null) {
+					   log.append(line);
+					}   
+				  TextView tv = (TextView)findViewById(R.id.dumplog_tv);
+				  tv.setText(log.toString());
+				} catch (IOException e) {
+					  // Handle Exception
+				}
             }
         });
 
