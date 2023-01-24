@@ -97,7 +97,9 @@
 			android:layout_height="300px"
 			android:textColor="#f00"
 			android:textSize="14px"
+			android:scrollbars="vertical"
 			android:typeface="serif"/>
+
     </LinearLayout>
     </ScrollView>
 
