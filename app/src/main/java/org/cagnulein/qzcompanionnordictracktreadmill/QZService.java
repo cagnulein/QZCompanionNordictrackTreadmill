@@ -297,7 +297,7 @@ public class QZService extends Service {
 
         File lastModifiedFile = files[0];
         for (int i = 1; i < files.length; i++) {
-            if (lastModifiedFile.lastModified() < files[i].lastModified()) {
+            if (lastModifiedFile.lastModified() < files[i].lastModified() && (files[i].getName().contains("_logs.txt") || files[i].getName().contains("FitPro_"))) {
                 lastModifiedFile = files[i];
             }
         }
