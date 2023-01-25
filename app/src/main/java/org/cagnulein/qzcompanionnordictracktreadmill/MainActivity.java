@@ -17,6 +17,7 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -221,8 +222,13 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 					}   
 				  TextView tv = (TextView)findViewById(R.id.dumplog_tv);
 				  tv.setText(log.toString());
+                    tv.setMovementMethod(new ScrollingMovementMethod());
 				} catch (IOException e) {
 					  // Handle Exception
+                    TextView tv = (TextView)findViewById(R.id.dumplog_tv);
+                    tv.setText(e.getMessage());
+                    tv.setMovementMethod(new ScrollingMovementMethod());
+                    Log.e(LOG_TAG, e.getMessage());
 				}
             }
         });
