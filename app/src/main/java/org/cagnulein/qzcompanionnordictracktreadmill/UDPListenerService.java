@@ -196,9 +196,9 @@ public class UDPListenerService extends Service {
                             y2 = (int) (453.014 - (22.702 * reqSpeed * 0.621371));
                         } else if (device == _device.nordictrack_2950) {
                             x1 = 1845;     //middle of slider
-                            y1Speed = 807 - (int) ((QZService.lastSpeedFloat - 1) * 29.78);
+                            y1Speed = 807 - (int) ((QZService.lastSpeedFloat - 1) * 31);
                             //set speed slider to target position
-                            y2 = y1Speed - (int) ((reqSpeed - QZService.lastSpeedFloat) * 29.78);
+                            y2 = y1Speed - (int) ((reqSpeed - QZService.lastSpeedFloat) * 31);
                         } else if (device == _device.proform_2000) {
                             x1 = 1205;     //middle of slider
                             y2 = (int) ((-19.921 * reqSpeed) + 631.03);
@@ -243,9 +243,9 @@ public class UDPListenerService extends Service {
                         y2 = (int) (441.813 - (21.802 * reqInclination));
                     } else if (device == _device.nordictrack_2950) {
                         x1 = 75;     //middle of slider
-                        y1Inclination = 807 - (int) ((QZService.lastInclinationFloat + 3) * 29.9);
+                        y1Inclination = 807 - (int) ((QZService.lastInclinationFloat + 3) * 31.1);
                         //set speed slider to target position
-                        y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 29.9);
+                        y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 31.1);
                     } else if (device == _device.proform_2000) {
                         x1 = 79;
                         y2 = (int) ((-21.804 * reqInclination) + 520.11);
