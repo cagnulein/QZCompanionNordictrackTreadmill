@@ -222,14 +222,12 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 						BufferedReader is = new BufferedReader(new InputStreamReader(speed2InputStream));
 						String line;
 						while ((line = is.readLine()) != null) {
-							TextView tv = (TextView)findViewById(R.id.dumplog_tv);
-							tv.setText(tv.text() + "\r\n" + line);
+							tv.setText(tv.getText().toString(); + "\r\n" + line);
 							tv.setMovementMethod(new ScrollingMovementMethod());
 							break;
 						}					  					  
 					} catch (IOException e) {
 						  // Handle Exception
-						TextView tv = (TextView)findViewById(R.id.dumplog_tv);
 						tv.setText(e.getMessage());
 						tv.setMovementMethod(new ScrollingMovementMethod());
 						Log.e(LOG_TAG, e.getMessage());
