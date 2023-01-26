@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 				if(!file.equals("")) {
 					try {
 						InputStream speed2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed KPH\" " + file + "  | tail -n1");
-						BufferedReader is = new BufferedReader(new InputStreamReader(in));
+						BufferedReader is = new BufferedReader(new InputStreamReader(speed2InputStream));
 						String line;
 						while ((line = is.readLine()) != null) {
 							TextView tv = (TextView)findViewById(R.id.dumplog_tv);

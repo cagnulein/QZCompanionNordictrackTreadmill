@@ -25,8 +25,7 @@ public class QZService extends Service {
     private static final String LOG_TAG = "QZ:Service";
     int startMode;       // indicates how to behave if the service is killed
     IBinder binder;      // interface for clients that bind
-    boolean allowRebind; // indicates whether onRebind should be used
-    String path = "/sdcard/.wolflogs/";
+    boolean allowRebind; // indicates whether onRebind should be used    
     int clientPort = 8002;
     Handler handler = new Handler();
     Runnable runnable = null;
@@ -291,6 +290,7 @@ public class QZService extends Service {
 
     public static String pickLatestFileFromDownloads() {
 
+		String path = "/sdcard/.wolflogs/";
         File dir = new File(path);
         File[] files = dir.listFiles();
         if (files == null || files.length == 0) {
