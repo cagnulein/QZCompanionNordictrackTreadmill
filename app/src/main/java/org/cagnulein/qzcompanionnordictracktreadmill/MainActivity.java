@@ -215,13 +215,15 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 				
 				String file = QZService.pickLatestFileFromDownloads();
 				if(!file.equals("")) {
+					TextView tv = (TextView)findViewById(R.id.dumplog_tv);
+					tv.setText("FILE " + file);
 					try {
-						InputStream speed2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed KPH\" " + file + "  | tail -n1");
+						InputStream speed2InputStream = shellRuntime.execAndGetOutput("cat " + file);
 						BufferedReader is = new BufferedReader(new InputStreamReader(speed2InputStream));
 						String line;
 						while ((line = is.readLine()) != null) {
 							TextView tv = (TextView)findViewById(R.id.dumplog_tv);
-							tv.setText(line);
+							tv.setText(tv.text() + "\r\n" + line);
 							tv.setMovementMethod(new ScrollingMovementMethod());
 							break;
 						}					  					  
