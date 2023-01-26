@@ -22,11 +22,6 @@
         <service android:name=".QZService"/>
         <service android:name=".UDPListenerService"/>
 
-        <service
-            android:name=".TcpServerService"
-            android:enabled="true"
-            android:exported="false" />
-
         <service android:name="com.cgutman.androidremotedebugger.service.ShellService"
             android:enabled="true"
             android:exported="false" >
