@@ -209,26 +209,30 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                 String command = "logcat -b all -d > /sdcard/logcat.log";
                 MainActivity.sendCommand(command);
                 Log.i(LOG_TAG, command);
-
-				try {
-				  Process process = Runtime.getRuntime().exec("logcat -d");
-				  BufferedReader bufferedReader = new BufferedReader(
-					   new InputStreamReader(process.getInputStream()));
-
-				  StringBuilder log=new StringBuilder();
-				  String line = ""; 
-				  while ((line = bufferedReader.readLine()) != null) {
-					   log.append(line);
-					}   
-				  TextView tv = (TextView)findViewById(R.id.dumplog_tv);
-				  tv.setText(log.toString());
-                    tv.setMovementMethod(new ScrollingMovementMethod());
-				} catch (IOException e) {
-					  // Handle Exception
-                    TextView tv = (TextView)findViewById(R.id.dumplog_tv);
-                    tv.setText(e.getMessage());
-                    tv.setMovementMethod(new ScrollingMovementMethod());
-                    Log.e(LOG_TAG, e.getMessage());
+				
+				QString file = QZSerivce.pickLatestFileFromDownloads();
+				if(!file.equals("")) {
+					try {
+						InputStream speed2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed KPH\" " + file + "  | tail -n1");
+						BufferedReader is = new BufferedReader(new InputStreamReader(in));
+						String line;
+						while ((line = is.readLine()) != null) {
+							TextView tv = (TextView)findViewById(R.id.dumplog_tv);
+							tv.setText(line);
+							tv.setMovementMethod(new ScrollingMovementMethod());
+							break;
+						}					  					  
+					} catch (IOException e) {
+						  // Handle Exception
+						TextView tv = (TextView)findViewById(R.id.dumplog_tv);
+						tv.setText(e.getMessage());
+						tv.setMovementMethod(new ScrollingMovementMethod());
+						Log.e(LOG_TAG, e.getMessage());
+					}
+				} else {
+					TextView tv = (TextView)findViewById(R.id.dumplog_tv);
+					tv.setText("file not found");
+					tv.setMovementMethod(new ScrollingMovementMethod());
 				}
             }
         });

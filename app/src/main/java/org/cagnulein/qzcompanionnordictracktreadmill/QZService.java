@@ -289,7 +289,7 @@ public class QZService extends Service {
         // The service is no longer used and is being destroyed
     }
 
-    public String pickLatestFileFromDownloads() {
+    public static String pickLatestFileFromDownloads() {
 
         File dir = new File(path);
         File[] files = dir.listFiles();
