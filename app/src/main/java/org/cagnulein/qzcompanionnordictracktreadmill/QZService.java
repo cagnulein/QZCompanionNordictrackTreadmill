@@ -161,66 +161,89 @@ public class QZService extends Service {
                 socket = new DatagramSocket();
                 socket.setBroadcast(true);
 
-                InputStream speedInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed KPH\" | tail -n1");
-                if(!speed(speedInputStream)) {
-                    InputStream speed2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed KPH\" " + file + "  | tail -n1");
-                    if(!speed(speed2InputStream)) {
-                        sendBroadcast(lastSpeed);
-                    }
-                    speed2InputStream.close();
-                }
-                speedInputStream.close();
-                InputStream inclineInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed Grade\" | tail -n1");
-                if(!incline(inclineInputStream)) {
-                    InputStream incline2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed Grade\" " + file + "  | tail -n1");
-                    if(!incline(incline2InputStream)) {
-                        sendBroadcast(lastInclination);
-                    }
-                    incline2InputStream.close();
-                }
-                inclineInputStream.close();
-                InputStream procWattInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed Watts\" | tail -n1");
-                if(!watt(procWattInputStream)) {
-                    InputStream watt2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed Watts\" " + file + "  | tail -n1");
-                    if(!watt(watt2InputStream)) {
-                        sendBroadcast(lastWattage);
-                    }
-                    watt2InputStream.close();
-                }
-                procWattInputStream.close();
-                InputStream cadenceInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed RPM\" | tail -n1");
-                if(!cadence(cadenceInputStream)) {
-                    InputStream cadence2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed RPM\" " + file + "  | tail -n1");
-                    if(!cadence(cadence2InputStream)) {
-                        sendBroadcast(lastCadence);
-                    }
-                    cadence2InputStream.close();
-                }
-                cadenceInputStream.close();
-                InputStream gearInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed CurrentGear\" | tail -n1");
-                if(!gear(gearInputStream)) {
-                    InputStream gear2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed CurrentGear\" " + file + "  | tail -n1");
-                    if(!gear(gear2InputStream)) {
-                        sendBroadcast(lastGear);
-                    }
-                    gear2InputStream.close();
-                }
-                gearInputStream.close();
-                InputStream resistanceInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed Resistance\" | tail -n1");
-                if(!resistance(resistanceInputStream)) {
-                    InputStream resistance2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed Resistance\" " + file + "  | tail -n1");
-                    if(!resistance(resistance2InputStream)) {
-                        sendBroadcast(lastResistance);
-                    }
-                    resistance2InputStream.close();
-                }
-                resistanceInputStream.close();
+				// this device doesn't have tail and grep capabilities
+				if(UDPListenerService.device == UDPListenerService._device.c1750) {
+					try {
+						InputStream speed2InputStream = shellRuntime.execAndGetOutput("cat " + file);
+						BufferedReader is = new BufferedReader(new InputStreamReader(speed2InputStream));
+						String line;
+						while ((line = is.readLine()) != null) {
+							if(line.contains("Changed KPH")) {
+								lastSpeed = line;
+							} else if(line.contains("Changed Grade")) {
+								lastInclination = line;
+							}
+						}
+						if(!lastSpeed.equals(""))
+							sendBroadcast(lastSpeed);
+						if(!lastInclination.equals(""))
+							sendBroadcast(lastInclination);						
+					} catch (IOException e) {
+						  // Handle Exception						
+						Log.e(LOG_TAG, e.getMessage());
+					}					
+				} else {					
+					InputStream speedInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed KPH\" | tail -n1");
+					if(!speed(speedInputStream)) {
+						InputStream speed2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed KPH\" " + file + "  | tail -n1");
+						if(!speed(speed2InputStream)) {
+							sendBroadcast(lastSpeed);
+						}
+						speed2InputStream.close();
+					}
+					speedInputStream.close();
+					InputStream inclineInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed Grade\" | tail -n1");
+					if(!incline(inclineInputStream)) {
+						InputStream incline2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed Grade\" " + file + "  | tail -n1");
+						if(!incline(incline2InputStream)) {
+							sendBroadcast(lastInclination);
+						}
+						incline2InputStream.close();
+					}
+					inclineInputStream.close();
+					InputStream procWattInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed Watts\" | tail -n1");
+					if(!watt(procWattInputStream)) {
+						InputStream watt2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed Watts\" " + file + "  | tail -n1");
+						if(!watt(watt2InputStream)) {
+							sendBroadcast(lastWattage);
+						}
+						watt2InputStream.close();
+					}
+					procWattInputStream.close();
+					InputStream cadenceInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed RPM\" | tail -n1");
+					if(!cadence(cadenceInputStream)) {
+						InputStream cadence2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed RPM\" " + file + "  | tail -n1");
+						if(!cadence(cadence2InputStream)) {
+							sendBroadcast(lastCadence);
+						}
+						cadence2InputStream.close();
+					}
+					cadenceInputStream.close();
+					InputStream gearInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed CurrentGear\" | tail -n1");
+					if(!gear(gearInputStream)) {
+						InputStream gear2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed CurrentGear\" " + file + "  | tail -n1");
+						if(!gear(gear2InputStream)) {
+							sendBroadcast(lastGear);
+						}
+						gear2InputStream.close();
+					}
+					gearInputStream.close();
+					InputStream resistanceInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed Resistance\" | tail -n1");
+					if(!resistance(resistanceInputStream)) {
+						InputStream resistance2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed Resistance\" " + file + "  | tail -n1");
+						if(!resistance(resistance2InputStream)) {
+							sendBroadcast(lastResistance);
+						}
+						resistance2InputStream.close();
+					}
+					resistanceInputStream.close();
 
-                if(counterTruncate++ > 1200) {
-                    Log.d(LOG_TAG, "Truncating file...");
-                    counterTruncate = 0;
-                    shellRuntime.exec("truncate -s0 " + file);
-                }
+					if(counterTruncate++ > 1200) {
+						Log.d(LOG_TAG, "Truncating file...");
+						counterTruncate = 0;
+						shellRuntime.exec("truncate -s0 " + file);
+					}
+				}
             } catch (Exception ex) {
                 ex.printStackTrace();
                 return;

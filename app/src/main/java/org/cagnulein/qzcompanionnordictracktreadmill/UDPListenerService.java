@@ -50,9 +50,10 @@ public class UDPListenerService extends Service {
         s40,
         exp7i,
         x32i,
+		c1750,
     }
 
-    private static _device device;
+    public static _device device;
 
     private final ShellRuntime shellRuntime = new ShellRuntime();
 

@@ -190,6 +190,8 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                     UDPListenerService.setDevice(UDPListenerService._device.s22i);
                 } else if(i == R.id.tdf10) {
                     UDPListenerService.setDevice(UDPListenerService._device.tdf10);
+                } else if(i == R.id.c1750) {
+                    UDPListenerService.setDevice(UDPListenerService._device.c1750);
                 } else {
                     UDPListenerService.setDevice(UDPListenerService._device.other);
                 }
@@ -224,7 +226,6 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 						while ((line = is.readLine()) != null) {
 							tv.setText(tv.getText().toString() + "\r\n" + line);
 							tv.setMovementMethod(new ScrollingMovementMethod());
-							break;
 						}					  					  
 					} catch (IOException e) {
 						  // Handle Exception
