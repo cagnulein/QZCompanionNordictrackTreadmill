@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 
@@ -48,6 +49,8 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
     private static final String LOG_TAG = "QZ:AdbRemote";
     private static String lastCommand = "";
     private static boolean ADBConnected = false;
+	
+	private final ShellRuntime shellRuntime = new ShellRuntime();
 
     // on below line we are creating variables.
     RadioGroup radioGroup;
@@ -210,7 +213,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                 MainActivity.sendCommand(command);
                 Log.i(LOG_TAG, command);
 				
-				QString file = QZSerivce.pickLatestFileFromDownloads();
+				String file = QZService.pickLatestFileFromDownloads();
 				if(!file.equals("")) {
 					try {
 						InputStream speed2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed KPH\" " + file + "  | tail -n1");
