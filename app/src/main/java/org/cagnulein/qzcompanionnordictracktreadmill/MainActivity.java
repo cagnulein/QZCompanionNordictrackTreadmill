@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 						BufferedReader is = new BufferedReader(new InputStreamReader(speed2InputStream));
 						String line;
 						while ((line = is.readLine()) != null) {
-							tv.setText(tv.getText().toString(); + "\r\n" + line);
+							tv.setText(tv.getText().toString() + "\r\n" + line);
 							tv.setMovementMethod(new ScrollingMovementMethod());
 							break;
 						}					  					  
