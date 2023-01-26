@@ -20,7 +20,6 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.2.2' // downloads 1.7.1 Metadata
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version" // <= 1.5.20 used here
     }
 }
 
