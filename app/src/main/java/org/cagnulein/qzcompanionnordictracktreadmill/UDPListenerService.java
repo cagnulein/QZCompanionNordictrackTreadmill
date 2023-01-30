@@ -301,7 +301,7 @@ public class UDPListenerService extends Service {
     void startListenForUDPBroadcast() {
         UDPBroadcastThread = new Thread(new Runnable() {
             public void run() {
-				while(true) {					
+				{					
 					try {
 						InetAddress broadcastIP = getBroadcastAddress();
 						Integer port = 8003;
