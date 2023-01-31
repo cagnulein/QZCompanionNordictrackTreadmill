@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 				if(!file.equals("")) {
 					TextView tv = (TextView)findViewById(R.id.dumplog_tv);
 					tv.setText("FILE " + file);
-					try {
+					/*try {
 						InputStream speed2InputStream = shellRuntime.execAndGetOutput("cat " + file);
 						BufferedReader is = new BufferedReader(new InputStreamReader(speed2InputStream));
 						String line;
@@ -232,7 +232,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 						tv.setText(e.getMessage());
 						tv.setMovementMethod(new ScrollingMovementMethod());
 						Log.e(LOG_TAG, e.getMessage());
-					}
+					}*/
 				} else {
 					TextView tv = (TextView)findViewById(R.id.dumplog_tv);
 					tv.setText("file not found");
