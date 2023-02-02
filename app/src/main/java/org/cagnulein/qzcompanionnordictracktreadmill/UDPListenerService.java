@@ -265,7 +265,7 @@ public class UDPListenerService extends Service {
         }
 
         broadcastIntent(senderIP, message);
-        socket.close();
+        //socket.close();
     }
 
     private double roundToHalf(double d) {
