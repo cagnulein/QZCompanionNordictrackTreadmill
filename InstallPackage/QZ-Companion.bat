@@ -1,6 +1,6 @@
 :: QZ-Companion App Installer
 :: Author: Al Udell
-:: Revised: December 15, 2022
+:: Revised: February 7, 2023
 :: QZ on Facebook - https://www.facebook.com/groups/149984563348738
 
 @echo off
