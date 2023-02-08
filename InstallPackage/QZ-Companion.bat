@@ -88,7 +88,7 @@ adb shell monkey -p com.ifit.standalone 1 >> QZ-Companion-log.txt 2>&1
 timeout 5
 
 :: save debug files
-adb push .wolfDev /sdcard >nul 2>&1
+adb shell mkdir -p /sdcard/.wolfDev/keepme >nul 2>&1
 adb shell dumpsys package org.cagnulein.qzcompanionnordictracktreadmill > dumpsys.log 2>&1
 adb logcat -d > logcat.txt 2>&1
 
