@@ -25,7 +25,7 @@
             <TextView
                 android:id="@+id/dumplog_tv"
                 android:layout_width="fill_parent"
-                android:layout_height="100px"
+                android:layout_height="300px"
                 android:scrollbars="vertical"
                 android:textSize="14px"
                 android:textIsSelectable="true"

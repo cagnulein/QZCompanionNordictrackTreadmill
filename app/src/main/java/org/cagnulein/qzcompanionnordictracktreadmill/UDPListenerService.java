@@ -14,6 +14,7 @@ import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
+import android.widget.TextView;
 
 /*
  * Linux command to send UDP:
@@ -107,6 +108,11 @@ public class UDPListenerService extends Service {
         device = dev;
     }
 
+    private void writeLog(String command) {
+        MainActivity.writeLog(command);
+        Log.i(LOG_TAG, command);
+    }
+
     private void listenAndWaitAndThrowIntent(InetAddress broadcastIP, Integer port) throws Exception {
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
@@ -120,22 +126,22 @@ public class UDPListenerService extends Service {
         }
         //socket.setSoTimeout(1000);
         DatagramPacket packet = new DatagramPacket(recvBuf, recvBuf.length);
-        Log.i(LOG_TAG, "Waiting for UDP broadcast");
+        writeLog("Waiting for UDP broadcast");
         socket.receive(packet);
 
         String senderIP = packet.getAddress().getHostAddress();
         String message = new String(packet.getData()).trim();
 
-        Log.i(LOG_TAG, "Got UDP broadcast from " + senderIP + ", message: " + message);
+        writeLog("Got UDP broadcast from " + senderIP + ", message: " + message);
 
-        Log.i(LOG_TAG, message);
+        writeLog(message);
         String[] amessage = message.split(";");
         if(device == _device.s22i || device == _device.tdf10) {
             if (amessage.length > 0) {
                 String rResistance = amessage[0];
                 double reqResistance = Double.parseDouble(rResistance);
                 reqResistance = Math.round((reqResistance) * 10) / 10.0;
-                Log.i(LOG_TAG, "requestResistance: " + reqResistance + " " + lastReqResistance);
+                writeLog("requestResistance: " + reqResistance + " " + lastReqResistance);
 
                 if (lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) {
                     if (reqResistance != -1 && lastReqResistance != reqResistance || reqCachedResistance != -1) {
@@ -154,7 +160,7 @@ public class UDPListenerService extends Service {
 
                         String command = "input swipe " + x1 + " " + y1Resistance + " " + x1 + " " + y2 + " 200";
                         MainActivity.sendCommand(command);
-                        Log.i(LOG_TAG, command);
+                        writeLog(command);
 
                         if (device == _device.s22i || device == _device.tdf10)
                             y1Resistance = y2;  //set new vertical position of speed slider
@@ -171,7 +177,7 @@ public class UDPListenerService extends Service {
                 String rSpeed = amessage[0];
                 double reqSpeed = Double.parseDouble(rSpeed);
                 reqSpeed = Math.round((reqSpeed) * 10) / 10.0;
-                Log.i(LOG_TAG, "requestSpeed: " + reqSpeed + " " + lastReqSpeed);
+                writeLog("requestSpeed: " + reqSpeed + " " + lastReqSpeed);
 
                 if (lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) {
                     if (reqSpeed != -1 && lastReqSpeed != reqSpeed || reqCachedSpeed != -1) {
@@ -207,7 +213,7 @@ public class UDPListenerService extends Service {
 
                         String command = "input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
                         MainActivity.sendCommand(command);
-                        Log.i(LOG_TAG, command);
+                        writeLog(command);
 
                         if (device == _device.x11i || device == _device.proform_2000 || device == _device.t85s || device == _device.s40 || device == _device.exp7i || device == _device.x32i)
                             y1Speed = y2;  //set new vertical position of speed slider
@@ -223,7 +229,7 @@ public class UDPListenerService extends Service {
             if (amessage.length > 1 && lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) {
                 String rInclination = amessage[1];
                 double reqInclination = roundToHalf(Double.parseDouble(rInclination));
-                Log.i(LOG_TAG, "requestInclination: " + reqInclination + " " + lastReqInclination);
+                writeLog("requestInclination: " + reqInclination + " " + lastReqInclination);
                 if (reqInclination != -100 && lastReqInclination != reqInclination) {
                     int x1 = 0;
                     int y2 = 0;
@@ -254,7 +260,7 @@ public class UDPListenerService extends Service {
 
                     String command = " input swipe " + x1 + " " + y1Inclination + " " + x1 + " " + y2 + " 200";
                     MainActivity.sendCommand(command);
-                    Log.i(LOG_TAG, command);
+                    writeLog(command);
 
                     if (device == _device.x11i || device == device.proform_2000 || device == device.t85s || device == device.s40 || device == device.exp7i || device == _device.x32i)
                         y1Inclination = y2;  //set new vertical position of inclination slider
@@ -310,7 +316,7 @@ public class UDPListenerService extends Service {
 						}
 						//if (!shouldListenForUDPBroadcast) throw new ThreadDeath();
 					} catch (Exception e) {
-						Log.i(LOG_TAG, "no longer listening for UDP broadcasts cause of error " + e.getMessage());
+                        writeLog("no longer listening for UDP broadcasts cause of error " + e.getMessage());
 					}
 				}
             }
@@ -339,7 +345,7 @@ public class UDPListenerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         shouldRestartSocketListen = true;
         startListenForUDPBroadcast();
-        Log.i(LOG_TAG, "Service started");
+        writeLog("Service started");
         return START_STICKY;
     }
 

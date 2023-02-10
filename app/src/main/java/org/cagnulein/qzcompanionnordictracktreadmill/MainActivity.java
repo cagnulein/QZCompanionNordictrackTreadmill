@@ -25,6 +25,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Logger;
 
 import java.io.BufferedReader;
@@ -49,7 +53,8 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
     private static final String LOG_TAG = "QZ:AdbRemote";
     private static String lastCommand = "";
     private static boolean ADBConnected = false;
-	
+    private static String appLogs = "";
+
 	private final ShellRuntime shellRuntime = new ShellRuntime();
 
     // on below line we are creating variables.
@@ -158,11 +163,16 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         }
     };
 
+    public static void writeLog(String command) {
+        Date date = new Date();
+        Timestamp timestamp2 = new Timestamp(date.getTime());
+        appLogs = appLogs + "\n" + timestamp2 + " " + command;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         checkPermissions();
 
         sharedPreferences = getSharedPreferences("QZ",MODE_PRIVATE);
@@ -211,15 +221,18 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         dumplog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+            TextView tv = (TextView)findViewById(R.id.dumplog_tv);
+            tv.setText(tv.getText() + "\n" + appLogs);
+
                 String command = "logcat -b all -d > /sdcard/logcat.log";
                 MainActivity.sendCommand(command);
                 Log.i(LOG_TAG, command);
-				
+				/*
 				String file = QZService.pickLatestFileFromDownloads();
 				if(!file.equals("")) {
 					TextView tv = (TextView)findViewById(R.id.dumplog_tv);
 					tv.setText("FILE " + file);
-					/*try {
+					try {
 						InputStream speed2InputStream = shellRuntime.execAndGetOutput("cat " + file);
 						BufferedReader is = new BufferedReader(new InputStreamReader(speed2InputStream));
 						String line;
@@ -232,12 +245,12 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 						tv.setText(e.getMessage());
 						tv.setMovementMethod(new ScrollingMovementMethod());
 						Log.e(LOG_TAG, e.getMessage());
-					}*/
+					}
 				} else {
 					TextView tv = (TextView)findViewById(R.id.dumplog_tv);
 					tv.setText("file not found");
 					tv.setMovementMethod(new ScrollingMovementMethod());
-				}
+				}*/
             }
         });
 
