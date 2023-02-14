@@ -38,7 +38,7 @@ public class UDPListenerService extends Service {
     static long lastSwipeMs = 0;
     static double reqCachedSpeed = -1;
     static double reqCachedResistance = -1;
-    static float reqCachcedInclination = -1;
+    static float reqCachedInclination = -100;
 
     public enum _device {
         x11i,
@@ -229,7 +229,12 @@ public class UDPListenerService extends Service {
             if (amessage.length > 1 && lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) {
                 String rInclination = amessage[1];
                 double reqInclination = roundToHalf(Double.parseDouble(rInclination));
-                writeLog("requestInclination: " + reqInclination + " " + lastReqInclination);
+                writeLog("requestInclination: " + reqInclination + " " + lastReqInclination + " " + reqCachedInclination);				
+				Boolean need = reqInclination != -100 && lastReqInclination != reqInclination;
+				if (!need && reqCachedInclination != -100) {
+					reqInclination = reqCachedInclination;
+					reqCachedInclination = -100;
+				}					
                 if (reqInclination != -100 && lastReqInclination != reqInclination) {
                     int x1 = 0;
                     int y2 = 0;
@@ -266,8 +271,14 @@ public class UDPListenerService extends Service {
                         y1Inclination = y2;  //set new vertical position of inclination slider
                     lastReqInclination = reqInclination;
                     lastSwipeMs = Calendar.getInstance().getTimeInMillis();
+					reqCachedInclination = -100;
                 }
-            }
+            } else if(amessage.length > 1) {
+                String rInclination = amessage[1];
+                double reqInclination = roundToHalf(Double.parseDouble(rInclination));
+                writeLog("requestInclination not handled due to lastSwipeMs: " + reqInclination);
+				reqCachedInclination = reqInclination;
+			}
         }
 
         broadcastIntent(senderIP, message);
