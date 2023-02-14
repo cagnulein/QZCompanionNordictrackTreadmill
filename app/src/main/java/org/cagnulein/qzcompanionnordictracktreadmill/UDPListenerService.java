@@ -38,7 +38,7 @@ public class UDPListenerService extends Service {
     static long lastSwipeMs = 0;
     static double reqCachedSpeed = -1;
     static double reqCachedResistance = -1;
-    static float reqCachedInclination = -100;
+    static double reqCachedInclination = -100;
 
     public enum _device {
         x11i,
