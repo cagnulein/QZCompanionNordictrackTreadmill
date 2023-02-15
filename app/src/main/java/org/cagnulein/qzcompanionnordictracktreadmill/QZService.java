@@ -313,7 +313,14 @@ public class QZService extends Service {
 
     public static String pickLatestFileFromDownloads() {
 
-		String path = "/sdcard/.wolflogs/";
+        String ret = pickLatestFileFromDownloadsInternal("/sdcard/.wolflogs/");
+        if(ret.equals("")) {
+            ret = pickLatestFileFromDownloadsInternal("/.wolflogs/");
+        }
+        return ret;
+    }
+
+    public static String pickLatestFileFromDownloadsInternal(String path) {
         File dir = new File(path);
         File[] files = dir.listFiles();
         if (files == null || files.length == 0) {
@@ -329,6 +336,7 @@ public class QZService extends Service {
         }
         String k = lastModifiedFile.toString();
 
+        Log.i(LOG_TAG, path);
         Log.i(LOG_TAG, "lastModifiedFile " + lastModifiedFile);
         Log.i(LOG_TAG, "string: " + k);
         return k;
