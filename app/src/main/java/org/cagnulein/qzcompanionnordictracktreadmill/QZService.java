@@ -56,13 +56,13 @@ public class QZService extends Service {
     public void onCreate() {
   // The service is being created
         //Toast.makeText(this, "Service created!", Toast.LENGTH_LONG).show();
-        Log.i(LOG_TAG, "Service onCreate");
+        writeLog( "Service onCreate");
 
         try {
             runnable = new Runnable() {
                 @Override
                 public void run() {
-                    Log.i(LOG_TAG, "Service run"); parse();
+                    writeLog( "Service run"); parse();
                 }
             };
         } finally {
@@ -73,7 +73,7 @@ public class QZService extends Service {
         }
 
         if(runnable != null) {
-            Log.i(LOG_TAG, "Service postDelayed");
+            writeLog( "Service postDelayed");
             handler.postDelayed(runnable, 500);
         }
     }
@@ -287,7 +287,7 @@ public class QZService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i(LOG_TAG, "Service started");
+        writeLog("Service started");
       
         return START_STICKY;
     }
@@ -324,7 +324,7 @@ public class QZService extends Service {
         File dir = new File(path);
         File[] files = dir.listFiles();
         if (files == null || files.length == 0) {
-            Log.i(LOG_TAG,"There is no file in the folder");
+            writeLog("There is no file in the folder");
             return "";
         }
 
@@ -336,10 +336,15 @@ public class QZService extends Service {
         }
         String k = lastModifiedFile.toString();
 
-        Log.i(LOG_TAG, path);
-        Log.i(LOG_TAG, "lastModifiedFile " + lastModifiedFile);
-        Log.i(LOG_TAG, "string: " + k);
+        writeLog(path);
+        writeLog("lastModifiedFile " + lastModifiedFile);
+        writeLog("string: " + k);
         return k;
 
+    }
+
+    private static void writeLog(String command) {
+        MainActivity.writeLog(command);
+        Log.i(LOG_TAG, command);
     }
 }
