@@ -276,8 +276,10 @@ public class UDPListenerService extends Service {
             } else if(amessage.length > 1) {
                 String rInclination = amessage[1];
                 double reqInclination = roundToHalf(Double.parseDouble(rInclination));
-                writeLog("requestInclination not handled due to lastSwipeMs: " + reqInclination);
-				reqCachedInclination = reqInclination;
+                if(reqInclination != -100) {
+                    writeLog("requestInclination not handled due to lastSwipeMs: " + reqInclination);
+                    reqCachedInclination = reqInclination;
+                }
 			}
         }
 
