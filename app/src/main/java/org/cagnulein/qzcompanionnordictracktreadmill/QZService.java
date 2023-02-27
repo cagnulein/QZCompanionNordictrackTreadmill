@@ -68,7 +68,7 @@ public class QZService extends Service {
         } finally {
             if(socket != null){
                 socket.close();
-                Log.e(LOG_TAG, "socket.close()");
+                writeLog("socket.close()");
             }
         }
 
@@ -82,7 +82,7 @@ public class QZService extends Service {
         BufferedReader is = new BufferedReader(new InputStreamReader(in));
         String line;
         while ((line = is.readLine()) != null) {
-            System.out.println(line);
+            writeLog(line);
             lastSpeed = line;
             String[] b = line.split(" ");
             lastSpeedFloat = Float.parseFloat(b[b.length-1]);
@@ -154,7 +154,7 @@ public class QZService extends Service {
     private void parse() {
 
         String file = pickLatestFileFromDownloads();
-        Log.d(LOG_TAG,"Parsing " + file);
+        writeLog("Parsing " + file);
 
         if(!file.equals("")) {
             try {
@@ -180,7 +180,7 @@ public class QZService extends Service {
 							sendBroadcast(lastInclination);						
 					} catch (IOException e) {
 						  // Handle Exception						
-						Log.e(LOG_TAG, e.getMessage());
+						writeLog(e.getMessage());
 					}					
 				} else {					
 					InputStream speedInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed KPH\" | tail -n1");
@@ -239,7 +239,7 @@ public class QZService extends Service {
 					resistanceInputStream.close();
 
 					if(counterTruncate++ > 1200) {
-						Log.d(LOG_TAG, "Truncating file...");
+						writeLog("Truncating file...");
 						counterTruncate = 0;
 						shellRuntime.exec("truncate -s0 " + file);
 					}
@@ -263,9 +263,9 @@ public class QZService extends Service {
             byte[] sendData = messageStr.getBytes();
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, getBroadcastAddress(), this.clientPort);
             socket.send(sendPacket);
-            System.out.println(messageStr);
+            writeLog(messageStr);
         } catch (IOException e) {
-            Log.e(LOG_TAG, "IOException: " + e.getMessage());
+            writeLog("IOException: " + e.getMessage());
         }
     }
     InetAddress getBroadcastAddress() throws IOException {
@@ -279,7 +279,7 @@ public class QZService extends Service {
                 quads[k] = (byte) ((broadcast >> k * 8) & 0xFF);
             return InetAddress.getByAddress(quads);
         } catch (Exception e) {
-            Log.e(LOG_TAG, "IOException: " + e.getMessage());
+            writeLog( "IOException: " + e.getMessage());
         }
         byte[] quads = new byte[4];
         return InetAddress.getByAddress(quads);
