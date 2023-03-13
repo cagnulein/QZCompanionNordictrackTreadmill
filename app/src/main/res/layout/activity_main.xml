@@ -117,7 +117,13 @@
                         android:id="@+id/c1750"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="C1750 Treadmill" />						
+                        android:text="C1750 Treadmill" />	
+
+					<RadioButton
+                        android:id="@+id/t65s"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="T6.5s Treadmill" />	                        					
                 </RadioGroup>				
             </LinearLayout>
         </ScrollView>
