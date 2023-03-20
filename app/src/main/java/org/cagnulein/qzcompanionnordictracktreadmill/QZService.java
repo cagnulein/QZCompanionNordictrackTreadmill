@@ -316,6 +316,9 @@ public class QZService extends Service {
         String ret = pickLatestFileFromDownloadsInternal("/sdcard/.wolflogs/");
         if(ret.equals("")) {
             ret = pickLatestFileFromDownloadsInternal("/.wolflogs/");
+            if(ret.equals("")) {
+                ret = pickLatestFileFromDownloadsInternal("/sdcard/eru/");
+            }
         }
         return ret;
     }
