@@ -137,7 +137,17 @@ with medium confidence](media/image2.png)
     script will ping the IP address first to ensure it is reachable on
     the network, then proceed to open an ADB connection and install the
     QZ Companion app. When completed, the script will reboot the
-    treadmill. Once rebooted, proceed to login to iFit. At this point,
+    treadmill. 
+    
+    Once rebooted, you will have iFit running in the foreground and QZ Companion running 
+    in the background. You need to bring QZ Companion to the foreground for a one-time setup. You should still have access 
+    to the Android system by swiping up from the bottom of the screen to see the Android navigation bar. If you don't see 
+    the navigation bar, you will need to enable Privileged mode again (see Step #2 above) however Privileged mode should be permanately enabled as part on the 
+    qz-companion.bat installation script. The Android navigation bar The Android navigation displays navigation controls: Back, Home, and App Overview. 
+    Hit the App Overview button and swipe over to QZ Companion. In the QZ Companion screen, select your specific exercise machine (e.g. "NordicTrack C2950").
+    Once again, swipe up from the bottom of the screen to display the Android navigation bar, select App Overview, and swipe over to iFit.
+        
+    Next, proceed to login to iFit. At this point,
     QZ Companion is running in the background and is ready to transmit
     treadmill speed and incline data to QZ.
     
