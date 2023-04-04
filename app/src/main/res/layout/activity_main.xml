@@ -75,7 +75,7 @@
                         android:id="@+id/nordictrack_2950"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Nordictrack 2950 Treadmill" />
+                        android:text="Nordictrack 2950 Treadmill (max speed 22)" />
 
                     <RadioButton
                         android:id="@+id/nordictrack_2950_maxspeed19"
