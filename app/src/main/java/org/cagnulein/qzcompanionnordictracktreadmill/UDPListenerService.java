@@ -53,6 +53,7 @@ public class UDPListenerService extends Service {
         x32i,
         c1750,
         t65s,
+        nordictrack_2950_maxspeed19,
     }
 
     public static _device device;
@@ -67,6 +68,7 @@ public class UDPListenerService extends Service {
                 y1Inclination = 557;    //vertical position of slider at 0.0
                 break;
             case nordictrack_2950:
+            case nordictrack_2950_maxspeed19:
                 lastReqSpeed = 2;
                 y1Speed = 807;      //vertical position of slider at 2.0
                 y1Inclination = 717;    //vertical position of slider at 0.0
@@ -215,6 +217,11 @@ public class UDPListenerService extends Service {
                             y1Speed = 807 - (int) ((QZService.lastSpeedFloat - 1) * 31);
                             //set speed slider to target position
                             y2 = y1Speed - (int) ((reqSpeed - QZService.lastSpeedFloat) * 31);
+                        } else if (device == _device.nordictrack_2950_maxspeed19) {
+                            x1 = 1845;     //middle of slider
+                            y1Speed = 807 - (int) ((QZService.lastSpeedFloat - 1) * 26.5);
+                            //set speed slider to target position
+                            y2 = y1Speed - (int) ((reqSpeed - QZService.lastSpeedFloat) * 26.5);                            
                         } else if (device == _device.proform_2000) {
                             x1 = 1205;     //middle of slider
                             y2 = (int) ((-19.921 * reqSpeed) + 631.03);
@@ -265,7 +272,7 @@ public class UDPListenerService extends Service {
                     } else if (device == _device.t65s) {
                         x1 = 74;
                         y2 = (int) (576.91 - (34.182 * reqInclination));                        
-                    } else if (device == _device.nordictrack_2950) {
+                    } else if (device == _device.nordictrack_2950 || device == _device.nordictrack_2950_maxspeed19) {
                         x1 = 75;     //middle of slider
                         y1Inclination = 807 - (int) ((QZService.lastInclinationFloat + 3) * 31.1);
                         //set speed slider to target position
