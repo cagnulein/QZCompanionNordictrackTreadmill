@@ -318,6 +318,9 @@ public class QZService extends Service {
             ret = pickLatestFileFromDownloadsInternal("/.wolflogs/");
             if(ret.equals("")) {
                 ret = pickLatestFileFromDownloadsInternal("/sdcard/eru/");
+                if(ret.equals("")) {
+                    ret = pickLatestFileFromDownloadsInternal("/storage/emulated/0/.wolflogs/");
+                }
             }
         }
         return ret;
