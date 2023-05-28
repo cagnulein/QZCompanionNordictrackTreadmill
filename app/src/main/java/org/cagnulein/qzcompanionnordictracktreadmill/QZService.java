@@ -172,12 +172,28 @@ public class QZService extends Service {
 								lastSpeed = line;
 							} else if(line.contains("Changed Grade")) {
 								lastInclination = line;
-							}
+                            } else if(line.contains("Changed Watts")) {
+                                lastWattage = line;
+                            } else if(line.contains("Changed RPM")) {
+                                lastCadence = line;
+                            } else if(line.contains("Changed CurrentGear")) {
+                                lastGear = line;
+                            } else if(line.contains("Changed Resistance")) {
+                                lastResistance = line;
+                            }
 						}
 						if(!lastSpeed.equals(""))
 							sendBroadcast(lastSpeed);
 						if(!lastInclination.equals(""))
-							sendBroadcast(lastInclination);						
+							sendBroadcast(lastInclination);
+                        if(!lastWattage.equals(""))
+                            sendBroadcast(lastWattage);
+                        if(!lastCadence.equals(""))
+                            sendBroadcast(lastCadence);
+                        if(!lastGear.equals(""))
+                            sendBroadcast(lastGear);
+                        if(!lastResistance.equals(""))
+                            sendBroadcast(lastResistance);
 					} catch (IOException e) {
 						  // Handle Exception						
 						writeLog(e.getMessage());

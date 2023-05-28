@@ -23,7 +23,7 @@ public class AlarmReceiver extends BroadcastReceiver
     {
         AlarmManager am =( AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent i = new Intent(context, AlarmReceiver.class);
-        PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, 0);
+        PendingIntent pi = PendingIntent.getBroadcast(context, 0, i, PendingIntent.FLAG_IMMUTABLE);
         assert am != null;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             am.set(AlarmManager.RTC_WAKEUP, (System.currentTimeMillis() + 10000L), pi);
