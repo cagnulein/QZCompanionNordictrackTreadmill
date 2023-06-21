@@ -187,7 +187,7 @@ public class UDPListenerService extends Service {
                 reqSpeed = Math.round((reqSpeed) * 10) / 10.0;
                 writeLog("requestSpeed: " + reqSpeed + " " + lastReqSpeed);
 
-                if (lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) {
+                if (lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis() && QZService.lastSpeedFloat > 0) {
                     if (reqSpeed != -1 && lastReqSpeed != reqSpeed || reqCachedSpeed != -1) {
                         if (reqCachedSpeed != -1) {
                             reqSpeed = reqCachedSpeed;
