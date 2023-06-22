@@ -75,13 +75,13 @@
                         android:id="@+id/nordictrack_2950"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Nordictrack 2950 Treadmill (max speed 22)" />
+                        android:text="Nordictrack 2950 Treadmill (max speed 19)" />
 
                     <RadioButton
-                        android:id="@+id/nordictrack_2950_maxspeed19"
+                        android:id="@+id/nordictrack_2950_maxspeed22"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Nordictrack 2950 Treadmill (max speed 19)" />
+                        android:text="Nordictrack 2950 Treadmill (max speed 22)" />
 
                     <RadioButton
                         android:id="@+id/proform_2000"
