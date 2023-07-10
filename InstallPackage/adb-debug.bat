@@ -19,7 +19,7 @@ adb pull /sdcard/logcat.log
 
 :: pull all wolflogs
 adb pull /sdcard/.wolflogs/
-::adb pull /sdcard/eru/
+adb pull /sdcard/eru/
 
 echo.
 echo Debug files generated - logcat.log, logcat.txt, and \.wolflogs
