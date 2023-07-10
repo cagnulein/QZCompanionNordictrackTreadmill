@@ -28,9 +28,7 @@ public class UDPListenerService extends Service {
     //Boolean shouldListenForUDPBroadcast = false;
     static DatagramSocket socket;
 
-    static double lastReqSpeed;
     static int y1Speed;      //vertical position of slider at 2.0
-    static double lastReqInclination = 0;
     static int y1Inclination;    //vertical position of slider at 0.0
     static double lastReqResistance = 0;
     static int y1Resistance;
@@ -63,18 +61,15 @@ public class UDPListenerService extends Service {
     public static void setDevice(_device dev) {
         switch(dev) {
             case x11i:
-                lastReqSpeed = 0;
                 y1Speed = 600;      //vertical position of slider at 2.0
                 y1Inclination = 557;    //vertical position of slider at 0.0
                 break;
             case nordictrack_2950:
             case nordictrack_2950_maxspeed22:
-                lastReqSpeed = 2;
                 y1Speed = 807;      //vertical position of slider at 2.0
                 y1Inclination = 717;    //vertical position of slider at 0.0
                 break;
             case proform_2000:
-                lastReqSpeed = 2;
                 y1Speed = 598;      //vertical position of slider at 2.0
                 y1Inclination = 522;    //vertical position of slider at 0.0
                 break;
@@ -87,26 +82,21 @@ public class UDPListenerService extends Service {
                 y1Resistance = 604;
                 break;				
             case t85s:
-                lastReqSpeed = 0;
                 y1Speed = 609;      //vertical position of slider at 2.0
                 y1Inclination = 609;    //vertical position of slider at 0.0
             case s40:
-                lastReqSpeed = 2;
                 y1Speed = 482;      //vertical position of slider at 2.0
                 y1Inclination = 490;    //vertical position of slider at 0.0
                 break;
             case exp7i:
-                lastReqSpeed = 1.6;
                 y1Speed = 430;      //vertical position of slider at 2.0
                 y1Inclination = 442;    //vertical position of slider at 0.0
                 break;
             case x32i:
-                lastReqSpeed = 0;
                 y1Speed = 927;      //vertical position of slider at 2.0
                 y1Inclination = 881;    //vertical position of slider at 0.0
                 break;
             case t65s:
-                lastReqSpeed = 0;
                 y1Speed = 495;      //vertical position of slider at 2.0
                 y1Inclination = 585;    //vertical position of slider at 0.0                
                 break;
@@ -185,10 +175,10 @@ public class UDPListenerService extends Service {
                 String rSpeed = amessage[0];
                 double reqSpeed = Double.parseDouble(rSpeed);
                 reqSpeed = Math.round((reqSpeed) * 10) / 10.0;
-                writeLog("requestSpeed: " + reqSpeed + " " + lastReqSpeed);
+                writeLog("requestSpeed: " + reqSpeed + " ");
 
                 if (lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis() && QZService.lastSpeedFloat > 0) {
-                    if (reqSpeed != -1 && lastReqSpeed != reqSpeed || reqCachedSpeed != -1) {
+                    if (reqSpeed != -1 || reqCachedSpeed != -1) {
                         if (reqCachedSpeed != -1) {
                             reqSpeed = reqCachedSpeed;
                         }
@@ -233,7 +223,6 @@ public class UDPListenerService extends Service {
 
                         if (device == _device.x11i || device == _device.proform_2000 || device == _device.t85s || device == _device.t65s || device == _device.s40 || device == _device.exp7i || device == _device.x32i)
                             y1Speed = y2;  //set new vertical position of speed slider
-                        lastReqSpeed = reqSpeed;
                         lastSwipeMs = Calendar.getInstance().getTimeInMillis();
                         reqCachedSpeed = -1;
                     }
@@ -245,13 +234,13 @@ public class UDPListenerService extends Service {
             if (amessage.length > 1 && lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) {
                 String rInclination = amessage[1];
                 double reqInclination = roundToHalf(Double.parseDouble(rInclination));
-                writeLog("requestInclination: " + reqInclination + " " + lastReqInclination + " " + reqCachedInclination);				
-				Boolean need = reqInclination != -100 && lastReqInclination != reqInclination;
+                writeLog("requestInclination: " + reqInclination + " " + reqCachedInclination);				
+				Boolean need = reqInclination != -100;
 				if (!need && reqCachedInclination != -100) {
 					reqInclination = reqCachedInclination;
 					reqCachedInclination = -100;
 				}					
-                if (reqInclination != -100 && lastReqInclination != reqInclination) {
+                if (reqInclination != -100) {
                     int x1 = 0;
                     int y2 = 0;
                     if (device == _device.x11i) {
@@ -288,7 +277,6 @@ public class UDPListenerService extends Service {
 
                     if (device == _device.x11i || device == _device.proform_2000 || device == _device.t85s || device == _device.t65s || device == _device.s40 || device == _device.exp7i || device == _device.x32i)
                         y1Inclination = y2;  //set new vertical position of inclination slider
-                    lastReqInclination = reqInclination;
                     lastSwipeMs = Calendar.getInstance().getTimeInMillis();
 					reqCachedInclination = -100;
                 }
