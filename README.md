@@ -1,5 +1,5 @@
 # QZCompanionNordictrackTreadmill
-Companion App of QZ for Nordictrack Treadmills
+Companion App of QZ for Nordictrack Treadmills & Bikes
 
 Reference: https://github.com/cagnulein/qdomyos-zwift/issues/815
 
@@ -14,7 +14,7 @@ QZ and QZ Companion software development: Roberto Viola
 QZ on Facebook - <https://www.facebook.com/groups/149984563348738>
 
 **Technical Overview:** The QZ Companion app, when installed on your
-treadmill, communicates live speed and inclination to the QZ app
+NordicTrack treadmill or bike, communicates live speed and inclination to the QZ app
 running on another device (e.g. Windows PC or laptop, Android phone or
 tablet, or iOS iPhone or iPad). QZ then communicates this information to
 Zwift running on a 3rd device (e.g. Windows PC or laptop, Android
