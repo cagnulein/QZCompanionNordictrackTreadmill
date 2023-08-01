@@ -130,6 +130,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="T6.5s Treadmill" />	                        					
+
+					<RadioButton
+                        android:id="@+id/t75s"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="T7.5s Treadmill" />	                        					                        
                 </RadioGroup>				
             </LinearLayout>
         </ScrollView>

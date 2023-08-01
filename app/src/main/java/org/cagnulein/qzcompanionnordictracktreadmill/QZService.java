@@ -197,6 +197,43 @@ public class QZService extends Service {
 					} catch (IOException e) {
 						  // Handle Exception						
 						writeLog(e.getMessage());
+                    }					
+                } // this device doesn't log on the wolflog file
+				if(UDPListenerService.device == UDPListenerService._device.t75s) {
+					try {
+						InputStream speed2InputStream = shellRuntime.execAndGetOutput("logcat -d");
+						BufferedReader is = new BufferedReader(new InputStreamReader(speed2InputStream));
+						String line;
+						while ((line = is.readLine()) != null) {
+							if(line.contains("Changed KPH") || line.contains("Changed Actual KPH")) {
+								lastSpeed = line;
+							} else if(line.contains("Changed Grade") || line.contains("Changed Actual Grade")) {
+								lastInclination = line;
+                            } else if(line.contains("Changed Watts")) {
+                                lastWattage = line;
+                            } else if(line.contains("Changed RPM")) {
+                                lastCadence = line;
+                            } else if(line.contains("Changed CurrentGear")) {
+                                lastGear = line;
+                            } else if(line.contains("Changed Resistance")) {
+                                lastResistance = line;
+                            }
+						}
+						if(!lastSpeed.equals(""))
+							sendBroadcast(lastSpeed);
+						if(!lastInclination.equals(""))
+							sendBroadcast(lastInclination);
+                        if(!lastWattage.equals(""))
+                            sendBroadcast(lastWattage);
+                        if(!lastCadence.equals(""))
+                            sendBroadcast(lastCadence);
+                        if(!lastGear.equals(""))
+                            sendBroadcast(lastGear);
+                        if(!lastResistance.equals(""))
+                            sendBroadcast(lastResistance);
+					} catch (IOException e) {
+						  // Handle Exception						
+						writeLog(e.getMessage());
 					}					
 				} else {					
 					InputStream speedInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed KPH\" | tail -n1");
