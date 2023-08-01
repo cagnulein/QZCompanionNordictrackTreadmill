@@ -201,7 +201,10 @@ public class QZService extends Service {
                 } // this device doesn't log on the wolflog file
 				if(UDPListenerService.device == UDPListenerService._device.t75s) {
 					try {
-						InputStream speed2InputStream = shellRuntime.execAndGetOutput("logcat -d");
+                        String command = "logcat -b all -d > /sdcard/logcat.log";
+                        MainActivity.sendCommand(command);
+                        writeLog(command);                        
+						InputStream speed2InputStream = shellRuntime.execAndGetOutput("cat /sdcard/logcat.log");
 						BufferedReader is = new BufferedReader(new InputStreamReader(speed2InputStream));
 						String line;
 						while ((line = is.readLine()) != null) {
