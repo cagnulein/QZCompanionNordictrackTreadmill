@@ -209,9 +209,9 @@ public class QZService extends Service {
 						String line;
 						while ((line = is.readLine()) != null) {
 							if(line.contains("Changed KPH") || line.contains("Changed Actual KPH")) {
-								lastSpeed = line;
+								lastSpeed = line.replaceAll("Actual ", "");;
 							} else if(line.contains("Changed Grade") || line.contains("Changed Actual Grade")) {
-								lastInclination = line;
+								lastInclination = line.replaceAll("Actual ", "");;
                             } else if(line.contains("Changed Watts")) {
                                 lastWattage = line;
                             } else if(line.contains("Changed RPM")) {
