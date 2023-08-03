@@ -242,43 +242,62 @@ public class QZService extends Service {
                     }
                 } else if(UDPListenerService.device == UDPListenerService._device.grand_tour_pro) {
                         try {
-                            String command = "logcat -b all -d > /storage/sdcard0/logcat.log";
-                            MainActivity.sendCommand(command);
-                            writeLog(command);                        
-                            InputStream speed2InputStream = shellRuntime.execAndGetOutput("cat /storage/sdcard0/logcat.log");
-                            BufferedReader is = new BufferedReader(new InputStreamReader(speed2InputStream));
-                            String line;
-                            while ((line = is.readLine()) != null) {
-                                if(line.contains("Changed KPH") || line.contains("Changed Actual KPH")) {
-                                    lastSpeed = line.replaceAll("Actual ", "");;
-                                } else if(line.contains("Changed Grade") || line.contains("Changed Actual Grade")) {
-                                    lastInclination = line.replaceAll("Actual ", "");;
-                                } else if(line.contains("Changed Watts")) {
-                                    lastWattage = line;
-                                } else if(line.contains("Changed RPM")) {
-                                    lastCadence = line;
-                                } else if(line.contains("Changed CurrentGear")) {
-                                    lastGear = line;
-                                } else if(line.contains("Changed Resistance")) {
-                                    lastResistance = line;
+                            //String command = "logcat -b all -d > /storage/sdcard0/logcat.log";
+                            //MainActivity.sendCommand(command);
+                            //writeLog(command);                        
+                            //InputStream speed2InputStream = shellRuntime.execAndGetOutput("cat /storage/sdcard0/logcat.log");
+                            try {
+                                String command = "logcat -b all -d";
+                                // Executes the command.
+                                Process process = Runtime.getRuntime().exec(command);
+                                writeLog(command);                        
+
+                                // Reads stdout.
+                                // NOTE: You can write to stdin of the command using
+                                //       process.getOutputStream().
+                                BufferedReader is = new BufferedReader(
+                                    new InputStreamReader(process.getInputStream()));
+                                String line;
+                                while ((line = is.readLine()) != null) {
+                                    if(line.contains("Changed KPH") || line.contains("Changed Actual KPH")) {
+                                        lastSpeed = line.replaceAll("Actual ", "");;
+                                    } else if(line.contains("Changed Grade") || line.contains("Changed Actual Grade")) {
+                                        lastInclination = line.replaceAll("Actual ", "");;
+                                    } else if(line.contains("Changed Watts")) {
+                                        lastWattage = line;
+                                    } else if(line.contains("Changed RPM")) {
+                                        lastCadence = line;
+                                    } else if(line.contains("Changed CurrentGear")) {
+                                        lastGear = line;
+                                    } else if(line.contains("Changed Resistance")) {
+                                        lastResistance = line;
+                                    }
                                 }
-                            }
-                            if(!lastSpeed.equals(""))
-                                sendBroadcast(lastSpeed);
-                            if(!lastInclination.equals(""))
-                                sendBroadcast(lastInclination);
-                            if(!lastWattage.equals(""))
-                                sendBroadcast(lastWattage);
-                            if(!lastCadence.equals(""))
-                                sendBroadcast(lastCadence);
-                            if(!lastGear.equals(""))
-                                sendBroadcast(lastGear);
-                            if(!lastResistance.equals(""))
-                                sendBroadcast(lastResistance);
+                                if(!lastSpeed.equals(""))
+                                    sendBroadcast(lastSpeed);
+                                if(!lastInclination.equals(""))
+                                    sendBroadcast(lastInclination);
+                                if(!lastWattage.equals(""))
+                                    sendBroadcast(lastWattage);
+                                if(!lastCadence.equals(""))
+                                    sendBroadcast(lastCadence);
+                                if(!lastGear.equals(""))
+                                    sendBroadcast(lastGear);
+                                if(!lastResistance.equals(""))
+                                    sendBroadcast(lastResistance);
+                            } catch (IOException e) {
+                                    // Handle Exception						
+                                writeLog(e.getMessage());
+                            }		
+                                reader.close();
+                    
+                                // Waits for the command to finish.
+                                process.waitFor();                    
                         } catch (IOException e) {
-                              // Handle Exception						
-                            writeLog(e.getMessage());
-                        }					                    
+                            throw new RuntimeException(e);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }                                                        			                    
 				} else {					
 					InputStream speedInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed KPH\" | tail -n1");
 					if(!speed(speedInputStream)) {
