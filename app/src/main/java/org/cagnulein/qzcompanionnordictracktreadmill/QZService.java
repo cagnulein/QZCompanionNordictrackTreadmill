@@ -285,14 +285,16 @@ public class QZService extends Service {
                                     sendBroadcast(lastGear);
                                 if(!lastResistance.equals(""))
                                     sendBroadcast(lastResistance);
+
+                                reader.close();
+                
+                                // Waits for the command to finish.
+                                process.waitFor();                    
+    
                             } catch (IOException e) {
                                     // Handle Exception						
                                 writeLog(e.getMessage());
                             }		
-                                reader.close();
-                    
-                                // Waits for the command to finish.
-                                process.waitFor();                    
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         } catch (InterruptedException e) {
