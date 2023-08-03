@@ -161,6 +161,8 @@ public class QZService extends Service {
                 socket = new DatagramSocket();
                 socket.setBroadcast(true);
 
+                writeLog("Device: " + UDPListenerService.device);
+
 				// this device doesn't have tail and grep capabilities
 				if(UDPListenerService.device == UDPListenerService._device.c1750) {
 					try {
@@ -199,7 +201,7 @@ public class QZService extends Service {
 						writeLog(e.getMessage());
                     }					
                 } // this device doesn't log on the wolflog file
-				if(UDPListenerService.device == UDPListenerService._device.t75s) {
+				else if(UDPListenerService.device == UDPListenerService._device.t75s) {
 					try {
                         String command = "logcat -b all -d > /sdcard/logcat.log";
                         MainActivity.sendCommand(command);
@@ -237,7 +239,46 @@ public class QZService extends Service {
 					} catch (IOException e) {
 						  // Handle Exception						
 						writeLog(e.getMessage());
-					}					
+                    }
+                } else if(UDPListenerService.device == UDPListenerService._device.grand_tour_pro) {
+                        try {
+                            String command = "logcat -b all -d > /storage/sdcard0/logcat.log";
+                            MainActivity.sendCommand(command);
+                            writeLog(command);                        
+                            InputStream speed2InputStream = shellRuntime.execAndGetOutput("cat /storage/sdcard0/logcat.log");
+                            BufferedReader is = new BufferedReader(new InputStreamReader(speed2InputStream));
+                            String line;
+                            while ((line = is.readLine()) != null) {
+                                if(line.contains("Changed KPH") || line.contains("Changed Actual KPH")) {
+                                    lastSpeed = line.replaceAll("Actual ", "");;
+                                } else if(line.contains("Changed Grade") || line.contains("Changed Actual Grade")) {
+                                    lastInclination = line.replaceAll("Actual ", "");;
+                                } else if(line.contains("Changed Watts")) {
+                                    lastWattage = line;
+                                } else if(line.contains("Changed RPM")) {
+                                    lastCadence = line;
+                                } else if(line.contains("Changed CurrentGear")) {
+                                    lastGear = line;
+                                } else if(line.contains("Changed Resistance")) {
+                                    lastResistance = line;
+                                }
+                            }
+                            if(!lastSpeed.equals(""))
+                                sendBroadcast(lastSpeed);
+                            if(!lastInclination.equals(""))
+                                sendBroadcast(lastInclination);
+                            if(!lastWattage.equals(""))
+                                sendBroadcast(lastWattage);
+                            if(!lastCadence.equals(""))
+                                sendBroadcast(lastCadence);
+                            if(!lastGear.equals(""))
+                                sendBroadcast(lastGear);
+                            if(!lastResistance.equals(""))
+                                sendBroadcast(lastResistance);
+                        } catch (IOException e) {
+                              // Handle Exception						
+                            writeLog(e.getMessage());
+                        }					                    
 				} else {					
 					InputStream speedInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed KPH\" | tail -n1");
 					if(!speed(speedInputStream)) {

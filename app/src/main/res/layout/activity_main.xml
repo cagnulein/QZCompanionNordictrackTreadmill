@@ -136,6 +136,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="T7.5s Treadmill" />	                        					                        
+                    
+                    <RadioButton
+                        android:id="@+id/grand_tour_pro"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Grand Tour Pro Bike" />	
                 </RadioGroup>				
             </LinearLayout>
         </ScrollView>
