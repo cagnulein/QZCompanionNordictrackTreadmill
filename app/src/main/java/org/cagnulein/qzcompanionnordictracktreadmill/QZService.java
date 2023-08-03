@@ -295,8 +295,6 @@ public class QZService extends Service {
                                     // Handle Exception						
                                 writeLog(e.getMessage());
                             }		
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }                                                        			                    
