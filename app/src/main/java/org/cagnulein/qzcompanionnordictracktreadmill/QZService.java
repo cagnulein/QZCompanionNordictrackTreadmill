@@ -286,7 +286,7 @@ public class QZService extends Service {
                                 if(!lastResistance.equals(""))
                                     sendBroadcast(lastResistance);
 
-                                reader.close();
+                                is.close();
                 
                                 // Waits for the command to finish.
                                 process.waitFor();                    
