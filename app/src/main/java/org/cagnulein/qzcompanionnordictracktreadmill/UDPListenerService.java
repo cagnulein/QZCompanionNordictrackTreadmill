@@ -54,6 +54,7 @@ public class UDPListenerService extends Service {
         nordictrack_2950_maxspeed22,
         t75s,
         grand_tour_pro,
+        proform_studio_bike_pro22
     }
 
     public static _device device;
@@ -82,7 +83,11 @@ public class UDPListenerService extends Service {
             case tdf10:
                 lastReqResistance = 1;
                 y1Resistance = 604;
-                break;				
+                break;
+            case proform_studio_bike_pro22:
+                lastReqResistance = 1;
+                y1Resistance = 805;
+                break;                				
             case t85s:
                 y1Speed = 609;      //vertical position of slider at 2.0
                 y1Inclination = 609;    //vertical position of slider at 0.0
@@ -144,7 +149,7 @@ public class UDPListenerService extends Service {
 
         writeLog(message);
         String[] amessage = message.split(";");
-        if(device == _device.s22i || device == _device.tdf10) {
+        if(device == _device.s22i || device == _device.tdf10 || device == _device.proform_studio_bike_pro22) {
             if (amessage.length > 0) {
                 String rResistance = amessage[0];
                 double reqResistance = Double.parseDouble(rResistance);
@@ -164,13 +169,16 @@ public class UDPListenerService extends Service {
                         } else if (device == _device.tdf10) {
 							x1 = 1205;
                             y2 = (int) (619.91 - (15.913 * reqResistance));
+                        } else if (device == _device.proform_studio_bike_pro22) {
+							x1 = 1828;
+                            y2 = (int) (826.25 - (21.25 * reqResistance));
 						}
 
                         String command = "input swipe " + x1 + " " + y1Resistance + " " + x1 + " " + y2 + " 200";
                         MainActivity.sendCommand(command);
                         writeLog(command);
 
-                        if (device == _device.s22i || device == _device.tdf10)
+                        if (device == _device.s22i || device == _device.tdf10 || device == _device.proform_studio_bike_pro22)
                             y1Resistance = y2;  //set new vertical position of speed slider
                         lastReqResistance = reqResistance;
                         lastSwipeMs = Calendar.getInstance().getTimeInMillis();
