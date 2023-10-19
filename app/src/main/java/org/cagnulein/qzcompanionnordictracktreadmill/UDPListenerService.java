@@ -54,7 +54,8 @@ public class UDPListenerService extends Service {
         nordictrack_2950_maxspeed22,
         t75s,
         grand_tour_pro,
-        proform_studio_bike_pro22
+        proform_studio_bike_pro22,
+        x32i_NTL39019
     }
 
     public static _device device;
@@ -103,6 +104,10 @@ public class UDPListenerService extends Service {
                 y1Speed = 927;      //vertical position of slider at 2.0
                 y1Inclination = 881;    //vertical position of slider at 0.0
                 break;
+            case x32i_NTL39019:
+                y1Speed = 779;      //vertical position of slider at 2.0
+                y1Inclination = 740;    //vertical position of slider at 0.0
+                break;                
             case t65s:
                 y1Speed = 495;      //vertical position of slider at 2.0
                 y1Inclination = 585;    //vertical position of slider at 0.0                
@@ -208,6 +213,9 @@ public class UDPListenerService extends Service {
                         } else if (device == _device.x32i) {
                             x1 = 1845;
                             y2 = (int) (978.8794 - (25.9811 * reqSpeed));
+                        } else if (device == _device.x32i_NTL39019) {
+                            x1 = 1845;
+                            y2 = (int) (817.5 - (42.5 * reqSpeed * 0.621371));                            
 						} else if (device == _device.t85s) {
                             x1 = 1207;
                             y2 = (int) (629.81 - (20.81 * reqSpeed));
@@ -245,7 +253,7 @@ public class UDPListenerService extends Service {
                         MainActivity.sendCommand(command);
                         writeLog(command);
 
-                        if (device == _device.x11i || device == _device.proform_2000 || device == _device.t85s || device == _device.t65s || device == _device.grand_tour_pro || device == _device.t75s || device == _device.s40 || device == _device.exp7i || device == _device.x32i)
+                        if (device == _device.x11i || device == _device.proform_2000 || device == _device.t85s || device == _device.t65s || device == _device.grand_tour_pro || device == _device.t75s || device == _device.s40 || device == _device.exp7i || device == _device.x32i || device == _device.x32i_NTL39019)
                             y1Speed = y2;  //set new vertical position of speed slider
                         lastSwipeMs = Calendar.getInstance().getTimeInMillis();
                         reqCachedSpeed = -1;
@@ -273,6 +281,9 @@ public class UDPListenerService extends Service {
                     } else if (device == _device.x32i) {
                         x1 = 74;
                         y2 = (int) (881.3421 - (11.8424 * reqInclination));
+                    } else if (device == _device.x32i_NTL39019) {
+                        x1 = 74;
+                        y2 = (int) (749 - (11.8424 * reqInclination));                        
 					} else if (device == _device.t85s) {
                         x1 = 75;
                         y2 = (int) (609 - (36.417 * reqInclination));
