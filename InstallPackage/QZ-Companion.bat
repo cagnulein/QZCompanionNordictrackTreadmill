@@ -92,6 +92,8 @@ adb shell mkdir -p /sdcard/.wolfDev/keepme >nul 2>&1
 adb shell dumpsys package org.cagnulein.qzcompanionnordictracktreadmill > dumpsys.log 2>&1
 adb logcat -d > logcat.txt 2>&1
 
+adb shell pm grant org.cagnulein.qzcompanionnordictracktreadmill android.permission.READ_LOGS
+
 echo. | tee -a QZ-Companion-log.txt
 pause > nul | set/p = QZ Companion is installed. Press any key to reboot treadmill . . .
 echo.
