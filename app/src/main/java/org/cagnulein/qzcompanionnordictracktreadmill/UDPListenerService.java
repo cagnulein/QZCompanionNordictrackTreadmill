@@ -177,6 +177,9 @@ public class UDPListenerService extends Service {
                         } else if (device == _device.proform_studio_bike_pro22) {
 							x1 = 1828;
                             y2 = (int) (826.25 - (21.25 * reqResistance));
+						} else {
+							x1 = 1828;
+                            y2 = (int) (826.25 - (21.25 * reqResistance));
 						}
 
                         String command = "input swipe " + x1 + " " + y1Resistance + " " + x1 + " " + y2 + " 200";
@@ -247,6 +250,9 @@ public class UDPListenerService extends Service {
                         } else if (device == _device.proform_2000) {
                             x1 = 1205;     //middle of slider
                             y2 = (int) ((-19.921 * reqSpeed) + 631.03);
+                        } else {
+                            x1 = 1205;     //middle of slider
+                            y2 = (int) ((-19.921 * reqSpeed) + 631.03);
                         }
 
                         String command = "input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
@@ -308,6 +314,9 @@ public class UDPListenerService extends Service {
                         //set speed slider to target position
                         y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 31.1);
                     } else if (device == _device.proform_2000) {
+                        x1 = 79;
+                        y2 = (int) ((-21.804 * reqInclination) + 520.11);
+                    } else {
                         x1 = 79;
                         y2 = (int) ((-21.804 * reqInclination) + 520.11);
                     }
