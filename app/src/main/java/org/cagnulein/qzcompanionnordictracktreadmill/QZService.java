@@ -172,6 +172,8 @@ public class QZService extends Service {
 						while ((line = is.readLine()) != null) {
 							if(line.contains("Changed KPH")) {
 								lastSpeed = line;
+                                String[] b = line.split(" ");
+                                lastSpeedFloat = Float.parseFloat(b[b.length-1]);                                
 							} else if(line.contains("Changed Grade")) {
 								lastInclination = line;
                             } else if(line.contains("Changed Watts")) {
@@ -211,7 +213,9 @@ public class QZService extends Service {
 						String line;
 						while ((line = is.readLine()) != null) {
 							if(line.contains("Changed KPH") || line.contains("Changed Actual KPH")) {
-								lastSpeed = line.replaceAll("Actual ", "");;
+								lastSpeed = line.replaceAll("Actual ", "");
+                                String[] b = line.split(" ");
+                                lastSpeedFloat = Float.parseFloat(b[b.length-1]);                                
 							} else if(line.contains("Changed Grade") || line.contains("Changed Actual Grade")) {
 								lastInclination = line.replaceAll("Actual ", "");;
                             } else if(line.contains("Changed Watts")) {
