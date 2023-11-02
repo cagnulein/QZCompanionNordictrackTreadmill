@@ -2,6 +2,17 @@
 
 @echo off
 
+set /p TMIP="Enter treadmill IP address: "
+
+ping %TMIP%
+timeout 5
+
+adb disconnect
+adb kill-server
+adb connect %TMIP%
+adb devices -l
+timeout 5
+
 set SAVESTAMP=%DATE:/=-%@%TIME::=-%
 set SAVESTAMP=%SAVESTAMP: =%
 
