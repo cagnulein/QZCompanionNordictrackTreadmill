@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="org.cagnulein.qzcompanionnordictracktreadmill"  android:versionName="3.3.9" android:versionCode="88" >
+    package="org.cagnulein.qzcompanionnordictracktreadmill"  android:versionName="3.3.10" android:versionCode="89" >
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />

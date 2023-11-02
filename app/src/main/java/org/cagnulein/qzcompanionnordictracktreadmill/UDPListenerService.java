@@ -205,7 +205,7 @@ public class UDPListenerService extends Service {
                 String rSpeed = amessage[0];
                 double reqSpeed = Double.parseDouble(rSpeed);
                 reqSpeed = Math.round((reqSpeed) * 10) / 10.0;
-                writeLog("requestSpeed: " + reqSpeed + " ");
+                writeLog("requestSpeed: " + reqSpeed + " lastSpeed:" + QZService.lastSpeedFloat + " cachedSpeed:" + reqCachedSpeed);
 
                 if (lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis() && QZService.lastSpeedFloat > 0) {
                     if (reqSpeed != -1 || reqCachedSpeed != -1) {
