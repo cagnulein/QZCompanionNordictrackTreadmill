@@ -219,7 +219,7 @@ public class UDPListenerService extends Service {
                             y2 = (int) (621.997 - (21.785 * reqSpeed));
                         } else if (device == _device.x32i) {
                             x1 = 1845;
-                            y2 = (int) (978.8794 - (25.9811 * reqSpeed));
+                            y2 = (int) (834.85 - (26.946 * reqSpeed));
                         } else if (device == _device.x32i_NTL39019) {
                             x1 = 1845;
                             y2 = (int) (817.5 - (42.5 * reqSpeed * 0.621371));                            
@@ -292,8 +292,8 @@ public class UDPListenerService extends Service {
                         x1 = 75;
                         y2 = (int) (565.491 - (8.44 * reqInclination));
                     } else if (device == _device.x32i) {
-                        x1 = 74;
-                        y2 = (int) (881.3421 - (11.8424 * reqInclination));
+                        x1 = 76;
+                        y2 = (int) (734.07 - (12.297 * reqInclination));
                     } else if (device == _device.x32i_NTL39019) {
                         x1 = 74;
                         y2 = (int) (749 - (11.8424 * reqInclination));                        
