@@ -55,7 +55,8 @@ public class UDPListenerService extends Service {
         t75s,
         grand_tour_pro,
         proform_studio_bike_pro22,
-        x32i_NTL39019
+        x32i_NTL39019,
+        x22i,
     }
 
     public static _device device;
@@ -68,6 +69,10 @@ public class UDPListenerService extends Service {
                 y1Speed = 600;      //vertical position of slider at 2.0
                 y1Inclination = 557;    //vertical position of slider at 0.0
                 break;
+            case x22i:
+                y1Speed = 785;      //vertical position of slider at 2.0
+                y1Inclination = 785;    //vertical position of slider at 0.0
+                break;                
             case nordictrack_2950:
             case nordictrack_2950_maxspeed22:
                 y1Speed = 807;      //vertical position of slider at 2.0
@@ -217,6 +222,9 @@ public class UDPListenerService extends Service {
                         if (device == _device.x11i) {
                             x1 = 1207;
                             y2 = (int) (621.997 - (21.785 * reqSpeed));
+                        } else if (device == _device.x22i) {
+                            x1 = 1845;
+                            y2 = (int) (785 - (23.636363636363636 * reqSpeed));                            
                         } else if (device == _device.x32i) {
                             x1 = 1845;
                             y2 = (int) (834.85 - (26.946 * reqSpeed));
@@ -266,7 +274,7 @@ public class UDPListenerService extends Service {
                         MainActivity.sendCommand(command);
                         writeLog(command);
 
-                        if (device == _device.x11i || device == _device.c1750 || device == _device.proform_2000 || device == _device.t85s || device == _device.t65s || device == _device.grand_tour_pro || device == _device.t75s || device == _device.s40 || device == _device.exp7i || device == _device.x32i || device == _device.x32i_NTL39019)
+                        if (device == _device.x11i || device == _device.x22i || device == _device.c1750 || device == _device.proform_2000 || device == _device.t85s || device == _device.t65s || device == _device.grand_tour_pro || device == _device.t75s || device == _device.s40 || device == _device.exp7i || device == _device.x32i || device == _device.x32i_NTL39019)
                             y1Speed = y2;  //set new vertical position of speed slider
                         lastSwipeMs = Calendar.getInstance().getTimeInMillis();
                         reqCachedSpeed = -1;
@@ -291,6 +299,9 @@ public class UDPListenerService extends Service {
                     if (device == _device.x11i) {
                         x1 = 75;
                         y2 = (int) (565.491 - (8.44 * reqInclination));
+                    else if (device == _device.x22i) {
+                        x1 = 75;
+                        y2 = (int) (785 - (11.304347826086957 * (reqInclination + 6)));                        
                     } else if (device == _device.x32i) {
                         x1 = 76;
                         y2 = (int) (734.07 - (12.297 * reqInclination));
@@ -335,7 +346,7 @@ public class UDPListenerService extends Service {
                     MainActivity.sendCommand(command);
                     writeLog(command);
 
-                    if (device == _device.x11i || device == _device.c1750 || device == _device.proform_2000 || device == _device.t85s || device == _device.t65s || device == _device.t75s || device == _device.grand_tour_pro || device == _device.s40 || device == _device.exp7i || device == _device.x32i)
+                    if (device == _device.x11i || device == _device.x22i || device == _device.c1750 || device == _device.proform_2000 || device == _device.t85s || device == _device.t65s || device == _device.t75s || device == _device.grand_tour_pro || device == _device.s40 || device == _device.exp7i || device == _device.x32i)
                         y1Inclination = y2;  //set new vertical position of inclination slider
                     lastSwipeMs = Calendar.getInstance().getTimeInMillis();
 					reqCachedInclination = -100;
