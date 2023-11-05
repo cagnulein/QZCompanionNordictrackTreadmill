@@ -164,7 +164,7 @@ public class QZService extends Service {
                 writeLog("Device: " + UDPListenerService.device);
 
 				// this device doesn't have tail and grep capabilities
-				if(UDPListenerService.device == UDPListenerService._device.c1750) {
+				if(UDPListenerService.device == UDPListenerService._device.c1750 || UDPListenerService.device == UDPListenerService._device.x22i) {
 					try {
 						InputStream speed2InputStream = shellRuntime.execAndGetOutput("cat " + file);
 						BufferedReader is = new BufferedReader(new InputStreamReader(speed2InputStream));
