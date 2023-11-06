@@ -271,7 +271,12 @@ public class UDPListenerService extends Service {
                         }
 
                         String command = "input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
-                        MainActivity.sendCommand(command);
+                        if(device == _device.x22i) {
+                            shellRuntime.exec(command);
+                        }
+                        else {
+                            MainActivity.sendCommand(command);
+                        }
                         writeLog(command);
 
                         if (device == _device.x11i || device == _device.x22i || device == _device.c1750 || device == _device.proform_2000 || device == _device.t85s || device == _device.t65s || device == _device.grand_tour_pro || device == _device.t75s || device == _device.s40 || device == _device.exp7i || device == _device.x32i || device == _device.x32i_NTL39019)
@@ -343,7 +348,11 @@ public class UDPListenerService extends Service {
                     }
 
                     String command = " input swipe " + x1 + " " + y1Inclination + " " + x1 + " " + y2 + " 200";
-                    MainActivity.sendCommand(command);
+                    if(device == _device.x22i) {
+                        shellRuntime.exec(command);
+                    } else {
+                        MainActivity.sendCommand(command);
+                    }
                     writeLog(command);
 
                     if (device == _device.x11i || device == _device.x22i || device == _device.c1750 || device == _device.proform_2000 || device == _device.t85s || device == _device.t65s || device == _device.t75s || device == _device.grand_tour_pro || device == _device.s40 || device == _device.exp7i || device == _device.x32i)
