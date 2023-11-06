@@ -47,6 +47,7 @@ public class QZService extends Service {
     String lastCadence = "";
     static String lastResistance = "";
     String lastGear = "";
+    static String lastHeart = "";
 
     int counterTruncate = 0;
 
@@ -184,6 +185,8 @@ public class QZService extends Service {
                                 lastGear = line;
                             } else if(line.contains("Changed Resistance")) {
                                 lastResistance = line;
+                            } else if(line.containts("HeartRateDataUpdate")) {
+                                lastHeart = line;
                             }
 						}
 						if(!lastSpeed.equals(""))
@@ -198,6 +201,8 @@ public class QZService extends Service {
                             sendBroadcast(lastGear);
                         if(!lastResistance.equals(""))
                             sendBroadcast(lastResistance);
+                        if(!lastHeart.equals(""))
+                            sendBroadcast(lastHeart);
 					} catch (IOException e) {
 						  // Handle Exception						
 						writeLog(e.getMessage());
