@@ -185,7 +185,7 @@ public class QZService extends Service {
                                 lastGear = line;
                             } else if(line.contains("Changed Resistance")) {
                                 lastResistance = line;
-                            } else if(line.containts("HeartRateDataUpdate")) {
+                            } else if(line.contains("HeartRateDataUpdate")) {
                                 lastHeart = line;
                             }
 						}
