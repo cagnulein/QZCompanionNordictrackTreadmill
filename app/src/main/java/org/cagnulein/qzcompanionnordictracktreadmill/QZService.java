@@ -249,7 +249,8 @@ public class QZService extends Service {
 						  // Handle Exception						
 						writeLog(e.getMessage());
                     }
-                } else if(UDPListenerService.device == UDPListenerService._device.grand_tour_pro) {
+                } else if(UDPListenerService.device == UDPListenerService._device.grand_tour_pro ||
+                          UDPListenerService.device == UDPListenerService._device.NTEX71021) {
                         try {
                             //String command = "logcat -b all -d > /storage/sdcard0/logcat.log";
                             //MainActivity.sendCommand(command);

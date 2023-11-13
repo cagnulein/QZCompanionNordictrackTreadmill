@@ -160,6 +160,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Proform Studio Bike Pro 22" />	
+
+                    <RadioButton
+                        android:id="@+id/NTEX71021"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Nordic Track Studio Bike - NTEX71021" />	                    
                 </RadioGroup>				
             </LinearLayout>
         </ScrollView>
