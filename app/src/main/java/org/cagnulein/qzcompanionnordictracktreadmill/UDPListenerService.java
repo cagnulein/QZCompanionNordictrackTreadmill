@@ -202,7 +202,7 @@ public class UDPListenerService extends Service {
                         MainActivity.sendCommand(command);
                         writeLog(command);
 
-                        if (device == _device.s22i || device == _device.tdf10 || device == _device.proform_studio_bike_pro22 || _device.NTEX71021)
+                        if (device == _device.s22i || device == _device.tdf10 || device == _device.proform_studio_bike_pro22 || device == _device.NTEX71021)
                             y1Resistance = y2;  //set new vertical position of speed slider
                         lastReqResistance = reqResistance;
                         lastSwipeMs = Calendar.getInstance().getTimeInMillis();
