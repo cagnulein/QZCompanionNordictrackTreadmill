@@ -216,6 +216,8 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                     UDPListenerService.setDevice(UDPListenerService._device.grand_tour_pro);
                 } else if(i == R.id.proform_studio_bike_pro22) {
                     UDPListenerService.setDevice(UDPListenerService._device.proform_studio_bike_pro22);                    
+                } else if(i == R.id.NTEX71021) {
+                    UDPListenerService.setDevice(UDPListenerService._device.NTEX71021);
                 } else {
                     UDPListenerService.setDevice(UDPListenerService._device.other);
                 }

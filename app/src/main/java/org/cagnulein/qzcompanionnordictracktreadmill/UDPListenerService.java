@@ -57,6 +57,7 @@ public class UDPListenerService extends Service {
         proform_studio_bike_pro22,
         x32i_NTL39019,
         x22i,
+        NTEX71021,
     }
 
     public static _device device;
@@ -128,7 +129,10 @@ public class UDPListenerService extends Service {
             case c1750:
                 y1Speed = 793;      //vertical position of slider at 2.0
                 y1Inclination = 694;    //vertical position of slider at 0.0                
-                break;                                                
+                break;                      
+            case NTEX71021:
+                y1Resistance = 480;      //vertical position of slider at 1.0
+                break;                      
             default:
                 break;
         }
@@ -186,6 +190,9 @@ public class UDPListenerService extends Service {
                         } else if (device == _device.proform_studio_bike_pro22) {
 							x1 = 1828;
                             y2 = (int) (826.25 - (21.25 * reqResistance));
+                        } else if (device == _device.NTEX71021) {
+                            x1 = 950;
+                            y2 = (int) (493 - (13.57 * reqResistance));                            
 						} else {
 							x1 = 1828;
                             y2 = (int) (826.25 - (21.25 * reqResistance));
@@ -195,7 +202,7 @@ public class UDPListenerService extends Service {
                         MainActivity.sendCommand(command);
                         writeLog(command);
 
-                        if (device == _device.s22i || device == _device.tdf10 || device == _device.proform_studio_bike_pro22)
+                        if (device == _device.s22i || device == _device.tdf10 || device == _device.proform_studio_bike_pro22 || device == _device.NTEX71021)
                             y1Resistance = y2;  //set new vertical position of speed slider
                         lastReqResistance = reqResistance;
                         lastSwipeMs = Calendar.getInstance().getTimeInMillis();
@@ -272,7 +279,12 @@ public class UDPListenerService extends Service {
                         }
 
                         String command = "input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
-                        MainActivity.sendCommand(command);
+                        if(device == _device.x22i) {
+                            shellRuntime.exec(command);
+                        }
+                        else {
+                            MainActivity.sendCommand(command);
+                        }
                         writeLog(command);
 
                         if (device == _device.x11i || device == _device.x22i || device == _device.c1750 || device == _device.proform_2000 || device == _device.t85s || device == _device.t65s || device == _device.grand_tour_pro || device == _device.t75s || device == _device.s40 || device == _device.exp7i || device == _device.x32i || device == _device.x32i_NTL39019)
@@ -345,7 +357,11 @@ public class UDPListenerService extends Service {
                     }
 
                     String command = " input swipe " + x1 + " " + y1Inclination + " " + x1 + " " + y2 + " 200";
-                    MainActivity.sendCommand(command);
+                    if(device == _device.x22i) {
+                        shellRuntime.exec(command);
+                    } else {
+                        MainActivity.sendCommand(command);
+                    }
                     writeLog(command);
 
                     if (device == _device.x11i || device == _device.x22i || device == _device.c1750 || device == _device.proform_2000 || device == _device.t85s || device == _device.t65s || device == _device.t75s || device == _device.grand_tour_pro || device == _device.s40 || device == _device.exp7i || device == _device.x32i)

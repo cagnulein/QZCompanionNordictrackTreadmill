@@ -47,6 +47,7 @@ public class QZService extends Service {
     String lastCadence = "";
     static String lastResistance = "";
     String lastGear = "";
+    static String lastHeart = "";
 
     int counterTruncate = 0;
 
@@ -184,6 +185,8 @@ public class QZService extends Service {
                                 lastGear = line;
                             } else if(line.contains("Changed Resistance")) {
                                 lastResistance = line;
+                            } else if(line.contains("HeartRateDataUpdate")) {
+                                lastHeart = line;
                             }
 						}
 						if(!lastSpeed.equals(""))
@@ -198,6 +201,8 @@ public class QZService extends Service {
                             sendBroadcast(lastGear);
                         if(!lastResistance.equals(""))
                             sendBroadcast(lastResistance);
+                        if(!lastHeart.equals(""))
+                            sendBroadcast(lastHeart);
 					} catch (IOException e) {
 						  // Handle Exception						
 						writeLog(e.getMessage());
@@ -244,7 +249,8 @@ public class QZService extends Service {
 						  // Handle Exception						
 						writeLog(e.getMessage());
                     }
-                } else if(UDPListenerService.device == UDPListenerService._device.grand_tour_pro) {
+                } else if(UDPListenerService.device == UDPListenerService._device.grand_tour_pro ||
+                          UDPListenerService.device == UDPListenerService._device.NTEX71021) {
                         try {
                             //String command = "logcat -b all -d > /storage/sdcard0/logcat.log";
                             //MainActivity.sendCommand(command);
