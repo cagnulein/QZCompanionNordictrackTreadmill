@@ -269,19 +269,21 @@ public class QZService extends Service {
                                     new InputStreamReader(process.getInputStream()));
                                 String line;
                                 while ((line = is.readLine()) != null) {
-                                    if(line.contains("Changed KPH") || line.contains("Changed Actual KPH")) {
-                                        lastSpeed = line.replaceAll("Actual ", "");;
-                                    } else if(line.contains("Changed Grade") || line.contains("Changed Actual Grade")) {
-                                        lastInclination = line.replaceAll("Actual ", "");;
-                                    } else if(line.contains("Changed Watts")) {
-                                        lastWattage = line;
-                                    } else if(line.contains("Changed RPM")) {
-                                        lastCadence = line;
-                                    } else if(line.contains("Changed CurrentGear")) {
-                                        lastGear = line;
-                                    } else if(line.contains("Changed Resistance")) {
-                                        lastResistance = line;
-                                    }
+                                    if(!line.contains(LOG_TAG)) {}
+                                        if(line.contains("Changed KPH") || line.contains("Changed Actual KPH")) {
+                                            lastSpeed = line.replaceAll("Actual ", "");;
+                                        } else if(line.contains("Changed Grade") || line.contains("Changed Actual Grade")) {
+                                            lastInclination = line.replaceAll("Actual ", "");;
+                                        } else if(line.contains("Changed Watts")) {
+                                            lastWattage = line;
+                                        } else if(line.contains("Changed RPM")) {
+                                            lastCadence = line;
+                                        } else if(line.contains("Changed CurrentGear")) {
+                                            lastGear = line;
+                                        } else if(line.contains("Changed Resistance")) {
+                                            lastResistance = line;
+                                        }
+                                    }  
                                 }
                                 if(!lastSpeed.equals(""))
                                     sendBroadcast(lastSpeed);
