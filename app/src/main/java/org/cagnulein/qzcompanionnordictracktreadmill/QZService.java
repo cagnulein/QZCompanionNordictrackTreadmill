@@ -269,7 +269,7 @@ public class QZService extends Service {
                                     new InputStreamReader(process.getInputStream()));
                                 String line;
                                 while ((line = is.readLine()) != null) {
-                                    if(!line.contains(LOG_TAG)) {}
+                                    if(!line.contains(LOG_TAG)) {
                                         if(line.contains("Changed KPH") || line.contains("Changed Actual KPH")) {
                                             lastSpeed = line.replaceAll("Actual ", "");;
                                         } else if(line.contains("Changed Grade") || line.contains("Changed Actual Grade")) {
