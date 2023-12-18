@@ -37,19 +37,19 @@ jobs:
         name: apk
         path: app/build/outputs/apk/debug/app-debug.apk
 
-    - name: Update the InstallPackage
-      run: cp app/build/outputs/apk/debug/app-debug.apk ./InstallPackage/QZCompanionNordictrackTreadmill.apk
-      
     - uses: r0adkll/sign-android-release@v1
       name: Sign app APK
       # ID used to access action output
       id: sign_app
       with:
-        releaseDirectory: './InstallPackage/QZCompanionNordictrackTreadmill.apk'
+        releaseDirectory: app/build/outputs/apk/debug/app-debug.apk
         signingKeyBase64: ${{ secrets.SIGNING_KEY }}
         alias: ${{ secrets.ALIAS }}
         keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
         keyPassword: ${{ secrets.KEY_PASSWORD }}
+
+    - name: Update the InstallPackage
+      run: cp app/build/outputs/apk/debug/app-debug.apk ./InstallPackage/QZCompanionNordictrackTreadmill.apk
 
     - name: Commit InstallPackage
       uses: EndBug/add-and-commit@v9 # You can change this to use a specific version.
