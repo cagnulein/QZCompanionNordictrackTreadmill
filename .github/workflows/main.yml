@@ -31,22 +31,23 @@ jobs:
     - name: Build release apk
       run: chmod a+x gradlew && ./gradlew clean assembleRelease
 
-    - name: Archive apk
-      uses: actions/upload-artifact@v2
-      with:
-        name: apk
-        path: app/build/outputs/apk/release/app-debug.apk
-
     - uses: r0adkll/sign-android-release@v1
       name: Sign app APK
       # ID used to access action output
       id: sign_app
       with:
-        releaseDirectory: app/build/outputs/apk/debug/
+        releaseDirectory: app/build/outputs/apk/release/
         signingKeyBase64: ${{ secrets.SIGNING_KEY }}
         alias: ${{ secrets.ALIAS }}
         keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
         keyPassword: ${{ secrets.KEY_PASSWORD }}
+
+    - name: Archive apk
+      uses: actions/upload-artifact@v2
+      with:
+        name: apk
+        path: ${{steps.sign_app.outputs.signedReleaseFile}}
+  
 
     - name: Update the InstallPackage
       run: cp ${{steps.sign_app.outputs.signedReleaseFile}} ./InstallPackage/QZCompanionNordictrackTreadmill.apk
