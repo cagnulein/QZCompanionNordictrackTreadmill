@@ -47,12 +47,23 @@ jobs:
          message: 'Updating InstallPackage'
          push: origin HEAD:master
 
+    - uses: r0adkll/sign-android-release@v1
+      name: Sign app APK
+      # ID used to access action output
+      id: sign_app
+      with:
+        releaseDirectory: './InstallPackage/QZCompanionNordictrackTreadmill.apk'
+        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+        alias: ${{ secrets.ALIAS }}
+        keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+        keyPassword: ${{ secrets.KEY_PASSWORD }}
+
     - name: Create release and upload apk
       uses: underwindfall/create-release-with-debugapk@v2.0.0
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: 3.3.19 #${{ steps.get_version.outputs.VERSION }}
-        asset_path: app/build/outputs/apk/debug/app-debug.apk
+        tag_name: 3.3.20 #${{ steps.get_version.outputs.VERSION }}
+        asset_path: ${{steps.sign_app.outputs.signedReleaseFile}}
         asset_name: QZCompanionNordictrackTreadmill.apk
         asset_content_type: application/zip
