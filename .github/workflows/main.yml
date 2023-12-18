@@ -49,7 +49,7 @@ jobs:
         keyPassword: ${{ secrets.KEY_PASSWORD }}
 
     - name: Update the InstallPackage
-      run: ${{steps.sign_app.outputs.signedReleaseFile}} ./InstallPackage/QZCompanionNordictrackTreadmill.apk
+      run: cp ${{steps.sign_app.outputs.signedReleaseFile}} ./InstallPackage/QZCompanionNordictrackTreadmill.apk
 
     - name: Commit InstallPackage
       uses: EndBug/add-and-commit@v9 # You can change this to use a specific version.
