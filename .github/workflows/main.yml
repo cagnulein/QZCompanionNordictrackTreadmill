@@ -28,24 +28,37 @@ jobs:
       id: get_version
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
-    - name: Build debug apk
-      run: chmod a+x gradlew && ./gradlew clean assembleDebug
+    - name: Build release apk
+      run: chmod a+x gradlew && ./gradlew clean assembleRelease
+
+    - uses: r0adkll/sign-android-release@v1
+      name: Sign app APK
+      # ID used to access action output
+      id: sign_app
+      with:
+        releaseDirectory: app/build/outputs/apk/release/
+        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+        alias: ${{ secrets.ALIAS }}
+        keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+        keyPassword: ${{ secrets.KEY_PASSWORD }}
 
     - name: Archive apk
       uses: actions/upload-artifact@v2
       with:
         name: apk
-        path: app/build/outputs/apk/debug/app-debug.apk
+        path: ${{steps.sign_app.outputs.signedReleaseFile}}
+  
 
     - name: Update the InstallPackage
-      run: cp app/build/outputs/apk/debug/app-debug.apk ./InstallPackage/QZCompanionNordictrackTreadmill.apk
-      
+      run: cp ${{steps.sign_app.outputs.signedReleaseFile}} ./InstallPackage/QZCompanionNordictrackTreadmill.apk
+
     - name: Commit InstallPackage
       uses: EndBug/add-and-commit@v9 # You can change this to use a specific version.
       with:    
-         add: './InstallPackage/QZCompanionNordictrackTreadmill.apk'
-         message: 'Updating InstallPackage'
-         push: origin HEAD:master
+        add: './InstallPackage/QZCompanionNordictrackTreadmill.apk'
+        message: 'Updating InstallPackage'
+        push: origin HEAD:master
+  
 
     - name: Create release and upload apk
       uses: underwindfall/create-release-with-debugapk@v2.0.0
@@ -53,6 +66,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: 3.3.21 #${{ steps.get_version.outputs.VERSION }}
-        asset_path: app/build/outputs/apk/debug/app-debug.apk
+        asset_path: ${{steps.sign_app.outputs.signedReleaseFile}}
         asset_name: QZCompanionNordictrackTreadmill.apk
         asset_content_type: application/zip
