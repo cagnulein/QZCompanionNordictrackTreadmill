@@ -40,13 +40,6 @@ jobs:
     - name: Update the InstallPackage
       run: cp app/build/outputs/apk/debug/app-debug.apk ./InstallPackage/QZCompanionNordictrackTreadmill.apk
       
-    - name: Commit InstallPackage
-      uses: EndBug/add-and-commit@v9 # You can change this to use a specific version.
-      with:    
-         add: './InstallPackage/QZCompanionNordictrackTreadmill.apk'
-         message: 'Updating InstallPackage'
-         push: origin HEAD:master
-
     - uses: r0adkll/sign-android-release@v1
       name: Sign app APK
       # ID used to access action output
@@ -57,6 +50,14 @@ jobs:
         alias: ${{ secrets.ALIAS }}
         keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
         keyPassword: ${{ secrets.KEY_PASSWORD }}
+
+    - name: Commit InstallPackage
+      uses: EndBug/add-and-commit@v9 # You can change this to use a specific version.
+      with:    
+        add: './InstallPackage/QZCompanionNordictrackTreadmill.apk'
+        message: 'Updating InstallPackage'
+        push: origin HEAD:master
+  
 
     - name: Create release and upload apk
       uses: underwindfall/create-release-with-debugapk@v2.0.0
