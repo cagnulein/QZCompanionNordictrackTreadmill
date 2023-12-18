@@ -28,8 +28,8 @@ jobs:
       id: get_version
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
-    - name: Build debug apk
-      run: chmod a+x gradlew && ./gradlew clean assembleDebug
+    - name: Build release apk
+      run: chmod a+x gradlew && ./gradlew clean assembleRelease
 
     - name: Archive apk
       uses: actions/upload-artifact@v2
