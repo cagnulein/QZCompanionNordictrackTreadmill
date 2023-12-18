@@ -58,6 +58,7 @@ public class UDPListenerService extends Service {
         x32i_NTL39019,
         x22i,
         NTEX71021,
+        c1750_2021,
     }
 
     public static _device device;
@@ -130,6 +131,10 @@ public class UDPListenerService extends Service {
                 y1Speed = 793;      //vertical position of slider at 2.0
                 y1Inclination = 694;    //vertical position of slider at 0.0                
                 break;                      
+            case c1750_2021:
+                y1Speed = 592;      //vertical position of slider at 2.0
+                y1Inclination = 547;    //vertical position of slider at 0.0                
+                break;                                      
             case NTEX71021:
                 y1Resistance = 480;      //vertical position of slider at 1.0
                 break;                      
@@ -273,6 +278,10 @@ public class UDPListenerService extends Service {
                             x1 = 1845;     //middle of slider
                             y1Speed = 785 - (int) ((QZService.lastSpeedFloat - 1) * 31.42);
                             y2 = y1Speed - (int) ((reqSpeed - QZService.lastSpeedFloat) * 31.42);
+                        } else if (device == _device.c1750_2021) {
+                            x1 = 1205;     //middle of slider
+                            y1Speed = 620 - (int) ((QZService.lastSpeedFloat - 1) * 20.73);
+                            y2 = y1Speed - (int) ((reqSpeed - QZService.lastSpeedFloat) * 20.73);                            
                         } else {
                             x1 = 1205;     //middle of slider
                             y2 = (int) ((-19.921 * reqSpeed) + 631.03);
@@ -287,7 +296,7 @@ public class UDPListenerService extends Service {
                         }
                         writeLog(command);
 
-                        if (device == _device.x11i || device == _device.x22i || device == _device.c1750 || device == _device.proform_2000 || device == _device.t85s || device == _device.t65s || device == _device.grand_tour_pro || device == _device.t75s || device == _device.s40 || device == _device.exp7i || device == _device.x32i || device == _device.x32i_NTL39019)
+                        if (device == _device.x11i || device == _device.x22i || device == _device.c1750 || device == _device.c1750_2021 || device == _device.proform_2000 || device == _device.t85s || device == _device.t65s || device == _device.grand_tour_pro || device == _device.t75s || device == _device.s40 || device == _device.exp7i || device == _device.x32i || device == _device.x32i_NTL39019)
                             y1Speed = y2;  //set new vertical position of speed slider
                         lastSwipeMs = Calendar.getInstance().getTimeInMillis();
                         reqCachedSpeed = -1;
@@ -351,6 +360,9 @@ public class UDPListenerService extends Service {
                     } else if (device == _device.c1750) {
                         x1 = 79;
                         y2 = (int) ((-34.9 * reqInclination) + 700);                        
+                    } else if (device == _device.c1750_2021) {
+                        x1 = 79;
+                        y2 = (int) ((-22 * reqInclination) + 553);                                                
                     } else {
                         x1 = 79;
                         y2 = (int) ((-21.804 * reqInclination) + 520.11);
@@ -364,7 +376,7 @@ public class UDPListenerService extends Service {
                     }
                     writeLog(command);
 
-                    if (device == _device.x11i || device == _device.x22i || device == _device.c1750 || device == _device.proform_2000 || device == _device.t85s || device == _device.t65s || device == _device.t75s || device == _device.grand_tour_pro || device == _device.s40 || device == _device.exp7i || device == _device.x32i)
+                    if (device == _device.x11i || device == _device.x22i || device == _device.c1750 || device == _device.c1750_2021 || device == _device.proform_2000 || device == _device.t85s || device == _device.t65s || device == _device.t75s || device == _device.grand_tour_pro || device == _device.s40 || device == _device.exp7i || device == _device.x32i)
                         y1Inclination = y2;  //set new vertical position of inclination slider
                     lastSwipeMs = Calendar.getInstance().getTimeInMillis();
 					reqCachedInclination = -100;
