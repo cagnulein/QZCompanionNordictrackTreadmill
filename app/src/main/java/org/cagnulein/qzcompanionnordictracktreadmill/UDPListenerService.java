@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.text.DecimalFormatSymbols;
 import java.util.Calendar;
+import java.util.Locale;
 
 import android.app.Service;
 import android.content.Context;
@@ -160,6 +162,9 @@ public class UDPListenerService extends Service {
                 "MyApp::MyWakelockTag");
         wakeLock.acquire();
 
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
+        char decimalSeparator = symbols.getDecimalSeparator();
+
         byte[] recvBuf = new byte[15000];
         if (socket == null || socket.isClosed()) {
             socket = new DatagramSocket(port);
@@ -180,6 +185,9 @@ public class UDPListenerService extends Service {
         if(device == _device.s22i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.proform_studio_bike_pro22) {
             if (amessage.length > 0) {
                 String rResistance = amessage[0];
+                if(decimalSeparator != '.') {
+                    rResistance = rResistance.replace('.', decimalSeparator);
+                }
                 double reqResistance = Double.parseDouble(rResistance);
                 reqResistance = Math.round((reqResistance) * 10) / 10.0;
                 writeLog("requestResistance: " + reqResistance + " " + lastReqResistance);
@@ -228,6 +236,10 @@ public class UDPListenerService extends Service {
         } else {
             if (amessage.length > 0) {
                 String rSpeed = amessage[0];
+                if(decimalSeparator != '.') {
+                    rSpeed = rSpeed.replace('.', decimalSeparator);
+                }
+
                 double reqSpeed = Double.parseDouble(rSpeed);
                 reqSpeed = Math.round((reqSpeed) * 10) / 10.0;
                 writeLog("requestSpeed: " + reqSpeed + " lastSpeed:" + QZService.lastSpeedFloat + " cachedSpeed:" + reqCachedSpeed);
@@ -316,6 +328,9 @@ public class UDPListenerService extends Service {
 
             if (amessage.length > 1 && lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) {
                 String rInclination = amessage[1];
+                if(decimalSeparator != '.') {
+                    rInclination = rInclination.replace('.', decimalSeparator);
+                }
                 double reqInclination = roundToHalf(Double.parseDouble(rInclination));
                 writeLog("requestInclination: " + reqInclination + " " + reqCachedInclination);				
 				Boolean need = reqInclination != -100;
