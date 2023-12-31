@@ -59,6 +59,7 @@ public class UDPListenerService extends Service {
         x22i,
         NTEX71021,
         c1750_2021,
+        s22i_NTEX02121_5,
     }
 
     public static _device device;
@@ -87,6 +88,10 @@ public class UDPListenerService extends Service {
             case s22i:
                 lastReqResistance = 0;
                 y1Resistance = 618;
+                break;
+            case s22i_NTEX02121_5:
+                lastReqResistance = 0;
+                y1Resistance = 535;
                 break;
             case tdf10:
                 lastReqResistance = 1;
@@ -172,7 +177,7 @@ public class UDPListenerService extends Service {
 
         writeLog(message);
         String[] amessage = message.split(";");
-        if(device == _device.s22i || device == _device.tdf10 || device == _device.proform_studio_bike_pro22) {
+        if(device == _device.s22i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.proform_studio_bike_pro22) {
             if (amessage.length > 0) {
                 String rResistance = amessage[0];
                 double reqResistance = Double.parseDouble(rResistance);
@@ -189,6 +194,9 @@ public class UDPListenerService extends Service {
                         if (device == _device.s22i) {
                             x1 = 75;
                             y2 = (int) (616.18 - (17.223 * reqResistance));
+                        } else if (device == _device.s22i_NTEX02121_5) {
+							x1 = 75;
+                            y2 = (int) (532 - (17.6 * reqResistance));
                         } else if (device == _device.tdf10) {
 							x1 = 1205;
                             y2 = (int) (619.91 - (15.913 * reqResistance));
@@ -207,7 +215,7 @@ public class UDPListenerService extends Service {
                         MainActivity.sendCommand(command);
                         writeLog(command);
 
-                        if (device == _device.s22i || device == _device.tdf10 || device == _device.proform_studio_bike_pro22 || device == _device.NTEX71021)
+                        if (device == _device.s22i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.proform_studio_bike_pro22 || device == _device.NTEX71021)
                             y1Resistance = y2;  //set new vertical position of speed slider
                         lastReqResistance = reqResistance;
                         lastSwipeMs = Calendar.getInstance().getTimeInMillis();
