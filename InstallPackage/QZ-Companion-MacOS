@@ -1,0 +1,96 @@
+#!/bin/bash
+
+# QZ-Companion MacOS App Installer
+# Author: Jacob Senitza
+# Revised: January 5, 2024
+# QZ on Facebook - https://www.facebook.com/groups/149984563348738
+
+cd -- "$(dirname "$0")" || exit
+
+echo -e "\n*** Make sure your treadmill is powered-up and USB Debugging is turned on ***\n"
+
+read -r -p "Enter treadmill IP address: " TMIP
+
+echo "Log generated at $(date) for IP $TMIP" > QZ-Companion-log.txt
+
+echo | tee -a QZ-Companion-log.txt
+echo "Pinging $TMIP ..." | tee -a QZ-Companion-log.txt
+ping -c 1 "$TMIP" >> QZ-Companion-log.txt 2>&1
+if ping -c 1 "$TMIP" | grep -q '[0-9] *ms'; then
+  echo "Ping successful."
+else
+  echo "Cannot ping $TMIP."
+  exit 1
+fi
+sleep 5
+
+echo | tee -a QZ-Companion-log.txt
+echo "Connecting to treadmill via ADB ..." | tee -a QZ-Companion-log.txt
+echo >> QZ-Companion-log.txt
+
+# fix for 'failed to authenticate to {IP:port}'
+{
+  ./adb disconnect
+  ./adb kill-server
+  ./adb connect "$TMIP"
+} > /dev/null 2>&1
+
+{
+  ./adb disconnect
+  ./adb kill-server
+  ./adb connect "$TMIP"
+} >> QZ-Companion-log.txt 2>&1
+
+if ./adb connect "$TMIP" | grep -q 'connected to'; then
+  echo -e "ADB connection successful.\n"
+else
+  echo "Cannot establish ADB connection."
+  exit 1
+fi
+echo >> QZ-Companion-log.txt
+./adb devices -l >> QZ-Companion-log.txt
+sleep 5
+
+# report Android and SDK version
+{
+  echo "Android version:"
+  ./adb shell getprop ro.build.version.release
+  echo "SDK version:"
+  ./adb shell getprop ro.build.version.sdk
+  echo
+} >> QZ-Companion-log.txt
+
+echo -e  "Checking for previous installation ..." | tee -a QZ-Companion-log.txt
+if ./adb shell pidof org.cagnulein.qzcompanionnordictracktreadmill | grep -q '[0-9]*'; then
+  echo -e "QZ Companion found - removing\n" | tee -a QZ-Companion-log.txt
+  ./adb uninstall org.cagnulein.qzcompanionnordictracktreadmill >> QZ-Companion-log.txt 2>&1
+else
+  echo -e "QZ Companion not installed\n" | tee -a QZ-Companion-log.txt
+fi
+sleep 5
+
+echo -e "Installing QZ Companion ..." | tee -a QZ-Companion-log.txt
+ ./adb install QZCompanionNordictrackTreadmill.apk 2>&1 | tee -a QZ-Companion-log.txt
+sleep 5
+
+echo -e "Launching QZ Companion ...\n" | tee -a QZ-Companion-log.txt
+./adb shell monkey -p org.cagnulein.qzcompanionnordictracktreadmill 1 >> QZ-Companion-log.txt 2>&1
+sleep 5
+
+echo -e "Launching iFit ...\n" | tee -a QZ-Companion-log.txt
+./adb shell monkey -p com.ifit.standalone 1 >> QZ-Companion-log.txt 2>&1
+sleep 5
+
+# save debug files and permanently enable privileged mode
+./adb shell mkdir -p /sdcard/.wolfDev/keepme > /dev/null 2>&1
+./adb shell dumpsys package org.cagnulein.qzcompanionnordictracktreadmill > dumpsys.log 2>&1
+./adb logcat -d > logcat.txt 2>&1
+
+./adb shell pm grant org.cagnulein.qzcompanionnordictracktreadmill android.permission.READ_LOGS
+
+read -n 1 -r -p "QZ Companion is installed. Press any key to reboot treadmill . . ."
+echo -e "\nRebooting treadmill ..." | tee -a QZ-Companion-log.txt
+
+./adb reboot
+
+echo -e "\nInstallation complete.\nRefer to QZ-Companion-log.txt for installation details."

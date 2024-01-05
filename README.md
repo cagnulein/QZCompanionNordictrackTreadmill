@@ -126,24 +126,36 @@ and know your treadmills IP, you can skip to step 4.
 with medium confidence](media/image2.png)
     Enable USB Debugging on your treadmill
 
-**QZ Companion Installation Method 1:  Over Wifi via an ADB script run from a Windows PC. Choose this method if you can successfully establish an ADB connection between treadmill and Windows PC.**
+**QZ Companion Installation Method 1:  Over Wifi via an ADB script run from a Windows PC or Mac. Choose this method if you can successfully establish an ADB connection between treadmill and Windows PC.**
 
 4.  Install the QZ Companion app on your treadmill. Download the QZ
     Companion installation package from this Github repository and extract
-    it to your Windows PC. Go into the extracted folder and run
-    qz-companion.bat by either double-clicking it or running it from the
-    command-line. When prompted to enter the treadmills IP address,
+    it to your computer. 
+
+    **If you are using a Windows PC:**
+    Go into the extracted folder, open the folder InstallPackage and
+    run `qz-companion.bat` by either double-clicking it or running it from the
+    command-line. 
+
+    **If you are using a Mac:**
+    Go into the extracted folder and open the folder InstallPackage.
+    Right click the file `QZ-Companion-MacOS` and select open **OR** navigate
+    to this folder in Terminal and enter `./QZ-Companion-MacOS`
+        _Important note: Double clicking this file will cause MacOS to throw
+        a security warning, you must use one of the methods above._
+
+    When prompted to enter the treadmills IP address,
     enter the same IP as noted in previous Step 3 and hit enter. The
     script will ping the IP address first to ensure it is reachable on
     the network, then proceed to open an ADB connection and install the
-    QZ Companion app. When completed, the script will reboot the
-    treadmill. 
+    QZ Companion app. When completed, the script will prompt you to 
+    press any key to reboot the treadmill. 
     
     Once rebooted, you will have iFit running in the foreground and QZ Companion running 
     in the background. You need to bring QZ Companion to the foreground for a one-time setup. You should still have access 
     to the Android system by swiping up from the bottom of the screen to see the Android navigation bar. If you don't see 
-    the navigation bar, you will need to enable Privileged mode again (see Step #2 above), however Privileged mode should be permanately enabled as part on the 
-    qz-companion.bat installation script. The Android navigation bar displays 3 navigation controls: Back, Home, and App Overview. 
+    the navigation bar, you will need to enable Privileged mode again (see Step #2 above), however Privileged mode should be permanently enabled as part of the
+    `QZ-Companion.bat` or `QZ-Companion-MacOS` installation script. The Android navigation bar displays 3 navigation controls: Back, Home, and App Overview. 
     Hit the App Overview button and swipe over to QZ Companion. In the QZ Companion screen, select your specific exercise machine (e.g. "NordicTrack C2950").
     Once again, swipe up from the bottom of the screen to display the Android navigation bar, select App Overview, and swipe over to iFit. Note that in 
     some cases, you may need to reboot your exercise machine once more for the QZ Companion selection to work.
@@ -155,7 +167,7 @@ with medium confidence](media/image2.png)
     If it reads all 0's, try going to the treadmill's Settings > Apps > QZ Companion app > Permissions, and enabling all permissions.
 
 ![](media/image3.png)
-    Run QZ-Companion.bat on a Wifi connected Windows PC
+    Run `QZ-Companion.bat` or `QZ-Companion-MacOS` script on a WiFi connected computer
 
 **QZ Installation Method 2: Via the treadmill build-in web browser.**
 
@@ -185,8 +197,8 @@ QZ Companion will proceed to install. You will get a confirmation screen when do
 -   When completed, you should reboot the treadmill by cycling the power switch. Once rebooted, you will have iFit running in the foreground and QZ Companion running 
     in the background. You need to bring QZ Companion to the foreground for a one-time setup. You should still have access 
     to the Android system by swiping up from the bottom of the screen to see the Android navigation bar. If you don't see 
-    the navigation bar, you will need to enable Privileged mode again (see Step #2 above), however Privileged mode should be permanately enabled as part on the 
-    qz-companion.bat installation script. The Android navigation bar displays 3 navigation controls: Back, Home, and App Overview. 
+    the navigation bar, you will need to enable Privileged mode again (see Step #2 above), however Privileged mode should be permanently enabled as part of the 
+    `QZ-Companion.bat` or `QZ-Companion-MacOS` installation script. The Android navigation bar displays 3 navigation controls: Back, Home, and App Overview. 
     Hit the App Overview button and swipe over to QZ Companion. In the QZ Companion screen, select your specific exercise machine (e.g. "NordicTrack C2950").
     Once again, swipe up from the bottom of the screen to display the Android navigation bar, select App Overview, and swipe over to iFit. Note that in 
     some cases, you may need to reboot your exercise machine once more for the QZ Companion selection to work.
@@ -252,19 +264,22 @@ generated](media/image6.png)
 
 **The QZ Companion installation package (qz-companion.zip) contains**:
 
--   QZCompanionNordictrackTreadmill.apk (QZ Companion Android app).
+-   `QZCompanionNordictrackTreadmill.apk` (QZ Companion Android app).
 
--   QZ-Companion.bat (batch script used to install QZ Companion via
-    ADB).
+-   `QZ-Companion.bat` (batch script used to install QZ Companion via
+    ADB on Windows).
 
--   QZ-Companion-simple.bat (alternative batch script to use if you wish
+-   `QZ-Companion-MacOS` (shell script used to install QZ Companion via
+    ADB on MacOS).
+
+-   `QZ-Companion-simple.bat` (alternative batch script to use if you wish
     to run the commands separately for debugging and troubleshooting
     purposes).
 
--   Uninstall-QZ-Companion.bat (batch script used to uninstall/remove QZ
+-   `Uninstall-QZ-Companion.bat` (batch script used to uninstall/remove QZ
     Companion).
 
--   All other files (adb.exe, AdbWinApi.dll, AdbWinUsbApi.dll, tee.exe) are required for the scripts. Do not delete them.
+-   All other files (`adb.exe`, `AdbWinApi.dll`, `AdbWinUsbApi.dll`, `tee.exe`) are required for the scripts. Do not delete them.
 
 **Troubleshooting**:
 
