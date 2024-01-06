@@ -23,15 +23,16 @@ run both QZ and Zwift, eliminating the need for a 3rd device, as long
 as QZ runs in the background while Zwift runs in the foreground.
 
 **New Feature:** QZ Companion now works with QZ to control the incline of your treadmill (auto-incline),
-and speed as well (auto-speed). For example, you can choose to have Zwift control your
-treadmill incline as you run or bike through virtual worlds; have QZ make speed and
+and speed as well (auto-speed), or in the case of a bike, it controls incline and resistance. 
+For example, you can choose to have Zwift control your
+treadmill or bike incline as you run or cycle through virtual worlds; choose to have QZ make speed (or resistance) and
 incline changes as you progress through a Zwift workout, or, you can choose to load
-a GPX file in QZ and have the treadmill follow the incline recorded in the file.
+a GPX file in QZ and have the treadmill or bike follow the incline recorded in the file.
 
 **Disclaimer**: We have tested this solution on several models of NordicTrack and Pro-Form treadmills
-and bikes and many are supported now. We began development with a NordicTrack Commercial 2950 (2021 model) 
+and bikes and many are supported now. We began development on a NordicTrack Commercial 2950 (2021 model) 
 treadmill with a built-in 22" touchscreen. Note that this solution should work on any iFit-enabled/iFit-embedded
-NordicTrack or Pro-Form treadmill with built-in Android tablet. Refer to
+NordicTrack or Pro-Form treadmill or bike with built-in Android tablet. Refer to
 <https://www.ifit.com/equipment/treadmills> and <https://www.ifit.com/equipment/bikes> for available models. 
 We are constantly adding QZ Companion support for more iFit-enabled/iFit-embedded
 NordicTrack and Pro-Form treadmills and bikes and will update this document as
@@ -47,15 +48,15 @@ NordicTrack Commercial 2950 (2021 model)
 
 **About QZ Companion**:
 
--   This solution works on iFit-enabled/iFit-embedded treadmills. It
-    transmits speed and inclination directly to Zwift. Also, auto-inclination and speed
-    control works on some models of NordicTrack and ProForm treadmills.
+-   This solution works on iFit-enabled/iFit-embedded treadmills and bikes. It
+    transmits speed (or resistance) and inclination directly to Zwift. Also, auto-inclination and auto-speed
+    (or auto-resistance) control works on most models of NordicTrack and ProForm treadmills and bikes.
 
 -   The QZ Companion app always runs in the background on your
-    treadmill, using minimal memory and CPU.
+    treadmill or bike, using minimal memory and CPU.
 
--   QZ Companion will auto-start when the treadmill is powered on. There
-    is no need to enter the treadmills "privileged mode" after initial
+-   QZ Companion will auto-start when the treadmill or bike is powered on. There
+    is no need to enter the treadmill or bikes "privileged mode" after initial
     installation.
 
 -   QZ Companion is not affected by Android or iFit updates. It
@@ -63,7 +64,7 @@ NordicTrack Commercial 2950 (2021 model)
     Android updates.
 
 -   You can use flexible equipment startup sequences - e.g. start your
-    treadmill first, HRM monitor second, QZ app third, Zwift last, or
+    treadmill or bike first, HRM monitor second, QZ app third, Zwift last, or
     change the sequence. QZ will always communicate with QZ Companion
     regardless of your startup sequence.
     
@@ -79,17 +80,17 @@ iFit subscription to use the treadmills manual mode.
 
 **Installation Instructions:** 
 
-QZ Companion can be installed in one of two ways. Both methods make no changes to the underlying Android or iFit structure and can be easily removed via an uninstall script or by doing a treadmill factory reset.
+QZ Companion can be installed in one of two ways. Both methods make no changes to the underlying Android or iFit structure and can be easily removed via an uninstall script or by doing a treadmill or bike factory reset.
 
 **Note:** The first install method is strongly recommended if you can get an ADB connection established between a Windows PC 
-and your treadmill. The second method is provided for those who cannot get an ADB connection established, but is harder to troubleshoot if you encounter problems.
+and your treadmill or bike. The second method is provided for those who cannot get an ADB connection established, but is harder to troubleshoot if you encounter problems.
 
 If you have USB debugging mode enabled
-and know your treadmills IP, you can skip to step 4.
+and know your treadmill or bikes IP, you can skip to step 4.
 
-1.  Factory reset the treadmill. It is highly recommended that you
-    factory reset your treadmill before continuing. In my case, a reset
-    is performed on my NT C2950 by pressing in and holding the pinhole
+1.  Factory reset the treadmill or bike. It is highly recommended that you
+    factory reset your treadmill or bike before continuing. For example, a reset
+    is performed on a NT C2950 treadmill by pressing in and holding the pinhole
     style reset button on in the left-side on the console while
     simultaneously turning on the treadmill with the power switch. I use
     a paper-clip to push the reset button in. The reset button must be
@@ -97,26 +98,27 @@ and know your treadmills IP, you can skip to step 4.
     Unfortunately, the reset button and power switch are far apart and
     may require two people to coordinate the reset. After the 10 second
     reset, the console will display the reset and progress animation.
-    The reset usually takes about 5 -7 minutes on my treadmill. When
+    The reset usually takes about 5 -7 minutes on this treadmill. When
     it is done, iFit will prompt you do login and select your Wifi
-    network.
+    network. Note that reset may be done by pinhole or within the iFit settings,
+    or some other way on your machine. Refer to your user manual to find out how.
 
-2.  Enable Privileged mode. When you see the main iFit dashboard screen,
+3.  Enable Privileged mode. When you see the main iFit dashboard screen,
     tap on an area of white that doesn't activate anything (e.g. the top
     of the screen) 10 times, count 7 seconds, then tap on the same spot
     10 more times. If done correctly, you will see the Privileged mode
     activation screen. Open the website https://getresponsecode.com and
     enter the first 6-digit code you see on your treadmill screen and
     click Submit. The website will provide a response code which you
-    will enter in the treadmill console via the onscreen keyboard. If
+    will enter in the treadmill or bike console via the onscreen keyboard. If
     done correctly, a message at the bottom of the screen appears
     confirming privileged mode is enabled, and the Android desktop will
     appear.
 
-3.  Enable USB debugging. From the treadmills Android desktop, swipe up
+4.  Enable USB debugging. From the treadmill or bikes Android desktop, swipe up
     from the bottom of the screen to open the installed apps screen.
     Select Settings, System, Advanced settings, and About tablet. Take
-    note of the treadmills IP address (e.g. 10.0.0.124), and also look
+    note of the treadmill or bikes IP address (e.g. 10.0.0.124), and also look
     for the Build number. Tap on the Build number 7 times. You will get
     a message at the bottom of the screen confirming Developer options
     is unlocked. Next, select the back button/arrow to return to the
@@ -130,7 +132,7 @@ with medium confidence](media/image2.png)
 
 **QZ Companion Installation Method 1:  Over Wifi via an ADB script run from a Windows PC or Mac. Choose this method if you can successfully establish an ADB connection between treadmill and Windows PC.**
 
-4.  Install the QZ Companion app on your treadmill. Download the QZ
+4.  Install the QZ Companion app on your treadmill or bike. Download the QZ
     Companion installation package from this Github repository and extract
     it to your computer. 
 
@@ -146,12 +148,12 @@ with medium confidence](media/image2.png)
         _Important note: Double clicking this file will cause MacOS to throw
         a security warning, you must use one of the methods above._
 
-    When prompted to enter the treadmills IP address,
+    When prompted to enter the treadmill or bikes IP address,
     enter the same IP as noted in previous Step 3 and hit enter. The
     script will ping the IP address first to ensure it is reachable on
     the network, then proceed to open an ADB connection and install the
     QZ Companion app. When completed, the script will prompt you to 
-    press any key to reboot the treadmill. 
+    press any key to reboot the treadmill or bike. 
     
     Once rebooted, you will have iFit running in the foreground and QZ Companion running 
     in the background. You need to bring QZ Companion to the foreground for a one-time setup. You should still have access 
@@ -160,27 +162,27 @@ with medium confidence](media/image2.png)
     `QZ-Companion.bat` or `QZ-Companion-MacOS` installation script. The Android navigation bar displays 3 navigation controls: Back, Home, and App Overview. 
     Hit the App Overview button and swipe over to QZ Companion. In the QZ Companion screen, select your specific exercise machine (e.g. "NordicTrack C2950").
     Once again, swipe up from the bottom of the screen to display the Android navigation bar, select App Overview, and swipe over to iFit. Note that in 
-    some cases, you may need to reboot your exercise machine once more for the QZ Companion selection to work.
+    some cases, you may need to reboot your treadmill or bike once more for the QZ Companion selection to work.
         
     Next, proceed to login to iFit. At this point,
     QZ Companion is running in the background and is ready to transmit
-    treadmill speed and incline data to QZ.
+    treadmill speed (or resistance) and incline data to QZ.
     
     If it reads all 0's, try going to the treadmill's Settings > Apps > QZ Companion app > Permissions, and enabling all permissions.
 
 ![](media/image3.png)
     Run `QZ-Companion.bat` or `QZ-Companion-MacOS` script on a WiFi connected computer
 
-**QZ Installation Method 2: Via the treadmill build-in web browser.**
+**QZ Installation Method 2: Via the treadmill or bikes build-in web browser.**
 
-4.	To install the QZ Companion app on your treadmill via the treadmill built-in web browser, 
+4.	To install the QZ Companion app on your treadmill or bike via the treadmill built-in web browser, 
     from the treadmills Android desktop, swipe up from the bottom of the screen to open the installed apps screen. 
     Select Browser.
 
 ![1 - browser](https://user-images.githubusercontent.com/63697253/200885852-75909cbd-e084-4e99-8f71-8201fc4d4f1a.jpg)
-    Open the treadmill build-in web browser
+    Open the treadmill or bikes build-in web browser
 
--   Enter the following short URL address – https://tinyurl.com/qz-companion. This link will download the latest QZ Companion APK to the browser download folder on your treadmill.
+-   Enter the following short URL address – https://tinyurl.com/qz-companion. This link will download the latest QZ Companion APK to the browser download folder on your treadmill or bike.
 
 ![2 - apk downloaded](https://user-images.githubusercontent.com/63697253/200886187-19eb5515-54fb-4003-834c-1e587cab5976.jpg)
     QZ Companion APK downloaded
@@ -196,7 +198,7 @@ QZ Companion will proceed to install. You will get a confirmation screen when do
 ![6 - app installed](https://user-images.githubusercontent.com/63697253/200886487-c8150e6a-ce0e-44bd-9b5a-a4696b986703.jpg)
     QZ Companion APK installation screens
 
--   When completed, you should reboot the treadmill by cycling the power switch. Once rebooted, you will have iFit running in the foreground and QZ Companion running 
+-   When completed, you should reboot the treadmill or bike by cycling the power switch. Once rebooted, you will have iFit running in the foreground and QZ Companion running 
     in the background. You need to bring QZ Companion to the foreground for a one-time setup. You should still have access 
     to the Android system by swiping up from the bottom of the screen to see the Android navigation bar. If you don't see 
     the navigation bar, you will need to enable Privileged mode again (see Step #2 above), however Privileged mode should be permanently enabled as part of the 
@@ -205,25 +207,25 @@ QZ Companion will proceed to install. You will get a confirmation screen when do
     Once again, swipe up from the bottom of the screen to display the Android navigation bar, select App Overview, and swipe over to iFit. Note that in 
     some cases, you may need to reboot your exercise machine once more for the QZ Companion selection to work.
     
--   Once rebooted, proceed to login to iFit. At this point, QZ Companion is running in the background and is ready to transmit treadmill speed and incline data to QZ.
+-   Once rebooted, proceed to login to iFit. At this point, QZ Companion is running in the background and is ready to transmit treadmill speed (or resistance) and incline data to QZ.
 
-**Now that QZ Companion is installed and running on your treadmill, it’s time to configure QZ to communicate with QZ Companion.**
+**Now that QZ Companion is installed and running on your treadmill or bike, it’s time to configure QZ to communicate with QZ Companion.**
 
 5.  Configure QZ to communicate with QZ Companion. On your 2nd QZ
     device (Windows PC or laptop, Android phone or tablet, or iOS iPhone
-    or iPad), open QZ and go to Settings. Expand Treadmill Options,
-    Proform/NordicTrack Options, and enter the treadmills IP address under
+    or iPad), open QZ and go to Settings. Expand Treadmill or Bike Options,
+    Proform/NordicTrack Options, and enter the treadmill or bikes IP address under
     NordicTrack 2950 IP and hit OK. Exit and relaunch QZ to activate the
     change. If done correctly, QZ will display live data tiles to
     indicate it is communicating directly with QZ Companion on the
-    treadmill. Next in QZ, expand Experimental Features and turn on
+    treadmill or bike. Next in QZ, expand Experimental Features and turn on
     Enable Virtual Device, Virtual Device Bluetooth, and Wahoo Direct
     Connect. Exit and relaunch QZ again to activate the changes. Wahoo
-    direct connect will now transmit the treadmills speed and incline
+    direct connect will now transmit the treadmills speed (or bike resistance) and incline
     data to Zwift via Bluetooth.
 
 ![](media/image4.png)
-    Enter your treadmill IP address in QZ
+    Enter your treadmill or bike IP address in QZ
 
 ![Graphical user interface, text, application Description automatically
 generated](media/image5.png)
@@ -235,9 +237,9 @@ generated](media/image6.png)
     Turn on Wahoo Direct Connect in QZ
 
 6.  Start an iFit manual workout to confirm QZ Companion communication.
-    From the main iFit dashboard screen on your treadmill, select Manual
+    From the main iFit dashboard screen on your treadmill or bike, select Manual
     workout. QZ Companion will immediately begin to transmit live speed
-    and incline changes to QZ which will display in the live data tiles.
+    (or bike resistance) and incline changes to QZ which will display in the live data tiles.
     At this point, you can take advantage of the many features of QZ
     while working out or simply use it to transmit data to Zwift.
 
@@ -251,10 +253,10 @@ generated](media/image6.png)
 7.  Finally, launch and configure Zwift to use the QZ Bluetooth device.
     Now that QZ is receiving live treadmill data from QZ Companion,
     Zwift can be configured to receive this data from QZ over Bluetooth.
-    At the Zwift Paired Devices screen, under Run Speed, search and
+    At the Zwift Paired Devices screen, under treadmill Run Speed, search and
     select Wahoo Tread device (this is QZ). Optionally select your Heart
     Rate and Cadence devices and proceed to start a Zwift workout. Zwift
-    will receive live speed and incline data from your treadmill via QZ
+    will receive live speed and incline data from your treadmill or bike via QZ
     and QZ Companion data link.
 
 ![](media/image9.png)
@@ -262,7 +264,7 @@ generated](media/image6.png)
 
 ![Graphical user interface Description automatically
  generated](media/image10.png)
-    Start a Zwift workout and control speed from your treadmill
+    Start a Zwift workout and control speed from your treadmill or bike
 
 **The QZ Companion installation package (qz-companion.zip) contains**:
 
@@ -286,7 +288,7 @@ generated](media/image6.png)
 **Troubleshooting**:
 
 -   The primary reason QZ Companion installation will likely fail is
-    because your Windows PC can't communicate with the treadmill IP
+    because your Windows PC can't communicate with the treadmill or bike IP
     address over your Wifi network. Ensure both devices are connected to
     the same Wifi network. The installation script will first attempt to
     ping your treadmill IP address. If this ping fails, you will need to
@@ -294,6 +296,6 @@ generated](media/image6.png)
 
 -   When executed, the QZ-Companion.bat installation script will
     generate a log file named QZ-Companion-log.txt. If communication fails
-    or the app fails to install on your treadmill, refer to this log to
+    or the app fails to install on your treadmill or bike, refer to this log to
     troubleshoot specific errors. You may be required to share this log
     to obtain technical support.
