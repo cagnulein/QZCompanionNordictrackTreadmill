@@ -23,7 +23,7 @@ run both QZ and Zwift, eliminating the need for a 3rd device, as long
 as QZ runs in the background while Zwift runs in the foreground.
 
 **New Feature:** QZ Companion now works with QZ to control the incline of your treadmill (auto-incline),
-and speed as well (auto-speed), or in the case of a bike, it controls incline and resistance. 
+and speed as well (auto-speed), or in the case of a bike, it automatically controls incline and resistance. 
 For example, you can choose to have Zwift control your
 treadmill or bike incline as you run or cycle through virtual worlds; choose to have QZ make speed (or resistance) and
 incline changes as you progress through a Zwift workout, or, you can choose to load
@@ -208,6 +208,15 @@ QZ Companion will proceed to install. You will get a confirmation screen when do
     some cases, you may need to reboot your exercise machine once more for the QZ Companion selection to work.
     
 -   Once rebooted, proceed to login to iFit. At this point, QZ Companion is running in the background and is ready to transmit treadmill speed (or resistance) and incline data to QZ.
+  
+-   If you wish to have Zwift control incline of your treadmill or bike (auto-incline),
+and speed (auto-speed), or in the case of a bike, auto-resistance, you must enable the onscreen treadmill speed and incline sliders; for a bike
+it is the onscreen resistance and incline sliders. To enable these sliders, start a manual workout. Once you see the manual workout screen, tap
+on any empty area of the screen. This will bring up the "Controls" option. Tap on Controls and you will now see the onscreen sliders on each side of the
+screen. Repeat the same procedure to disable the sliders if you don't need auto-speed/incline/resistance.
+
+![onscreen-controls](https://github.com/cagnulein/QZCompanionNordictrackTreadmill/assets/63697253/d9191fb8-0942-4db4-bb96-21db94a74fe7)
+    NT C2950 screen with onscreen speed and incline sliders enabled
 
 **Now that QZ Companion is installed and running on your treadmill or bike, it’s time to configure QZ to communicate with QZ Companion.**
 
