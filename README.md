@@ -252,10 +252,6 @@ generated](media/image6.png)
     At this point, you can take advantage of the many features of QZ
     while working out or simply use it to transmit data to Zwift.
 
-![Diagram Description automatically
- generated](media/image7.png)
-    Start an iFit manual workout
-
 ![](media/image8.png)
     QZ receiving live speed and incline from QZ Companion
 
