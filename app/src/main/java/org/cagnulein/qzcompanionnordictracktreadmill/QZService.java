@@ -274,8 +274,8 @@ public class QZService extends Service {
                                     if(!line.contains(LOG_TAG)) {
                                         if(line.contains("Changed KPH") || line.contains("Changed Actual KPH")) {
                                             lastSpeed = line.replaceAll("Actual ", "");;
-                                        } else if(line.contains("Changed Grade") || line.contains("Changed Actual Grade")) {
-                                            lastInclination = line.replaceAll("Actual ", "");;
+                                        } else if(line.contains("Changed Grade") || line.contains("Changed Actual Grade") || line.contains("Grade changed")) {
+                                            lastInclination = line.replaceAll("Actual ", "").replaceAll("Grade changed", "Changed Grade");
                                         } else if(line.contains("Changed Watts")) {
                                             lastWattage = line;
                                         } else if(line.contains("Changed RPM")) {
