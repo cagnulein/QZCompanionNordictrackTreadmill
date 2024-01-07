@@ -204,7 +204,10 @@ public class UDPListenerService extends Service {
                             y2 = (int) (616.18 - (17.223 * reqResistance));
                         } else if (device == _device.s22i_NTEX02121_5) {
 							x1 = 75;
-                            y2 = (int) (532 - (17.6 * reqResistance));
+                            writeLog("lastInclinationFloat " + QZService.lastInclinationFloat);
+                            y1Resistance = 800 - (int) ((QZService.lastInclinationFloat + 10) * 19);
+                            //set speed slider to target position
+                            y2 = y1Resistance - (int) ((reqResistance - QZService.lastInclinationFloat) * 19);
                         } else if (device == _device.tdf10) {
 							x1 = 1205;
                             y2 = (int) (619.91 - (15.913 * reqResistance));
