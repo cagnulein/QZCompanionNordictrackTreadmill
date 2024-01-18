@@ -135,7 +135,13 @@
                         android:id="@+id/x32i_NTL39019"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="X32i NTL39019 Treadmill" />                        
+                        android:text="X32i NTL39019 Treadmill" />              
+
+                    <RadioButton
+                        android:id="@+id/x32i_NTL39221"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="X32i NTL39221 Treadmill" />                                          
 						
 					<RadioButton
                         android:id="@+id/c1750"
