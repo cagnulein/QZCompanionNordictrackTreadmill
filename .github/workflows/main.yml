@@ -74,7 +74,7 @@ jobs:
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: 3.3.28 #${{ steps.get_version.outputs.VERSION }}
+        tag_name: 3.3.29 #${{ steps.get_version.outputs.VERSION }}
         asset_path: ${{steps.sign_app.outputs.signedReleaseFile}}
         asset_name: QZCompanionNordictrackTreadmill.apk
         asset_content_type: application/zip

@@ -296,9 +296,9 @@ public class UDPListenerService extends Service {
                             y2 = y1Speed - (int) ((reqSpeed - QZService.lastSpeedFloat) * 31);
                         } else if (device == _device.x32i_NTL39221) {
                             x1 = 1845;     //middle of slider
-                            y1Speed = 807 - (int) ((QZService.lastSpeedFloat - 1) * 46.63);
+                            y1Speed = 807 - (int) (((QZService.lastSpeedFloat * 0.621371) - 1) * 46.63);
                             //set speed slider to target position
-                            y2 = y1Speed - (int) (((reqSpeed * 0.621371) - QZService.lastSpeedFloat) * 46.63);
+                            y2 = y1Speed - (int) (((reqSpeed * 0.621371) - (QZService.lastSpeedFloat * 0.621371)) * 46.63);
                         } else if (device == _device.nordictrack_2950_maxspeed22) {
                             x1 = 1845;     //middle of slider
                             y1Speed = 682 - (int) ((QZService.lastSpeedFloat - 1) * 26.5);
@@ -391,9 +391,9 @@ public class UDPListenerService extends Service {
                         y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 31.1);
                     } else if (device == _device.x32i_NTL39221) {
                         x1 = 75;     //middle of slider
-                        y1Inclination = 635 - (int) ((QZService.lastInclinationFloat) * 11.75);
+                        y1Inclination = 750 - (int) ((QZService.lastInclinationFloat) * 12.05);
                         //set speed slider to target position
-                        y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 11.75);                        
+                        y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 12.05);
                     } else if (device == _device.proform_2000) {
                         x1 = 79;
                         y1Inclination = 520 - (int) ((QZService.lastInclinationFloat + 3) * 21.804);
