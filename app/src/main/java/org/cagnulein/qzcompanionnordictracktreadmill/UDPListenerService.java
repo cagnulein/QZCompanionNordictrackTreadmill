@@ -321,7 +321,7 @@ public class UDPListenerService extends Service {
                             y2 = y1Speed - (int) ((reqSpeed - QZService.lastSpeedFloat) * 20.73);                            
                         } else if (device == _device.c1750_2020) {
                             x1 = 1205;     //middle of slider
-                            y1Speed = 575 - (int) (((QZService.lastSpeedFloat * * 0.621371) - 1) * 28.91);
+                            y1Speed = 575 - (int) (((QZService.lastSpeedFloat * 0.621371) - 1) * 28.91);
                             y2 = y1Speed - (int) (((reqSpeed * 0.621371) - (QZService.lastSpeedFloat * 0.621371)) * 28.91);                                                        
                         } else {
                             x1 = 1205;     //middle of slider
