@@ -167,6 +167,7 @@ public class QZService extends Service {
 				// this device doesn't have tail and grep capabilities
 				if(UDPListenerService.device == UDPListenerService._device.c1750 || 
                 UDPListenerService.device == UDPListenerService._device.c1750_2021 || 
+                UDPListenerService.device == UDPListenerService._device.c1750_2020 || 
                 UDPListenerService.device == UDPListenerService._device.x22i) {
 					try {
 						InputStream speed2InputStream = shellRuntime.execAndGetOutput("cat " + file);
