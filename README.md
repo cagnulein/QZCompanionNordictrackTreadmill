@@ -16,7 +16,7 @@ QZ on Facebook - <https://www.facebook.com/groups/149984563348738>
 Watch the accompanying Youtube video below for a quick overview of this guide.
 
 <div align="center">
-    <a href="https://www.youtube.com/watch?v=_KRMSHxo5AQ" target_"blank"><img src="https://img.youtube.com/vi/_KRMSHxo5AQ/0.jpg" alt="Companion App of QZ for Nordictrack Treadmills & Bikes" style="width:100%;"></a>
+    <a href="https://www.youtube.com/watch?v=_KRMSHxo5AQ"><img src="https://img.youtube.com/vi/_KRMSHxo5AQ/0.jpg" alt="Companion App of QZ for Nordictrack Treadmills & Bikes" style="width:100%;"></a>
 </div>
 <br>
 
