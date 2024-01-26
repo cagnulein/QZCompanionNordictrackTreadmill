@@ -302,7 +302,7 @@ public class UDPListenerService extends Service {
                             x1 = 1845;     //middle of slider
                             y1Speed = 807 - (int) (((QZService.lastSpeedFloat * 0.621371) - 1) * 46.63);
                             //set speed slider to target position
-                            y2 = y1Speed - (int) (((reqSpeed * 0.621371) - (QZService.lastSpeedFloat * 0.621371)) * 46.63);
+                            y2 = y1Speed - (int) (((reqSpeed * 0.621371) - (QZService.lastSpeedFloat * 0.621371) - 1) * 46.63);
                         } else if (device == _device.nordictrack_2950_maxspeed22) {
                             x1 = 1845;     //middle of slider
                             y1Speed = 682 - (int) ((QZService.lastSpeedFloat - 1) * 26.5);
