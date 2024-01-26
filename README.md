@@ -176,7 +176,8 @@ with medium confidence](media/image2.png)
 **QZ Installation Method 2: Via the treadmill or bikes build-in web browser.**
 
 4.	To install the QZ Companion app on your treadmill or bike via the treadmill built-in web browser, 
-    from the treadmills Android desktop, swipe up from the bottom of the screen to open the installed apps screen. 
+    you must first enable Privileged mode from the main iFit dashboard screen - see Step #3 above. Note that there is
+  	no need to enable USB debugging for this method. Next, from the treadmills Android desktop, swipe up from the bottom of the screen to open the installed apps screen. 
     Select Browser.
 
 ![1 - browser](https://user-images.githubusercontent.com/63697253/200885852-75909cbd-e084-4e99-8f71-8201fc4d4f1a.jpg)
