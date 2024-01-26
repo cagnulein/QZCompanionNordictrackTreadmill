@@ -210,11 +210,11 @@ QZ Companion will proceed to install. You will get a confirmation screen when do
 -   Proceed to login to iFit. At this point, QZ Companion is running in the background and is ready to transmit treadmill speed (or resistance) and incline data to QZ.
   
 -   If you wish to have Zwift control incline of your treadmill or bike (auto-incline), and speed (auto-speed), or in the case of a bike, auto-resistance, you must first have Privileged mode
--   and USB debugging turned on. Note that Privileged mode is permanently enabled as part of the `QZ-Companion.bat` or `QZ-Companion-MacOS` installation script in Method #1. However, for Method #2,
--   unfortunately you must manually enable them first as they will get disabled on every treadmill or bike reboot. Once you have Privileged mode and USB debugging turned on, you must enable the
--   onscreen treadmill speed and incline sliders; for a bike it is the onscreen resistance and incline sliders. To enable these sliders, start a manual workout. Once you see the manual workout
--   screen, tap on any empty area of the screen. This will bring up the "Controls" option. Tap on Controls and you will now see the onscreen sliders on each side of the
--   screen. Repeat the same procedure to disable the sliders if you don't need auto-speed/incline/resistance.
+    and USB debugging turned on. Note that Privileged mode is permanently enabled as part of the `QZ-Companion.bat` or `QZ-Companion-MacOS` installation script in Method #1. However, for Method #2,
+    unfortunately you must manually enable them first as they will get disabled on every treadmill or bike reboot. Once you have Privileged mode and USB debugging turned on, you must enable the
+    onscreen treadmill speed and incline sliders; for a bike it is the onscreen resistance and incline sliders. To enable these sliders, start a manual workout. Once you see the manual workout
+    screen, tap on any empty area of the screen. This will bring up the "Controls" option. Tap on Controls and you will now see the onscreen sliders on each side of the
+    screen. Repeat the same procedure to disable the sliders if you don't need auto-speed/incline/resistance.
 
 ![onscreen-controls](https://github.com/cagnulein/QZCompanionNordictrackTreadmill/assets/63697253/d9191fb8-0942-4db4-bb96-21db94a74fe7)
     NT C2950 screen with onscreen speed and incline sliders enabled
