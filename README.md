@@ -13,12 +13,14 @@ QZ and QZ Companion software development: Roberto Viola
 
 QZ on Facebook - <https://www.facebook.com/groups/149984563348738>
 
+Watch the accompanying Youtube video for a quick overview of this guide.
+
 <div align="center">
       <a href="https://www.youtube.com/watch?v=_KRMSHxo5AQ">
      <img 
       src="https://img.youtube.com/vi/_KRMSHxo5AQ/0.jpg" 
-      alt="Everything Is AWESOME" 
-      style="width:100%;">
+      alt="Companion App of QZ for Nordictrack Treadmills & Bikes" 
+      style="width:75%;">
       </a>
     </div>
 
