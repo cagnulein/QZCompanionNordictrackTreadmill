@@ -13,7 +13,7 @@ QZ and QZ Companion software development: Roberto Viola
 
 QZ on Facebook - <https://www.facebook.com/groups/149984563348738>
 
-Watch the accompanying Youtube video for a quick overview of this guide.
+Watch the accompanying Youtube video below for a quick overview of this guide.
 
 <div align="center">
       <a href="https://www.youtube.com/watch?v=_KRMSHxo5AQ">
@@ -22,7 +22,7 @@ Watch the accompanying Youtube video for a quick overview of this guide.
       alt="Companion App of QZ for Nordictrack Treadmills & Bikes" 
       style="width:75%;">
       </a>
-    </div>
+</div>
 
 **Technical Overview:** The QZ Companion app, when installed on your
 NordicTrack treadmill or bike, communicates live speed and inclination to the QZ app
