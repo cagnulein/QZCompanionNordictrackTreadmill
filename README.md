@@ -158,7 +158,7 @@ with medium confidence](media/image2.png)
     Once rebooted, you will have iFit running in the foreground and QZ Companion running 
     in the background. You need to bring QZ Companion to the foreground for a one-time setup. You should still have access 
     to the Android system by swiping up from the bottom of the screen to see the Android navigation bar. If you don't see 
-    the navigation bar, you will need to enable Privileged mode again (see Step #2 above), however Privileged mode should be permanently enabled as part of the
+    the navigation bar, you will need to enable Privileged mode again (see Step #3 above), however Privileged mode should be permanently enabled as part of the
     `QZ-Companion.bat` or `QZ-Companion-MacOS` installation script. The Android navigation bar displays 3 navigation controls: Back, Home, and App Overview. 
     Hit the App Overview button and swipe over to QZ Companion. In the QZ Companion screen, select your specific exercise machine (e.g. "NordicTrack C2950").
     Once again, swipe up from the bottom of the screen to display the Android navigation bar, select App Overview, and swipe over to iFit. Note that in 
@@ -199,22 +199,22 @@ QZ Companion will proceed to install. You will get a confirmation screen when do
 ![6 - app installed](https://user-images.githubusercontent.com/63697253/200886487-c8150e6a-ce0e-44bd-9b5a-a4696b986703.jpg)
     QZ Companion APK installation screens
 
--   When completed, you should reboot the treadmill or bike by cycling the power switch. Once rebooted, you will have iFit running in the foreground and QZ Companion running 
-    in the background. You need to bring QZ Companion to the foreground for a one-time setup. You should still have access 
+-   Next, you need to bring QZ Companion to the foreground for a one-time setup. You should still have access 
     to the Android system by swiping up from the bottom of the screen to see the Android navigation bar. If you don't see 
-    the navigation bar, you will need to enable Privileged mode again (see Step #2 above), however Privileged mode should be permanently enabled as part of the 
-    `QZ-Companion.bat` or `QZ-Companion-MacOS` installation script. The Android navigation bar displays 3 navigation controls: Back, Home, and App Overview. 
-    Hit the App Overview button and swipe over to QZ Companion. In the QZ Companion screen, select your specific exercise machine (e.g. "NordicTrack C2950").
+    the navigation bar, you will need to enable Privileged mode again (see Step #3 above). The Android navigation bar displays 3 navigation controls: Back, Home, and App Overview. 
+    Hit the Home button to view the available app icons. Hit the QZ Companion icon to launch. In the QZ Companion screen, select your specific exercise machine (e.g. "NordicTrack C2950").
     Once again, swipe up from the bottom of the screen to display the Android navigation bar, select App Overview, and swipe over to iFit. Note that in 
-    some cases, you may need to reboot your exercise machine once more for the QZ Companion selection to work.
+    some cases, you may need to reboot your exercise machine once more for the QZ Companion selection to work. When the treadmill or bike is rebooted,  you will have iFit running
+    in the foreground and QZ Companion running in the background. 
     
--   Once rebooted, proceed to login to iFit. At this point, QZ Companion is running in the background and is ready to transmit treadmill speed (or resistance) and incline data to QZ.
+-   Proceed to login to iFit. At this point, QZ Companion is running in the background and is ready to transmit treadmill speed (or resistance) and incline data to QZ.
   
--   If you wish to have Zwift control incline of your treadmill or bike (auto-incline),
-and speed (auto-speed), or in the case of a bike, auto-resistance, you must enable the onscreen treadmill speed and incline sliders; for a bike
-it is the onscreen resistance and incline sliders. To enable these sliders, start a manual workout. Once you see the manual workout screen, tap
-on any empty area of the screen. This will bring up the "Controls" option. Tap on Controls and you will now see the onscreen sliders on each side of the
-screen. Repeat the same procedure to disable the sliders if you don't need auto-speed/incline/resistance.
+-   If you wish to have Zwift control incline of your treadmill or bike (auto-incline), and speed (auto-speed), or in the case of a bike, auto-resistance, you must first have Privileged mode
+-   and USB debugging turned on. Note that Privileged mode is permanently enabled as part of the `QZ-Companion.bat` or `QZ-Companion-MacOS` installation script in Method #1. However, for Method #2,
+-   unfortunately you must manually enable them first as they will get disabled on every treadmill or bike reboot. Once you have Privileged mode and USB debugging turned on, you must enable the
+-   onscreen treadmill speed and incline sliders; for a bike it is the onscreen resistance and incline sliders. To enable these sliders, start a manual workout. Once you see the manual workout
+-   screen, tap on any empty area of the screen. This will bring up the "Controls" option. Tap on Controls and you will now see the onscreen sliders on each side of the
+-   screen. Repeat the same procedure to disable the sliders if you don't need auto-speed/incline/resistance.
 
 ![onscreen-controls](https://github.com/cagnulein/QZCompanionNordictrackTreadmill/assets/63697253/d9191fb8-0942-4db4-bb96-21db94a74fe7)
     NT C2950 screen with onscreen speed and incline sliders enabled
