@@ -20,9 +20,10 @@ Watch the accompanying Youtube video below for a quick overview of this guide.
      <img 
       src="https://img.youtube.com/vi/_KRMSHxo5AQ/0.jpg" 
       alt="Companion App of QZ for Nordictrack Treadmills & Bikes" 
-      style="width:75%;">
+      style="width:100%;">
       </a>
 </div>
+<br>
 
 **Technical Overview:** The QZ Companion app, when installed on your
 NordicTrack treadmill or bike, communicates live speed and inclination to the QZ app
