@@ -426,9 +426,9 @@ public class UDPListenerService extends Service {
                         y1Inclination = 520 - (int) (QZService.lastInclinationFloat * 20);
                         y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 20);
                     } else if (device == _device.elite1000) {
-                        x1 = 75;
-                        y1Inclination = 615 - (int) (QZService.lastInclinationFloat * 32.58);
-                        y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 32.58);
+                        x1 = 76;
+                        y1Inclination = 589 - (int) (QZService.lastInclinationFloat * 32.8);
+                        y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 32.8);
                     } else {
                         x1 = 79;
                         y2 = (int) ((-21.804 * reqInclination) + 520.11);
