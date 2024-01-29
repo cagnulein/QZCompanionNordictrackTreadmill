@@ -186,6 +186,8 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                     UDPListenerService.setDevice(UDPListenerService._device.x11i);
                 } else if(i == R.id.x22i) {
                     UDPListenerService.setDevice(UDPListenerService._device.x22i);
+                } else if(i == R.id.x14i) {
+                    UDPListenerService.setDevice(UDPListenerService._device.x14i);
 				} else if(i == R.id.t85s) {
                     UDPListenerService.setDevice(UDPListenerService._device.t85s);
                 } else if(i == R.id.x32i) {
