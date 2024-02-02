@@ -78,6 +78,12 @@
                         android:text="S40 Treadmill" />
 
                     <RadioButton
+                        android:id="@+id/nordictrack_2450"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Nordictrack 2450 Treadmill" />
+
+                    <RadioButton
                         android:id="@+id/nordictrack_2950"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
