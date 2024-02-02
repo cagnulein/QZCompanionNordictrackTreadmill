@@ -60,6 +60,12 @@
                         android:text="X11i Treadmill" />
 
                     <RadioButton
+                        android:id="@+id/x14i"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="X14i Treadmill" />
+
+                    <RadioButton
                         android:id="@+id/x22i"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -160,6 +166,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="C1750 2020 Treadmill" />	
+
+					<RadioButton
+                        android:id="@+id/elite1000"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Elite 1000 Treadmill" />	
 
 					<RadioButton
                         android:id="@+id/c1750_2021"
