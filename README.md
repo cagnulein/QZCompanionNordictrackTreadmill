@@ -231,7 +231,7 @@ QZ Companion will proceed to install. You will get a confirmation screen when do
 5.  Configure QZ to communicate with QZ Companion. On your 2nd QZ
     device (Windows PC or laptop, Android phone or tablet, or iOS iPhone
     or iPad), open QZ and go to Settings. Expand Treadmill or Bike Options,
-    Proform/NordicTrack Options, and enter the treadmill or bikes IP address under
+    Proform/NordicTrack Options, choose your treadmill or bike from the dropdown and enter the treadmill or bikes IP address under
     NordicTrack 2950 IP and hit OK. Exit and relaunch QZ to activate the
     change. If done correctly, QZ will display live data tiles to
     indicate it is communicating directly with QZ Companion on the
