@@ -168,6 +168,7 @@ public class QZService extends Service {
 				if(UDPListenerService.device == UDPListenerService._device.c1750 || 
                 UDPListenerService.device == UDPListenerService._device.c1750_2021 || 
                 UDPListenerService.device == UDPListenerService._device.c1750_2020 || 
+                UDPListenerService.device == UDPListenerService._device.c1750_2020_kph || 
                 UDPListenerService.device == UDPListenerService._device.x22i ||
                 UDPListenerService.device == UDPListenerService._device.x14i) {
 					try {

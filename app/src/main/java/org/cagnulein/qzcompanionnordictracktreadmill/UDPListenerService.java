@@ -67,6 +67,7 @@ public class UDPListenerService extends Service {
         elite1000,
         x14i,
         nordictrack_2450,
+        c1750_2020_kph,
     }
 
     public static _device device;
@@ -161,6 +162,10 @@ public class UDPListenerService extends Service {
                 y1Speed = 575;      //vertical position of slider at 1.0
                 y1Inclination = 525;    //vertical position of slider at 0.0                                
                 break;              
+            case c1750_2020_kph:
+                y1Speed = 598;      //vertical position of slider at 1.0
+                y1Inclination = 525;    //vertical position of slider at 0.0                                
+                break;                              
             case elite1000:
                 y1Speed = 600;      //vertical position of slider at 1.0
                 y1Inclination = 600;    //vertical position of slider at 0.0                                
@@ -340,6 +345,10 @@ public class UDPListenerService extends Service {
                             x1 = 1205;     //middle of slider
                             y1Speed = 575 - (int) (((QZService.lastSpeedFloat * 0.621371) - 1) * 28.91);
                             y2 = y1Speed - (int) (((reqSpeed * 0.621371) - (QZService.lastSpeedFloat * 0.621371)) * 28.91);
+                        } else if (device == _device.c1750_2020_kph) {
+                            x1 = 1205;     //middle of slider
+                            y1Speed = 593 - (int) (((QZService.lastSpeedFloat) - 2) * 17.7);
+                            y2 = y1Speed - (int) (((reqSpeed) - (QZService.lastSpeedFloat)) * 17.7);
                         } else if (device == _device.nordictrack_2450) {
                             x1 = 1845;     //middle of slider
                             y1Speed = 790 - (int) (((QZService.lastSpeedFloat * 0.621371) - 1) * 46.36);
@@ -363,7 +372,7 @@ public class UDPListenerService extends Service {
                         }
                         writeLog(command);
 
-                        if (device == _device.x11i || device == _device.nordictrack_2450 || device == _device.x14i || device == _device.x22i || device == _device.elite1000 || device == _device.c1750 || device == _device.c1750_2021 || device == _device.c1750_2020 || device == _device.proform_2000 || device == _device.t85s || device == _device.t65s || device == _device.grand_tour_pro || device == _device.t75s || device == _device.s40 || device == _device.exp7i || device == _device.x32i || device == _device.x32i_NTL39019 || device == _device.x32i_NTL39221)
+                        if (device == _device.x11i || device == _device.nordictrack_2450 || device == _device.x14i || device == _device.x22i || device == _device.elite1000 || device == _device.c1750 || device == _device.c1750_2021 || device == _device.c1750_2020 || device == _device.c1750_2020_kph || device == _device.proform_2000 || device == _device.t85s || device == _device.t65s || device == _device.grand_tour_pro || device == _device.t75s || device == _device.s40 || device == _device.exp7i || device == _device.x32i || device == _device.x32i_NTL39019 || device == _device.x32i_NTL39221)
                             y1Speed = y2;  //set new vertical position of speed slider
                         lastSwipeMs = Calendar.getInstance().getTimeInMillis();
                         reqCachedSpeed = -1;
@@ -449,6 +458,10 @@ public class UDPListenerService extends Service {
                         x1 = 75;
                         y1Inclination = 520 - (int) (QZService.lastInclinationFloat * 20);
                         y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 20);
+                    } else if (device == _device.c1750_2020_kph) {
+                        x1 = 75;
+                        y1Inclination = 594 - (int) ((QZService.lastInclinationFloat -3) * 19.83);
+                        y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 19.83);
                     } else if (device == _device.elite1000) {
                         x1 = 76;
                         y1Inclination = 589 - (int) (QZService.lastInclinationFloat * 32.8);
@@ -466,7 +479,7 @@ public class UDPListenerService extends Service {
                     }
                     writeLog(command);
 
-                    if (device == _device.x11i || device == _device.nordictrack_2450 || device == _device.elite1000 || device == _device.x22i || device == _device.x14i || device == _device.c1750 || device == _device.c1750_2021 || device == _device.c1750_2020 || device == _device.proform_2000 || device == _device.t85s || device == _device.t65s || device == _device.t75s || device == _device.grand_tour_pro || device == _device.s40 || device == _device.exp7i || device == _device.x32i || device == _device.x32i_NTL39221)
+                    if (device == _device.x11i || device == _device.nordictrack_2450 || device == _device.elite1000 || device == _device.x22i || device == _device.x14i || device == _device.c1750 || device == _device.c1750_2021 || device == _device.c1750_2020  || device == _device.c1750_2020_kph || device == _device.proform_2000 || device == _device.t85s || device == _device.t65s || device == _device.t75s || device == _device.grand_tour_pro || device == _device.s40 || device == _device.exp7i || device == _device.x32i || device == _device.x32i_NTL39221)
                         y1Inclination = y2;  //set new vertical position of inclination slider
                     lastSwipeMs = Calendar.getInstance().getTimeInMillis();
 					reqCachedInclination = -100;
