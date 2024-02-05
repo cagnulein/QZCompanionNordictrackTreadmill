@@ -408,101 +408,99 @@ public class UDPListenerService extends Service {
                     } else if (device == _device.x14i) {
                         x1 = 75;
                         y1Inclination = 785;
-                        switch(reqInclination) {
-                            case -6f: y2 = 856; break;
-                            case -5.5f: y2 = 850; break;
-                            case -5f: y2 = 844; break;
-                            case -4.5f: y2 = 838; break;
-                            case -4f: y2 = 832; break;
-                            case -3.5f: y2 = 826; break;
-                            case -3f: y2 = 820; break;
-                            case -2.5f: y2 = 814; break;
-                            case -2f: y2 = 808; break;
-                            case -1.5f: y2 = 802; break;
-                            case -1f: y2 = 796; break;
-                            case -0.5f: y2 = 785; break;
-                            case 0f: y2 = 783; break;
-                            case 0.5f: y2 = 778; break;
-                            case 1f: y2 = 774; break;
-                            case 1.5f: y2 = 768; break;
-                            case 2f: y2 = 763; break;
-                            case 2.5f: y2 = 757; break;
-                            case 3f: y2 = 751; break;
-                            case 3.5f: y2 = 745; break;
-                            case 4f: y2 = 738; break;
-                            case 4.5f: y2 = 731; break;
-                            case 5f: y2 = 724; break;
-                            case 5.5f: y2 = 717; break;
-                            case 6f: y2 = 710; break;
-                            case 6.5f: y2 = 703; break;
-                            case 7f: y2 = 696; break;
-                            case 7.5f: y2 = 691; break;
-                            case 8f: y2 = 689; break;
-                            case 8.5f: y2 = 684; break;
-                            case 9f: y2 = 677; break;
-                            case 9.5f: y2 = 671; break;
-                            case 10f: y2 = 665; break;
-                            case 10.5f: y2 = 658; break;
-                            case 11f: y2 = 651; break;
-                            case 11.5f: y2 = 645; break;
-                            case 12f: y2 = 638; break;
-                            case 12.5f: y2 = 631; break;
-                            case 13f: y2 = 624; break;
-                            case 13.5f: y2 = 617; break;
-                            case 14f: y2 = 610; break;
-                            case 14.5f: y2 = 605; break;
-                            case 15f: y2 = 598; break;
-                            case 15.5f: y2 = 593; break;
-                            case 16f: y2 = 587; break;
-                            case 16.5f: y2 = 581; break;
-                            case 17f: y2 = 575; break;
-                            case 17.5f: y2 = 569; break;
-                            case 18f: y2 = 563; break;
-                            case 18.5f: y2 = 557; break;
-                            case 19f: y2 = 551; break;
-                            case 19.5f: y2 = 545; break;
-                            case 20f: y2 = 539; break;
-                            case 20.5f: y2 = 533; break;
-                            case 21f: y2 = 527; break;
-                            case 21.5f: y2 = 521; break;
-                            case 22f: y2 = 515; break;
-                            case 22.5f: y2 = 509; break;
-                            case 23f: y2 = 503; break;
-                            case 23.5f: y2 = 497; break;
-                            case 24f: y2 = 491; break;
-                            case 24.5f: y2 = 485; break;
-                            case 25f: y2 = 479; break;
-                            case 25.5f: y2 = 473; break;
-                            case 26f: y2 = 467; break;
-                            case 26.5f: y2 = 461; break;
-                            case 27f: y2 = 455; break;
-                            case 27.5f: y2 = 449; break;
-                            case 28f: y2 = 443; break;
-                            case 28.5f: y2 = 437; break;
-                            case 29f: y2 = 431; break;
-                            case 29.5f: y2 = 425; break;
-                            case 30f: y2 = 418; break;
-                            case 30.5f: y2 = 412; break;
-                            case 31f: y2 = 406; break;
-                            case 31.5f: y2 = 400; break;
-                            case 32f: y2 = 394; break;
-                            case 32.5f: y2 = 388; break;
-                            case 33f: y2 = 382; break;
-                            case 33.5f: y2 = 375; break;
-                            case 34f: y2 = 369; break;
-                            case 34.5f: y2 = 363; break;
-                            case 35f: y2 = 357; break;
-                            case 35.5f: y2 = 351; break;
-                            case 36f: y2 = 345; break;
-                            case 36.5f: y2 = 338; break;
-                            case 37f: y2 = 332; break;
-                            case 37.5f: y2 = 326; break;
-                            case 38f: y2 = 320; break;
-                            case 38.5f: y2 = 314; break;
-                            case 39f: y2 = 308; break;
-                            case 39.5f: y2 = 302; break;
-                            case 40f: y2 = 295; break;
-                        }
+                        if (reqInclination == -6) { y2 = 856; }
+                        else if (reqInclination == -5.5) { y2 = 850; }
+                        else if (reqInclination == -5) { y2 = 844; }
+                        else if (reqInclination == -4.5) { y2 = 838; }
+                        else if (reqInclination == -4) { y2 = 832; }
+                        else if (reqInclination == -3.5) { y2 = 826; }
+                        else if (reqInclination == -3) { y2 = 820; }
+                        else if (reqInclination == -2.5) { y2 = 814; }
+                        else if (reqInclination == -2) { y2 = 808; }
+                        else if (reqInclination == -1.5) { y2 = 802; }
+                        else if (reqInclination == -1) { y2 = 796; }
+                        else if (reqInclination == -0.5) { y2 = 785; }
+                        else if (reqInclination == 0) { y2 = 783; }
+                        else if (reqInclination == 0.5) { y2 = 778; }
+                        else if (reqInclination == 1) { y2 = 774; }
+                        else if (reqInclination == 1.5) { y2 = 768; }
+                        else if (reqInclination == 2) { y2 = 763; }
+                        else if (reqInclination == 2.5) { y2 = 757; }
+                        else if (reqInclination == 3) { y2 = 751; }
+                        else if (reqInclination == 3.5) { y2 = 745; }
+                        else if (reqInclination == 4) { y2 = 738; }
+                        else if (reqInclination == 4.5) { y2 = 731; }
+                        else if (reqInclination == 5) { y2 = 724; }
+                        else if (reqInclination == 5.5) { y2 = 717; }
+                        else if (reqInclination == 6) { y2 = 710; }
+                        else if (reqInclination == 6.5) { y2 = 703; }
+                        else if (reqInclination == 7) { y2 = 696; }
+                        else if (reqInclination == 7.5) { y2 = 691; }
+                        else if (reqInclination == 8) { y2 = 689; }
+                        else if (reqInclination == 8.5) { y2 = 684; }
+                        else if (reqInclination == 9) { y2 = 677; }
+                        else if (reqInclination == 9.5) { y2 = 671; }
+                        else if (reqInclination == 10) { y2 = 665; }
+                        else if (reqInclination == 10.5) { y2 = 658; }
+                        else if (reqInclination == 11) { y2 = 651; }
+                        else if (reqInclination == 11.5) { y2 = 645; }
+                        else if (reqInclination == 12) { y2 = 638; }
+                        else if (reqInclination == 12.5) { y2 = 631; }
+                        else if (reqInclination == 13) { y2 = 624; }
+                        else if (reqInclination == 13.5) { y2 = 617; }
+                        else if (reqInclination == 14) { y2 = 610; }
+                        else if (reqInclination == 14.5) { y2 = 605; }
+                        else if (reqInclination == 15) { y2 = 598; }
+                        else if (reqInclination == 15.5) { y2 = 593; }
+                        else if (reqInclination == 16) { y2 = 587; }
+                        else if (reqInclination == 16.5) { y2 = 581; }
+                        else if (reqInclination == 17) { y2 = 575; }
+                        else if (reqInclination == 17.5) { y2 = 569; }
+                        else if (reqInclination == 18) { y2 = 563; }
+                        else if (reqInclination == 18.5) { y2 = 557; }
+                        else if (reqInclination == 19) { y2 = 551; }
+                        else if (reqInclination == 19.5) { y2 = 545; }
+                        else if (reqInclination == 20) { y2 = 539; }
+                        else if (reqInclination == 20.5) { y2 = 533; }
+                        else if (reqInclination == 21) { y2 = 527; }
+                        else if (reqInclination == 21.5) { y2 = 521; }
+                        else if (reqInclination == 22) { y2 = 515; }
+                        else if (reqInclination == 22.5) { y2 = 509; }
+                        else if (reqInclination == 23) { y2 = 503; }
+                        else if (reqInclination == 23.5) { y2 = 497; }
+                        else if (reqInclination == 24) { y2 = 491; }
+                        else if (reqInclination == 24.5) { y2 = 485; }
+                        else if (reqInclination == 25) { y2 = 479; }
+                        else if (reqInclination == 25.5) { y2 = 473; }
+                        else if (reqInclination == 26) { y2 = 467; }
+                        else if (reqInclination == 26.5) { y2 = 461; }
+                        else if (reqInclination == 27) { y2 = 455; }
+                        else if (reqInclination == 27.5) { y2 = 449; }
+                        else if (reqInclination == 28) { y2 = 443; }
+                        else if (reqInclination == 28.5) { y2 = 437; }
+                        else if (reqInclination == 29) { y2 = 431; }
+                        else if (reqInclination == 29.5) { y2 = 425; }
+                        else if (reqInclination == 30) { y2 = 418; }
+                        else if (reqInclination == 30.5) { y2 = 412; }
+                        else if (reqInclination == 31) { y2 = 406; }
+                        else if (reqInclination == 31.5) { y2 = 400; }
+                        else if (reqInclination == 32) { y2 = 394; }
+                        else if (reqInclination == 32.5) { y2 = 388; }
+                        else if (reqInclination == 33) { y2 = 382; }
+                        else if (reqInclination == 33.5) { y2 = 375; }
+                        else if (reqInclination == 34) { y2 = 369; }
+                        else if (reqInclination == 34.5) { y2 = 363; }
+                        else if (reqInclination == 35) { y2 = 357; }
+                        else if (reqInclination == 35.5) { y2 = 351; }
+                        else if (reqInclination == 36) { y2 = 345; }
+                        else if (reqInclination == 36.5) { y2 = 338; }
+                        else if (reqInclination == 37) { y2 = 332; }
+                        else if (reqInclination == 37.5) { y2 = 326; }
+                        else if (reqInclination == 38) { y2 = 320; }
+                        else if (reqInclination == 38.5) { y2 = 314; }
+                        else if (reqInclination == 39) { y2 = 308; }
+                        else if (reqInclination == 39.5) { y2 = 302; }
+                        else if (reqInclination == 40) { y2 = 295; }
                     } else if (device == _device.x32i) {
                         x1 = 76;
                         y2 = (int) (734.07 - (12.297 * reqInclination));
