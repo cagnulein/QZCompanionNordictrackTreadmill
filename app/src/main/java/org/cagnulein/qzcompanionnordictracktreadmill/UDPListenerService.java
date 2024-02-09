@@ -408,7 +408,7 @@ public class UDPListenerService extends Service {
                     } else if (device == _device.x14i) {
                         x1 = 75;
                         y1Inclination = x14i_inclination_lookuptable(QZService.lastInclinationFloat);
-                        y2 = y1Inclination - x14i_inclination_lookuptable(reqInclination);
+                        y2 = x14i_inclination_lookuptable(reqInclination);
                     } else if (device == _device.x32i) {
                         x1 = 76;
                         y2 = (int) (734.07 - (12.297 * reqInclination));
