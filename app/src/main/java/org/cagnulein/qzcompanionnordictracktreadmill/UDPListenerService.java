@@ -612,7 +612,7 @@ public class UDPListenerService extends Service {
         else if (reqInclination == 7) { y2 = 696; }
         else if (reqInclination == 7.5) { y2 = 691; }
         else if (reqInclination == 8) { y2 = 689; }
-        else if (reqInclination == 8.5) { y2 = 684; }
+        else if (reqInclination == 8.5) { y2 = 683; }
         else if (reqInclination == 9) { y2 = 677; }
         else if (reqInclination == 9.5) { y2 = 671; }
         else if (reqInclination == 10) { y2 = 665; }
