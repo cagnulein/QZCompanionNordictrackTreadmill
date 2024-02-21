@@ -350,7 +350,7 @@ public class UDPListenerService extends Service {
                         } else if (device == _device.c1750_2020_kph) {
                             x1 = 1205;     //middle of slider
                             y1Speed = c1750_2020_kph_speed_function(QZService.lastSpeedFloat);
-                            y2 = c1750_2020_kph_speed_function(reqInclination);
+                            y2 = c1750_2020_kph_speed_function(reqSpeed);
                         } else if (device == _device.nordictrack_2450) {
                             x1 = 1845;     //middle of slider
                             y1Speed = 790 - (int) (((QZService.lastSpeedFloat * 0.621371) - 1) * 46.36);
@@ -728,13 +728,13 @@ public class UDPListenerService extends Service {
         // Returns slider position of required speed in pixels.
         if (reqSpeed <= 11) {
             // If speed is 11kmh or less
-            y2 = reqSpeed + (16-(16 * y1BaseSpeed));
+            y2 = reqSpeed + (16-(16 * (double)y1BaseSpeed));
         } else if (reqSpeed > 11 && reqSpeed < 12) {
             // If speed is more than 11kmh or less than 12kmh
-            y2 = reqSpeed + (8-(16 * y1BaseSpeed));
+            y2 = reqSpeed + (8-(16 * (double)y1BaseSpeed));
         } else if (reqSpeed >= 12) {
             // If speed is 12kmh or more
-            y2 = reqSpeed + (0-(16 * y1BaseSpeed));
+            y2 = reqSpeed + (0-(16 * (double)y1BaseSpeed));
         }
 
         return y2;
