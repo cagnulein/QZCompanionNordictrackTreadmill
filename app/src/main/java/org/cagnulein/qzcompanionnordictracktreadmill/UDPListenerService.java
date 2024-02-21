@@ -728,13 +728,13 @@ public class UDPListenerService extends Service {
         // Returns slider position of required speed in pixels.
         if (reqSpeed <= 11) {
             // If speed is 11kmh or less
-            y2 = reqSpeed + ( 16.0 - ( 16.0 * (double)y1BaseSpeed));
+            y2 = (int)(reqSpeed + ( 16.0 - ( 16.0 * (double)y1BaseSpeed)));
         } else if (reqSpeed > 11 && reqSpeed < 12) {
             // If speed is more than 11kmh or less than 12kmh
-            y2 = reqSpeed + ( 8.0 - ( 16.0 * (double)y1BaseSpeed));
+            y2 = (int)(reqSpeed + ( 8.0 - ( 16.0 * (double)y1BaseSpeed)));
         } else if (reqSpeed >= 12) {
             // If speed is 12kmh or more
-            y2 = reqSpeed + ( 0.0 - ( 16.0 * (double)y1BaseSpeed));
+            y2 = (int)(reqSpeed + ( 0.0 - ( 16.0 * (double)y1BaseSpeed)));
         }
 
         return y2;
