@@ -349,8 +349,8 @@ public class UDPListenerService extends Service {
                             y2 = y1Speed - (int) (((reqSpeed * 0.621371) - (QZService.lastSpeedFloat * 0.621371)) * 28.91);
                         } else if (device == _device.c1750_2020_kph) {
                             x1 = 1205;     //middle of slider
-                            y1Speed = 593 - (int) (((QZService.lastSpeedFloat) - 2) * 17.7);
-                            y2 = y1Speed - (int) (((reqSpeed) - (QZService.lastSpeedFloat)) * 17.7);
+                            y1Speed = c1750_2020_kph_speed_function(QZService.lastSpeedFloat);
+                            y2 = c1750_2020_kph_speed_function(reqInclination);
                         } else if (device == _device.nordictrack_2450) {
                             x1 = 1845;     //middle of slider
                             y1Speed = 790 - (int) (((QZService.lastSpeedFloat * 0.621371) - 1) * 46.36);
@@ -463,8 +463,8 @@ public class UDPListenerService extends Service {
                         y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 20);
                     } else if (device == _device.c1750_2020_kph) {
                         x1 = 75;
-                        y1Inclination = 594 - (int) ((QZService.lastInclinationFloat -3) * 19.83);
-                        y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 19.83);
+                        y1Inclination = c1750_2020_kph_inclination_lookuptable(QZService.lastInclinationFloat);
+                        y2 = c1750_2020_kph_inclination_lookuptable(reqInclination);
                     } else if (device == _device.elite1000) {
                         x1 = 76;
                         y1Inclination = 589 - (int) (QZService.lastInclinationFloat * 32.8);
@@ -679,4 +679,64 @@ public class UDPListenerService extends Service {
         return y2;        
     }
 
+    private int c1750_2020_kph_inclination_lookuptable(double reqInclination) {
+        int y2 = 0;
+        if (reqInclination == -3) { y2 = 592; }
+        else if (reqInclination == -2.5) { y2 = 584; }
+        else if (reqInclination == -2) { y2 = 576; }
+        else if (reqInclination == -1.5) { y2 = 568; }
+        else if (reqInclination == -1) { y2 = 560; }
+        else if (reqInclination == -0.5) { y2 = 544; }
+        else if (reqInclination == 0) { y2 = 528; }
+        else if (reqInclination == 0.5) { y2 = 520; }
+        else if (reqInclination == 1) { y2 = 512; }
+        else if (reqInclination == 1.5) { y2 = 504; }
+        else if (reqInclination == 2) { y2 = 496; }
+        else if (reqInclination == 2.5) { y2 = 488; }
+        else if (reqInclination == 3) { y2 = 480; }
+        else if (reqInclination == 3.5) { y2 = 472; }
+        else if (reqInclination == 4) { y2 = 464; }
+        else if (reqInclination == 4.5) { y2 = 456; }
+        else if (reqInclination == 5) { y2 = 448; }
+        else if (reqInclination == 5.5) { y2 = 440; }
+        else if (reqInclination == 6) { y2 = 432; }
+        else if (reqInclination == 6.5) { y2 = 424; }
+        else if (reqInclination == 7) { y2 = 400; }
+        else if (reqInclination == 7.5) { y2 = 384; }
+        else if (reqInclination == 8) { y2 = 368; }
+        else if (reqInclination == 8.5) { y2 = 360; }
+        else if (reqInclination == 9) { y2 = 352; }
+        else if (reqInclination == 9.5) { y2 = 344; }
+        else if (reqInclination == 10) { y2 = 336; }
+        else if (reqInclination == 10.5) { y2 = 328; }
+        else if (reqInclination == 11) { y2 = 320; }
+        else if (reqInclination == 11.5) { y2 = 312; }
+        else if (reqInclination == 12) { y2 = 304; }
+        else if (reqInclination == 12.5) { y2 = 288; }
+        else if (reqInclination == 13) { y2 = 272; }
+        else if (reqInclination == 13.5) { y2 = 264; }
+        else if (reqInclination == 14) { y2 = 256; }
+        else if (reqInclination == 14.5) { y2 = 248; }
+        else if (reqInclination == 15) { y2 = 240; }
+        return y2;        
+    }
+
+    private int c1750_2020_kph_speed_function(double reqSpeed) {
+        int y1BaseSpeed = 592; // Slider at 1kmh
+        int y2 = 0;
+        
+        // Returns slider position of required speed in pixels.
+        if (reqSpeed <= 11) {
+            // If speed is 11kmh or less
+            y2 = reqSpeed + (16-(16 * y1BaseSpeed));
+        } else if (reqSpeed > 11 && reqSpeed < 12) {
+            // If speed is more than 11kmh or less than 12kmh
+            y2 = reqSpeed + (8-(16 * y1BaseSpeed));
+        } else if (reqSpeed >= 12) {
+            // If speed is 12kmh or more
+            y2 = reqSpeed + (0-(16 * y1BaseSpeed));
+        }
+
+        return y2;
+    }
 }
