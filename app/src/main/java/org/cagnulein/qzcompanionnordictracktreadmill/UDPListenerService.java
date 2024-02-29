@@ -68,6 +68,7 @@ public class UDPListenerService extends Service {
         x14i,
         nordictrack_2450,
         c1750_2020_kph,
+        tdf10_inclination,
     }
 
     public static _device device;
@@ -111,6 +112,10 @@ public class UDPListenerService extends Service {
             case tdf10:
                 lastReqResistance = 1;
                 y1Resistance = 604;
+                break;
+            case tdf10_inclination:
+                lastReqResistance = 0; // inclination
+                y1Resistance = 482;
                 break;
             case proform_studio_bike_pro22:
                 lastReqResistance = 1;
@@ -210,7 +215,7 @@ public class UDPListenerService extends Service {
 
         writeLog(message);
         String[] amessage = message.split(";");
-        if(device == _device.s22i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.proform_studio_bike_pro22) {
+        if(device == _device.s22i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22) {
             if (amessage.length > 0) {
                 String rResistance = amessage[0];
                 if(decimalSeparator != '.') {
@@ -239,6 +244,9 @@ public class UDPListenerService extends Service {
                         } else if (device == _device.tdf10) {
 							x1 = 1205;
                             y2 = (int) (619.91 - (15.913 * reqResistance));
+                        } else if (device == _device.tdf10_inclination) {
+                            x1 = 74;
+                            y2 = (int) (-12.499 * reqResistance + 482.2);                            
                         } else if (device == _device.proform_studio_bike_pro22) {
 							x1 = 1828;
                             y2 = (int) (826.25 - (21.25 * reqResistance));
@@ -254,7 +262,7 @@ public class UDPListenerService extends Service {
                         MainActivity.sendCommand(command);
                         writeLog(command);
 
-                        if (device == _device.s22i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.proform_studio_bike_pro22 || device == _device.NTEX71021)
+                        if (device == _device.s22i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22 || device == _device.NTEX71021)
                             y1Resistance = y2;  //set new vertical position of speed slider
                         lastReqResistance = reqResistance;
                         lastSwipeMs = Calendar.getInstance().getTimeInMillis();
