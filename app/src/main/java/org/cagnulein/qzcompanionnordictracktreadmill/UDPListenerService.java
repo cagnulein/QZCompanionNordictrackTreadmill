@@ -359,11 +359,10 @@ public class UDPListenerService extends Service {
                             x1 = 1205;     //middle of slider
                             y1Speed = c1750_2020_kph_speed_function(QZService.lastSpeedFloat);
                             y2 = c1750_2020_kph_speed_function(reqSpeed);
-                        } else if (device == _device.nordictrack_2450) {
+                        } else if (device == _device.nordictrack_2450) {                            
                             x1 = 1845;     //middle of slider
-                            y1Speed = 790 - (int) (((QZService.lastSpeedFloat * 0.621371) - 1) * 46.36);
-                            y2 = y1Speed - (int) (((reqSpeed * 0.621371) - (QZService.lastSpeedFloat * 0.621371)) * 46.36);                            
-                            y2 = y1Speed - (int) (((reqSpeed * 0.621371) - (QZService.lastSpeedFloat * 0.621371)) * 28.91);                                                        
+                            y1Speed = nordictrack_2450_speed_function(QZService.lastSpeedFloat * 0.621371);
+                            y2 = nordictrack_2450_speed_function(reqSpeed * 0.621371);                                                        
                         } else if (device == _device.elite1000) {
                             x1 = 1209;     //middle of slider
                             y1Speed = 600 - (int) (((QZService.lastSpeedFloat * 0.621371)) * 31.33);
@@ -685,6 +684,11 @@ public class UDPListenerService extends Service {
         else if (reqInclination == 39.5) { y2 = 302; }
         else if (reqInclination == 40) { y2 = 295; }
         return y2;        
+    }
+
+    private int nordictrack_2450_speed_function(double reqSpeed) {
+        // −26.33x+831.39 where x is the inclination
+        return (int)(-26.33 * reqSpeed + 831.39);
     }
 
     private int c1750_2020_kph_inclination_lookuptable(double reqInclination) {
