@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Assumes Android treadmill USB debugging is turned on
+
+read -p "Enter treadmill IP address: " TMIP
+
+ping -c 4 $TMIP
+sleep 5
+
+./adb disconnect
+./adb kill-server
+./adb connect $TMIP
+./adb devices -l
+sleep 5
+
+# pull live logcat and QZ Companion logcat
+./adb logcat -d > logcat.txt
+./adb pull /sdcard/logcat.log
+
+# pull all wolflogs
+./adb pull /sdcard/.wolflogs/
+./adb pull /sdcard/eru/
+
+echo.
+echo Debug files generated - logcat.log, logcat.txt, and \.wolflogs
+echo.
+
+pause
