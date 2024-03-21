@@ -2,6 +2,8 @@
 
 # Assumes Android treadmill USB debugging is turned on
 
+cd -- "$(dirname "$0")" || exit
+
 read -p "Enter treadmill IP address: " TMIP
 
 ping -c 4 $TMIP
