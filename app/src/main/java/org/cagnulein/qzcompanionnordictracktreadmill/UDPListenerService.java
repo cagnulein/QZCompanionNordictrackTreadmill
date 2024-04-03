@@ -69,6 +69,7 @@ public class UDPListenerService extends Service {
         nordictrack_2450,
         c1750_2020_kph,
         tdf10_inclination,
+        proform_carbon_t14,
     }
 
     public static _device device;

@@ -170,19 +170,20 @@ public class QZService extends Service {
                 UDPListenerService.device == UDPListenerService._device.c1750_2020 || 
                 UDPListenerService.device == UDPListenerService._device.c1750_2020_kph || 
                 UDPListenerService.device == UDPListenerService._device.x22i ||
-                UDPListenerService.device == UDPListenerService._device.x14i) {
+                UDPListenerService.device == UDPListenerService._device.x14i ||
+                UDPListenerService.device == UDPListenerService.device.proform_carbon_t14) {
 					try {
 						InputStream speed2InputStream = shellRuntime.execAndGetOutput("cat " + file);
 						BufferedReader is = new BufferedReader(new InputStreamReader(speed2InputStream));
 						String line;
 						while ((line = is.readLine()) != null) {
-							if(line.contains("Changed KPH")) {
+							if(line.contains("Changed KPH") || line.contains("Kph changed")) {
 								lastSpeed = line;
                                 String[] b = line.split(" ");
-                                lastSpeedFloat = Float.parseFloat(b[b.length-1]);                                
-							} else if(line.contains("Changed Grade")) {
+                                lastSpeedFloat = Float.parseFloat(b[b.length-1]);
+							} else if(line.contains("Changed Grade") || line.contains("Grade changed")) {
 								lastInclination = line;
-                            } else if(line.contains("Changed Watts")) {
+                            } else if(line.contains("Changed Watts") || line.contains("Watts changed")) {
                                 lastWattage = line;
                             } else if(line.contains("Changed RPM")) {
                                 lastCadence = line;

@@ -9,8 +9,8 @@ android {
         applicationId "org.cagnulein.qzcompanionnordictracktreadmill"
         minSdkVersion 21
         targetSdkVersion 34
-        versionCode 122
-        versionName "3.3.42"
+        versionCode 123
+        versionName "3.3.43"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
