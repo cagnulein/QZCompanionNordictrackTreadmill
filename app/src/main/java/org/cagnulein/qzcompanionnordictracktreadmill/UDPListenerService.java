@@ -300,9 +300,13 @@ public class UDPListenerService extends Service {
                         if (device == _device.x11i) {
                             x1 = 1207;
                             y2 = (int) (621.997 - (21.785 * reqSpeed));
-                        } else if (device == _device.x22i || device == _device.x22i_v2) {
+                        } else if (device == _device.x22i) {
                             x1 = 1845;
                             y2 = (int) (785 - (23.636363636363636 * reqSpeed));                            
+                        } else if (device == _device.x22i_v2) {                            
+                            x1 = 1845;
+                            // 838 = 0 263 = 22 kph
+                            y2 = (int) (838 - (26.136 * reqSpeed));                            
                         } else if (device == _device.x14i) {
                             x1 = 1845;     //middle of slider
                             y1Speed = 807 - (int) ((QZService.lastSpeedFloat - 1) * 31);
@@ -419,9 +423,13 @@ public class UDPListenerService extends Service {
                     if (device == _device.x11i) {
                         x1 = 75;
                         y2 = (int) (565.491 - (8.44 * reqInclination));
-                    } else if (device == _device.x22i || device == _device.x22i_v2) {
+                    } else if (device == _device.x22i) {
                         x1 = 75;
                         y2 = (int) (785 - (11.304347826086957 * (reqInclination + 6)));                        
+                    } else if (device == _device.x22i_v2) {
+                        x1 = 75;
+                        // 742 = 0% 266 = 40%
+                        y2 = (int) (742 - (11.9 * (reqInclination + 6)));                        
                     } else if (device == _device.x14i) {
                         x1 = 75;
                         y1Inclination = x14i_inclination_lookuptable(QZService.lastInclinationFloat);
