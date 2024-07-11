@@ -120,6 +120,12 @@
                         android:text="Proform Carbon T14 Treadmill" />
 
                     <RadioButton
+                        android:id="@+id/s15i"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="S15i Bike" />
+
+                    <RadioButton
                         android:id="@+id/s22i"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
