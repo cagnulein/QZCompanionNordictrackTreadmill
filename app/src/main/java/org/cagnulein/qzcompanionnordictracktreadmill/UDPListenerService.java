@@ -290,6 +290,38 @@ public class UDPListenerService extends Service {
                     reqCachedResistance = reqResistance;
                 }
             }
+
+            // resistance
+            if (amessage.length > 1) {
+                String rResistance = amessage[1];
+                if(decimalSeparator != '.') {
+                    rResistance = rResistance.replace('.', decimalSeparator);
+                }
+                double reqResistance = Double.parseDouble(rResistance);
+                reqResistance = Math.round((reqResistance) * 10) / 10.0;
+                writeLog("requestResistance: " + reqResistance + " " + lastReqResistance);
+
+                if (lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) {
+                    if (QZService.lastResistanceFloat != reqResistance && reqResistance != -1 && reqResistance != -100) {
+                        int x1 = 0;
+                        int y2 = 0;
+                        if (device == _device.s15i) {
+                            x1 = 1848;
+                            writeLog("lastResistanceFloat " + QZService.lastResistanceFloat);
+                            y1Resistance = 820 - (int) ((QZService.lastResistanceFloat) * 23.16);
+                            //set speed slider to target position
+                            y2 = y1Resistance - (int) ((reqResistance - QZService.lastResistanceFloat) * 23.16);
+                        }
+
+                        String command = "input swipe " + x1 + " " + y1Resistance + " " + x1 + " " + y2 + " 200";
+                        MainActivity.sendCommand(command);
+                        writeLog(command);
+
+                        lastReqResistance = reqResistance;
+                        lastSwipeMs = Calendar.getInstance().getTimeInMillis();
+                    }
+                }
+            }            
         } else {
             if (amessage.length > 0) {
                 String rSpeed = amessage[0];
