@@ -301,7 +301,8 @@ public class UDPListenerService extends Service {
                 reqResistance = Math.round((reqResistance) * 10) / 10.0;
                 writeLog("requestResistance: " + reqResistance + " " + lastReqResistance);
 
-                if (lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) {
+                //if (lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) 
+                {
                     if (QZService.lastResistanceFloat != reqResistance && reqResistance != -1 && reqResistance != -100) {
                         int x1 = 0;
                         int y2 = 0;
