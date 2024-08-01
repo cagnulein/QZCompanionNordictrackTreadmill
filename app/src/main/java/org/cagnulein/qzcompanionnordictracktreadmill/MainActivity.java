@@ -17,6 +17,7 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
@@ -188,6 +189,12 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                     UDPListenerService.setDevice(UDPListenerService._device.x22i);
                 } else if(i == R.id.x22i_v2) {
                     UDPListenerService.setDevice(UDPListenerService._device.x22i_v2);
+                } else if(i == R.id.x22i_noadb) {
+                    if (!isAccessibilityServiceEnabled(getApplicationContext(), MyAccessibilityService.class)) {
+                        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                        startActivity(intent);
+                    }
+                    UDPListenerService.setDevice(UDPListenerService._device.x22i_noadb);
                 } else if(i == R.id.x14i) {
                     UDPListenerService.setDevice(UDPListenerService._device.x14i);
 				} else if(i == R.id.t85s) {
@@ -261,7 +268,13 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         dumplog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            TextView tv = (TextView)findViewById(R.id.dumplog_tv);
+                int device = sharedPreferences.getInt("device", R.id.other);
+                // test
+                if(device == R.id.x22i_noadb)
+                    MyAccessibilityService.performSwipe(600, 600, 300, 400, 100);
+
+
+                TextView tv = (TextView)findViewById(R.id.dumplog_tv);
             tv.setText(tv.getText() + "\n" + appLogs);
 
                 String command = "logcat -b all -d > /sdcard/logcat.log";
@@ -343,6 +356,37 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                 }
             }
         }
+    }
+
+    private boolean isAccessibilityServiceEnabled(Context context, Class<?> accessibilityService) {
+        int accessibilityEnabled = 0;
+        final String service = context.getPackageName() + "/" + accessibilityService.getCanonicalName();
+        try {
+            accessibilityEnabled = Settings.Secure.getInt(
+                    context.getApplicationContext().getContentResolver(),
+                    Settings.Secure.ACCESSIBILITY_ENABLED
+            );
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+        TextUtils.SimpleStringSplitter colonSplitter = new TextUtils.SimpleStringSplitter(':');
+
+        if (accessibilityEnabled == 1) {
+            String settingValue = Settings.Secure.getString(
+                    context.getApplicationContext().getContentResolver(),
+                    Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+            );
+            if (settingValue != null) {
+                colonSplitter.setString(settingValue);
+                while (colonSplitter.hasNext()) {
+                    String componentName = colonSplitter.next();
+                    if (componentName.equalsIgnoreCase(service)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     static public void sendCommand(String command) {

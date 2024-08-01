@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">QZ Companion Nordictrack Treadmill</string>
+    <string name="accessibility_service_description">Swipe to ifit sliders</string>
 </resources>
