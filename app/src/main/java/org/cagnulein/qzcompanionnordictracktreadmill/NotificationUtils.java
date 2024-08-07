@@ -43,7 +43,7 @@ public class NotificationUtils {
 
     private static Notification createNotification(Context context) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID);
-        builder.setSmallIcon(R.drawable.icon);
+        builder.setSmallIcon(R.drawable.ic_launcher_background);
         builder.setContentTitle("QZ Sync");
         builder.setContentText("Active!");
         builder.setOngoing(true);

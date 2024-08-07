@@ -75,7 +75,7 @@ public class MediaProjection  {
     public static void startService(Context context, int resultCode, Intent data) {
 		  _context = context;
 		  requestUsageStatsPermission();
-        context.startService(org.cagnulen.qdomyoszwift.ScreenCaptureService.getStartIntent(context, resultCode, data));
+        context.startService(ScreenCaptureService.getStartIntent(context, resultCode, data));
 
 		  AppChecker appChecker = new AppChecker();
 		  appChecker
