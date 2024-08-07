@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -187,9 +188,9 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         Log.d("OCR", packageName + " " + tt);       
     }
 
-    public static void startOCR() {
+    public void startOCR() {
         final int REQUEST_CODE = 100;
-        MediaProjectionManager mediaProjectionManager = 
+        MediaProjectionManager mediaProjectionManager =
                 (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
 
         Intent intent = mediaProjectionManager.createScreenCaptureIntent();
