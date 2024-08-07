@@ -63,7 +63,7 @@ public class QZService extends Service {
             runnable = new Runnable() {
                 @Override
                 public void run() {
-                    writeLog( "Service run"); parse();
+                    writeLog( "Service run"); parse(); MainActivity.getOCR();
                 }
             };
         } finally {

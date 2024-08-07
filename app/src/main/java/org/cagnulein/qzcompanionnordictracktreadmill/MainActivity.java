@@ -170,6 +170,32 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         appLogs = appLogs + "\n" + timestamp2 + " " + command;
     }
 
+    public static void getOCR() {
+        String text = ScreenCaptureService.getLastText();
+        String t = text;
+
+        String textExtended = ScreenCaptureService.getLastTextExtended();
+        String tt = textExtended;
+
+        int w = ScreenCaptureService.getImageWidth();
+        int h = ScreenCaptureService.getImageHeight();
+
+        String tExtended = textExtended;
+
+        String packageName = MediaProjection.getPackageName();
+
+        Log.d("OCR", packageName + " " + tt);       
+    }
+
+    public static void startOCR() {
+        final int REQUEST_CODE = 100;
+        MediaProjectionManager mediaProjectionManager = 
+                (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+
+        Intent intent = mediaProjectionManager.createScreenCaptureIntent();
+        startActivityForResult(intent, REQUEST_CODE);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -358,6 +384,8 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                 }
             }
         }
+
+        startOCR();
     }
 
     private boolean isAccessibilityServiceEnabled(Context context, Class<?> accessibilityService) {

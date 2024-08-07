@@ -57,6 +57,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+            <service
+        android:name=".ScreenCaptureService"
+        android:foregroundServiceType="mediaProjection" />
+        <meta-data
+        android:name="com.google.mlkit.vision.DEPENDENCIES"
+        android:value="ocr" />        
     </application>
 
 </manifest>
