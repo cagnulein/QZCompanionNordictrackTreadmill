@@ -358,10 +358,10 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 
         AlarmReceiver alarm = new AlarmReceiver();
         //alarm.setAlarm(this); // TODO RESTORE THIS IF POSSIBLE
-        Intent inServer = new Intent(context, UDPListenerService.class);
-        context.startService(inServer);
-        Intent in = new Intent(context, QZService.class);
-        context.startService(in);
+        Intent inServer = new Intent(getApplicationContext(), UDPListenerService.class);
+        getApplicationContext().startService(inServer);
+        Intent in = new Intent(getApplicationContext(), QZService.class);
+        getApplicationContext().startService(in);
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
