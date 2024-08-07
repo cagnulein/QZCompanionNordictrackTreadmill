@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 
 	private final ShellRuntime shellRuntime = new ShellRuntime();
 
+    private AndroidActivityResultReceiver resultReceiver;
+
     // on below line we are creating variables.
     RadioGroup radioGroup;
     SharedPreferences sharedPreferences;
@@ -198,9 +200,18 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE) {
+            resultReceiver.handleActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        resultReceiver = new AndroidActivityResultReceiver(this);
         checkPermissions();
 
         sharedPreferences = getSharedPreferences("QZ",MODE_PRIVATE);
