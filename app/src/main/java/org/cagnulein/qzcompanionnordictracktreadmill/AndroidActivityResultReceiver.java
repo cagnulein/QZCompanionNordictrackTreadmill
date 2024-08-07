@@ -1,7 +1,8 @@
-import android.app.Activity;
+package org.cagnulein.qzcompanionnordictracktreadmill;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
 
 public class AndroidActivityResultReceiver {
 

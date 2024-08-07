@@ -41,6 +41,8 @@ import java.io.InputStreamReader;
 
 import static android.content.ContentValues.TAG;
 
+import static org.cagnulein.qzcompanionnordictracktreadmill.MediaProjection.REQUEST_CODE;
+
 import com.cgutman.androidremotedebugger.AdbUtils;
 import com.cgutman.androidremotedebugger.console.ConsoleBuffer;
 import com.cgutman.androidremotedebugger.devconn.DeviceConnection;

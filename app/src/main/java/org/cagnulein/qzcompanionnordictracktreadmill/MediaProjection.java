@@ -18,7 +18,7 @@ import android.annotation.TargetApi;
 import com.rvalerio.fgchecker.AppChecker;
 
 public class MediaProjection  {
-    private static final int REQUEST_CODE = 100;
+    public static final int REQUEST_CODE = 100;
     private static Context _context;
     private static String _packageName = "";
     /*private static MediaProjection m_instance;
