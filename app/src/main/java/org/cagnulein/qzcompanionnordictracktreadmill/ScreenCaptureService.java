@@ -137,7 +137,7 @@ public class ScreenCaptureService extends Service {
                         int pixelStride = planes[0].getPixelStride();
                         int rowStride = planes[0].getRowStride();
                         int rowPadding = rowStride - pixelStride * mWidth;
-                        Log.e(TAG, "Image reviewing");
+                        //Log.e(TAG, "Image reviewing");
 
                           isRunning = true;
 
@@ -169,7 +169,7 @@ public class ScreenCaptureService extends Service {
                                   public void onSuccess(Text result) {
                                           // Task completed successfully
 
-                                          Log.e(TAG, "Image done!");
+                                          //Log.e(TAG, "Image done!");
 
                                           String resultText = result.getText();
                                           lastText = resultText;
@@ -204,13 +204,12 @@ public class ScreenCaptureService extends Service {
                                   @Override
                                   public void onFailure(Exception e) {
                                           // Task failed with an exception
-                                          Log.e(TAG, "Image error");
-                                          e.printStackTrace();
+                                          //Log.e(TAG, "Image fail");
                                           isRunning = false;
                                           }
                                   });
                           } else {
-                            Log.e(TAG, "Image ignored");
+                            //Log.e(TAG, "Image ignored");
                           }
                       }
             } catch (Exception e) {
