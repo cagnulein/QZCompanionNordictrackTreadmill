@@ -63,7 +63,7 @@ public class QZService extends Service {
             runnable = new Runnable() {
                 @Override
                 public void run() {
-                    writeLog( "Service run"); parse(); MainActivity.getOCR();
+                    writeLog( "Service run"); parse(); getOCR();
                 }
             };
         } finally {
@@ -150,6 +150,73 @@ public class QZService extends Service {
             return true;
         }
         return  false;
+    }
+
+    public String[] getOCR() {
+        String text = ScreenCaptureService.getLastText();
+        String t = text;
+
+        String textExtended = ScreenCaptureService.getLastTextExtended();
+        String tt = textExtended;
+
+        int w = ScreenCaptureService.getImageWidth();
+        int h = ScreenCaptureService.getImageHeight();
+
+        String tExtended = textExtended;
+
+        String packageName = MediaProjection.getPackageName();
+
+        Log.d("OCR", packageName + " " + tt);
+        Log.d("OCRSimple", packageName + " " + t);
+
+        // Extract incline and speed values
+        String[] result = new String[2];
+        String[] lines = tt.split("\\$\\$|\\n");
+
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].contains("incline")) {
+                try {
+                    result[0] = extractValue(lines, i, "incline");
+                    QZService.lastInclination = result[0];
+                    QZService.lastInclinationFloat = Float.parseFloat(result[0]);
+                } catch (Exception e) {
+                    QZService.lastInclination = "";
+                    QZService.lastInclinationFloat = 0.0f;
+                }
+
+            }
+            if (lines[i].contains("speed")) {
+                try {
+                    result[1] = extractValue(lines, i, "speed");
+                    QZService.lastSpeed = result[1];
+                    QZService.lastSpeedFloat = Float.parseFloat(result[1]);
+                } catch (Exception e) {
+                    QZService.lastSpeed = "";
+                    QZService.lastSpeedFloat = 0.0f;
+                }
+            }
+        }
+        if(!QZService.lastSpeed.equals(""))
+            sendBroadcast(QZService.lastSpeed);
+        if(!QZService.lastInclination.equals(""))
+            sendBroadcast(QZService.lastInclination);
+
+        return result;
+    }
+
+
+    private static String extractValue(String[] lines, int index, String keyword) {
+        String line = lines[index];
+        if (line.split("§§").length > 1) {
+            // Value is on the same line
+            return line.split("§§")[0].trim();
+        } else if (index > 0) {
+            // Value is on the previous line
+            String previousLine = lines[index - 1];
+            String[] parts = previousLine.split("§§");
+            return parts[parts.length - 1].trim();
+        }
+        return null;
     }
 
     private void parse() {
