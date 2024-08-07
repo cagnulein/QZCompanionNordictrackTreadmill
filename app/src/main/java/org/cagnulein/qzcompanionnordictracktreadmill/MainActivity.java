@@ -357,7 +357,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         }*/
 
         AlarmReceiver alarm = new AlarmReceiver();
-        alarm.setAlarm(this);
+        //alarm.setAlarm(this); // TODO RESTORE THIS IF POSSIBLE
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             /* If we have old RSA keys, just use them */
