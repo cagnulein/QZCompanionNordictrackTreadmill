@@ -174,7 +174,7 @@ public class QZService extends Service {
         String[] lines = t.split("\\$\\$|\\n");
 
         for (int i = 1; i < lines.length; i++) {
-            Log.d("lines: " + i + " " + lines[i]);
+            Log.d("OCRlines", i + " " + lines[i]);
             if (lines[i].contains("incline")) {
                 try {                    
                     QZService.lastInclination = lines[i-1].trim();
