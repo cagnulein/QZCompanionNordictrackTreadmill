@@ -171,14 +171,14 @@ public class QZService extends Service {
 
         // Extract incline and speed values
         String[] result = new String[2];
-        String[] lines = tt.split("\\$\\$|\\n");
+        String[] lines = t.split("\\$\\$|\\n");
 
-        for (int i = 0; i < lines.length; i++) {
+        for (int i = 1; i < lines.length; i++) {
+            Log.d("lines: " + i + " " + lines[i]);
             if (lines[i].contains("incline")) {
-                try {
-                    result[0] = extractValue(lines, i, "incline");
-                    QZService.lastInclination = result[0];
-                    QZService.lastInclinationFloat = Float.parseFloat(result[0]);
+                try {                    
+                    QZService.lastInclination = lines[i-1].trim();
+                    QZService.lastInclinationFloat = Float.parseFloat(QZService.lastInclination);
                 } catch (Exception e) {
                     QZService.lastInclination = "";
                     QZService.lastInclinationFloat = 0.0f;
@@ -186,37 +186,29 @@ public class QZService extends Service {
 
             }
             if (lines[i].contains("speed")) {
-                try {
-                    result[1] = extractValue(lines, i, "speed");
-                    QZService.lastSpeed = result[1];
-                    QZService.lastSpeedFloat = Float.parseFloat(result[1]);
+                try {                    
+                    QZService.lastSpeed = lines[i-1].trim();
+                    QZService.lastSpeedFloat = Float.parseFloat(QZService.lastSpeed);
                 } catch (Exception e) {
                     QZService.lastSpeed = "";
                     QZService.lastSpeedFloat = 0.0f;
                 }
             }
         }
-        if(!QZService.lastSpeed.equals(""))
-            sendBroadcast(QZService.lastSpeed);
-        if(!QZService.lastInclination.equals(""))
-            sendBroadcast(QZService.lastInclination);
+        try {
+            socket = new DatagramSocket();
+            socket.setBroadcast(true);
 
-        return result;
-    }
-
-
-    private static String extractValue(String[] lines, int index, String keyword) {
-        String line = lines[index];
-        if (line.split("§§").length > 1) {
-            // Value is on the same line
-            return line.split("§§")[0].trim();
-        } else if (index > 0) {
-            // Value is on the previous line
-            String previousLine = lines[index - 1];
-            String[] parts = previousLine.split("§§");
-            return parts[parts.length - 1].trim();
+            if(!QZService.lastSpeed.equals(""))
+                sendBroadcast(QZService.lastSpeed);
+            if(!QZService.lastInclination.equals(""))
+                sendBroadcast(QZService.lastInclination);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return;
         }
-        return null;
+        socket.close();
+        return result;
     }
 
     private void parse() {
