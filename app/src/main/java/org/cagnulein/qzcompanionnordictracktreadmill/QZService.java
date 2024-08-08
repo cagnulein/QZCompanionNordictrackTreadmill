@@ -205,7 +205,7 @@ public class QZService extends Service {
                 sendBroadcast(QZService.lastInclination);
         } catch (Exception ex) {
             ex.printStackTrace();
-            return;
+            return result;
         }
         socket.close();
         return result;
