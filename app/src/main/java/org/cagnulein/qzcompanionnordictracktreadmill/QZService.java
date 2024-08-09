@@ -63,7 +63,7 @@ public class QZService extends Service {
             runnable = new Runnable() {
                 @Override
                 public void run() {
-                    writeLog( "Service run"); parse(); getOCR();
+                    writeLog( "Service run"); /*parse();*/ getOCR();
                 }
             };
         } finally {
@@ -75,7 +75,7 @@ public class QZService extends Service {
 
         if(runnable != null) {
             writeLog( "Service postDelayed");
-            handler.postDelayed(runnable, 500);
+            handler.postDelayed(runnable, 100);
         }
     }
 
@@ -165,9 +165,6 @@ public class QZService extends Service {
         String tExtended = textExtended;
 
         String packageName = MediaProjection.getPackageName();
-
-        Log.d("OCR", packageName + " " + tt);
-        Log.d("OCRSimple", packageName + " " + t);
 
         // Extract incline and speed values
         String[] result = new String[2];
@@ -444,7 +441,7 @@ public class QZService extends Service {
             socket.close();
         }
 
-        handler.postDelayed(runnable, 500);
+        handler.postDelayed(runnable, 100);
     }
 
     public void sendBroadcast(String messageStr) {

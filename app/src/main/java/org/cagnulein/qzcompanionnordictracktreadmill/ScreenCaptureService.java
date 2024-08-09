@@ -129,6 +129,7 @@ public class ScreenCaptureService extends Service {
         public void onImageAvailable(ImageReader reader) {
             try (Image image = mImageReader.acquireLatestImage()) {
                 if (image != null && !isRunning) {
+                    Log.d("OCR","running");
                     Image.Plane[] planes = image.getPlanes();
                     ByteBuffer buffer = planes[0].getBuffer();
                     int pixelStride = planes[0].getPixelStride();
@@ -160,6 +161,7 @@ public class ScreenCaptureService extends Service {
                         .addOnSuccessListener(new OnSuccessListener<Text>() {
                             @Override
                             public void onSuccess(Text result) {
+                                Log.d("OCR","processed");
                                 // Process OCR result as before
                                 String resultText = result.getText();
                                 lastText = resultText;
