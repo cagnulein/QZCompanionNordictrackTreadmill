@@ -125,67 +125,68 @@ public class ScreenCaptureService extends Service {
     }
 
     private class ImageAvailableListener implements ImageReader.OnImageAvailableListener {
-    @Override
-    public void onImageAvailable(ImageReader reader) {
-        try (Image image = mImageReader.acquireLatestImage()) {
-            if (image != null && !isRunning) {
-                Image.Plane[] planes = image.getPlanes();
-                ByteBuffer buffer = planes[0].getBuffer();
-                int pixelStride = planes[0].getPixelStride();
-                int rowStride = planes[0].getRowStride();
-                int rowPadding = rowStride - pixelStride * mWidth;
+        @Override
+        public void onImageAvailable(ImageReader reader) {
+            try (Image image = mImageReader.acquireLatestImage()) {
+                if (image != null && !isRunning) {
+                    Image.Plane[] planes = image.getPlanes();
+                    ByteBuffer buffer = planes[0].getBuffer();
+                    int pixelStride = planes[0].getPixelStride();
+                    int rowStride = planes[0].getRowStride();
+                    int rowPadding = rowStride - pixelStride * mWidth;
 
-                isRunning = true;
+                    isRunning = true;
 
-                // Create full bitmap
-                int fullWidth = mWidth + rowPadding / pixelStride;
-                int fullHeight = mHeight;
-                Bitmap fullBitmap = Bitmap.createBitmap(fullWidth, fullHeight, Bitmap.Config.ARGB_8888);
-                fullBitmap.copyPixelsFromBuffer(buffer);
+                    // Create full bitmap
+                    int fullWidth = mWidth + rowPadding / pixelStride;
+                    int fullHeight = mHeight;
+                    Bitmap fullBitmap = Bitmap.createBitmap(fullWidth, fullHeight, Bitmap.Config.ARGB_8888);
+                    fullBitmap.copyPixelsFromBuffer(buffer);
 
-                // Calculate the region of interest (last 100 pixels)
-                int roiHeight = Math.min(100, fullHeight);
-                int roiY = fullHeight - roiHeight;
+                    // Calculate the region of interest (last 100 pixels)
+                    int roiHeight = Math.min(100, fullHeight);
+                    int roiY = fullHeight - roiHeight;
 
-                // Create a new bitmap for the region of interest
-                Bitmap roiBitmap = Bitmap.createBitmap(fullBitmap, 0, roiY, fullWidth, roiHeight);
+                    // Create a new bitmap for the region of interest
+                    Bitmap roiBitmap = Bitmap.createBitmap(fullBitmap, 0, roiY, fullWidth, roiHeight);
 
-                // Recycle the full bitmap as we no longer need it
-                fullBitmap.recycle();
+                    // Recycle the full bitmap as we no longer need it
+                    fullBitmap.recycle();
 
-                // Use roiBitmap for OCR
-                InputImage inputImage = InputImage.fromBitmap(roiBitmap, 0);
+                    // Use roiBitmap for OCR
+                    InputImage inputImage = InputImage.fromBitmap(roiBitmap, 0);
 
-                Task<Text> result = recognizer.process(inputImage)
-                    .addOnSuccessListener(new OnSuccessListener<Text>() {
-                        @Override
-                        public void onSuccess(Text result) {
-                            // Process OCR result as before
-                            String resultText = result.getText();
-                            lastText = resultText;
-                            lastTextExtended = "";
-                            for (Text.TextBlock block : result.getTextBlocks()) {
-                                String blockText = block.getText();
-                                Rect blockFrame = block.getBoundingBox();
-                                // Adjust the Y coordinate of the bounding box
-                                if (blockFrame != null) {
-                                    blockFrame.offset(0, roiY);
+                    Task<Text> result = recognizer.process(inputImage)
+                        .addOnSuccessListener(new OnSuccessListener<Text>() {
+                            @Override
+                            public void onSuccess(Text result) {
+                                // Process OCR result as before
+                                String resultText = result.getText();
+                                lastText = resultText;
+                                lastTextExtended = "";
+                                for (Text.TextBlock block : result.getTextBlocks()) {
+                                    String blockText = block.getText();
+                                    Rect blockFrame = block.getBoundingBox();
+                                    // Adjust the Y coordinate of the bounding box
+                                    if (blockFrame != null) {
+                                        blockFrame.offset(0, roiY);
+                                    }
+                                    lastTextExtended += blockText + "$$" + blockFrame.toString() + "§§";
                                 }
-                                lastTextExtended += blockText + "$$" + blockFrame.toString() + "§§";
+                                roiBitmap.recycle();
+                                isRunning = false;
                             }
-                            roiBitmap.recycle();
-                            isRunning = false;
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(Exception e) {
-                            isRunning = false;
-                        }
-                    });
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(Exception e) {
+                                isRunning = false;
+                            }
+                        });
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
