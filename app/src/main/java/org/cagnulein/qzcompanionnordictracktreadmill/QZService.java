@@ -175,7 +175,7 @@ public class QZService extends Service {
 
         for (int i = 1; i < lines.length; i++) {
             Log.d("OCRlines", i + " " + lines[i]);
-            if (lines[i].contains("incline")) {
+            if (lines[i].toLowerCase().contains("incline")) {
                 try {                    
                     QZService.lastInclination = "Changed Grade " + lines[i-1].trim();
                     QZService.lastInclinationFloat = Float.parseFloat(lines[i-1].trim());
@@ -185,7 +185,7 @@ public class QZService extends Service {
                 }
 
             }
-            if (lines[i].contains("speed")) {
+            if (lines[i].toLowerCase().contains("speed")) {
                 try {                    
                     QZService.lastSpeed = "Changed KPH " + lines[i-1].trim();
                     QZService.lastSpeedFloat = Float.parseFloat(lines[i-1].trim());
