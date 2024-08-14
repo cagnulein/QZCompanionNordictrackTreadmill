@@ -481,7 +481,7 @@ public class UDPListenerService extends Service {
                     if (device == _device.x11i) {
                         x1 = 75;
                         y2 = (int) (565.491 - (8.44 * reqInclination));
-                    } else if (device == _device.x22i || device == _device.x22i_noadb) {
+                    } else if (device == _device.x22i) {
                         x1 = 75;
                         y2 = (int) (785 - (11.304347826086957 * (reqInclination + 6)));                        
                     } else if (device == _device.x22i_noadb) {
