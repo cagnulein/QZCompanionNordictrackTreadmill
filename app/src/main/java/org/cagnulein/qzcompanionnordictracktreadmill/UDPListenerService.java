@@ -486,8 +486,8 @@ public class UDPListenerService extends Service {
                         y2 = (int) (785 - (11.304347826086957 * (reqInclination + 6)));                        
                     } else if (device == _device.x22i_noadb) {
                         x1 = 75;
-                        y1Inclination = 965 - (int) (QZService.lastInclinationFloat * 12.1);
-                        y2 = (int) (965 - (12.1 * reqInclination));
+                        y1Inclination = 658 - (int) (QZService.lastInclinationFloat * 12);
+                        y2 = (int) (658 - (12 * reqInclination));
                     } else if (device == _device.x22i_v2) {
                         x1 = 75;
                         // 742 = 0% 266 = 40%
