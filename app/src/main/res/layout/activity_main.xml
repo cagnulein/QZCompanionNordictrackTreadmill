@@ -120,6 +120,12 @@
                         android:text="Proform 2000 Treadmill" />
 
                     <RadioButton
+                        android:id="@+id/proform_carbon_e7"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Proform Carbon E7 Elliptical" />
+
+                    <RadioButton
                         android:id="@+id/proform_pro_9000"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

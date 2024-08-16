@@ -74,6 +74,7 @@ public class UDPListenerService extends Service {
         s15i,
         x22i_noadb,
         proform_pro_9000,
+        proform_carbon_e7,
     }
 
     public static _device device;
@@ -115,6 +116,9 @@ public class UDPListenerService extends Service {
             case proform_pro_9000:
                 y1Speed = 800;      //vertical position of slider at 2.0
                 y1Inclination = 715;    //vertical position of slider at 0.0
+                break;                
+            case proform_carbon_e7:                
+                y1Inclination = 430;    //vertical position of slider at 0.0
                 break;                
             case s15i:
                 lastReqResistance = 0;
@@ -234,7 +238,7 @@ public class UDPListenerService extends Service {
 
         writeLog(message);
         String[] amessage = message.split(";");
-        if(device == _device.s15i || device == _device.s22i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22) {
+        if(device == _device.proform_carbon_e7 || device == _device.s15i || device == _device.s22i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22) {
             if (amessage.length > 0) {
                 String rResistance = amessage[0];
                 if(decimalSeparator != '.') {
@@ -278,6 +282,12 @@ public class UDPListenerService extends Service {
                         } else if (device == _device.NTEX71021) {
                             x1 = 950;
                             y2 = (int) (493 - (13.57 * reqResistance));                            
+                        } else if (device == _device.proform_carbon_e7) {
+                            x1 = 75;
+                            writeLog("lastInclinationFloat " + QZService.lastInclinationFloat);
+                            y1Resistance = 440 - (int) ((QZService.lastInclinationFloat) * 11);
+                            //set speed slider to target position
+                            y2 = y1Resistance - (int) ((reqResistance - QZService.lastInclinationFloat) * 11);
 						} else {
 							x1 = 1828;
                             y2 = (int) (826.25 - (21.25 * reqResistance));
@@ -287,7 +297,7 @@ public class UDPListenerService extends Service {
                         MainActivity.sendCommand(command);
                         writeLog(command);
 
-                        if (device == _device.s15i || device == _device.s22i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22 || device == _device.NTEX71021)
+                        if (device == _device.proform_carbon_e7 || device == _device.s15i || device == _device.s22i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22 || device == _device.NTEX71021)
                             y1Resistance = y2;  //set new vertical position of speed slider
                         lastReqResistance = reqResistance;
                         lastSwipeMs = Calendar.getInstance().getTimeInMillis();
