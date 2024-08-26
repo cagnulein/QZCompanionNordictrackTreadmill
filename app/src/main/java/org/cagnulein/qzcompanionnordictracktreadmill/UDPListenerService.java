@@ -75,6 +75,7 @@ public class UDPListenerService extends Service {
         x22i_noadb,
         proform_pro_9000,
         proform_carbon_e7,
+        t95s,
     }
 
     public static _device device;
@@ -147,6 +148,9 @@ public class UDPListenerService extends Service {
             case t85s:
                 y1Speed = 609;      //vertical position of slider at 2.0
                 y1Inclination = 609;    //vertical position of slider at 0.0
+            case t95s:
+                y1Speed = 817;      //vertical position of slider at 1.0 mph
+                y1Inclination = 817;    //vertical position of slider at 0.0                
             case s40:
                 y1Speed = 482;      //vertical position of slider at 2.0
                 y1Inclination = 490;    //vertical position of slider at 0.0
@@ -379,6 +383,11 @@ public class UDPListenerService extends Service {
                         } else if (device == _device.x32i_NTL39019) {
                             x1 = 1845;
                             y2 = (int) (817.5 - (42.5 * reqSpeed * 0.621371));                            
+                        } else if (device == _device.t95s) {
+                            x1 = 1845;
+                            y1Speed = 817.5 - (int) (((QZService.lastSpeedFloat * 0.621371) - 1) * 42.5);
+                            //set speed slider to target position
+                            y2 = y1Speed - (int) (((reqSpeed * 0.621371) - (QZService.lastSpeedFloat * 0.621371) - 1) * 42.5);
 						} else if (device == _device.t85s) {
                             x1 = 1207;
                             y2 = (int) (629.81 - (20.81 * reqSpeed));
@@ -463,7 +472,7 @@ public class UDPListenerService extends Service {
                             writeLog(command);
                         }
 
-                        if (device == _device.x11i || device == _device.proform_carbon_t14 || device == _device.nordictrack_2450 || device == _device.x14i || device == _device.x22i || device == _device.x22i_v2 || device == _device.x22i_noadb || device == _device.elite1000 || device == _device.c1750 || device == _device.c1750_2021 || device == _device.c1750_2020 || device == _device.c1750_2020_kph || device == _device.proform_2000 || device == _device.proform_pro_9000 || device == _device.t85s || device == _device.t65s || device == _device.grand_tour_pro || device == _device.t75s || device == _device.s40 || device == _device.exp7i || device == _device.x32i || device == _device.x32i_NTL39019 || device == _device.x32i_NTL39221)
+                        if (device == _device.x11i || device == _device.proform_carbon_t14 || device == _device.nordictrack_2450 || device == _device.x14i || device == _device.x22i || device == _device.x22i_v2 || device == _device.x22i_noadb || device == _device.elite1000 || device == _device.c1750 || device == _device.c1750_2021 || device == _device.c1750_2020 || device == _device.c1750_2020_kph || device == _device.proform_2000 || device == _device.proform_pro_9000 || device == _device.t85s || device == _device.t95s || device == _device.t65s || device == _device.grand_tour_pro || device == _device.t75s || device == _device.s40 || device == _device.exp7i || device == _device.x32i || device == _device.x32i_NTL39019 || device == _device.x32i_NTL39221)
                             y1Speed = y2;  //set new vertical position of speed slider
                         lastSwipeMs = Calendar.getInstance().getTimeInMillis();
                         reqCachedSpeed = -1;
@@ -512,6 +521,12 @@ public class UDPListenerService extends Service {
                     } else if (device == _device.proform_carbon_t14) {
                         x1 = 76;
                         y2 = (int) (844 - (46.833 * reqInclination));                        
+                    } else if (device == _device.t95s) {
+                        x1 = 76;
+                        y2 = (int) (823 - (46 * reqInclination));    
+                        y1Inclination = 823 - (int) ((QZService.lastInclinationFloat) * 46);
+                        //set speed slider to target position
+                        y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 46);
                     } else if (device == _device.x32i_NTL39019) {
                         x1 = 74;
                         y2 = (int) (749 - (11.8424 * reqInclination));                        
@@ -590,7 +605,7 @@ public class UDPListenerService extends Service {
                         writeLog(command);
                     }
 
-                    if (device == _device.x11i || device == _device.nordictrack_2450 || device == _device.elite1000 || device == _device.x22i || device == _device.x22i_v2 || device == _device.x22i_noadb || device == _device.x14i || device == _device.c1750 || device == _device.c1750_2021 || device == _device.c1750_2020  || device == _device.c1750_2020_kph || device == _device.proform_2000 || device == _device.proform_pro_9000 || device == _device.t85s || device == _device.t65s || device == _device.t75s || device == _device.grand_tour_pro || device == _device.s40 || device == _device.exp7i || device == _device.x32i || device == _device.x32i_NTL39221)
+                    if (device == _device.x11i || device == _device.nordictrack_2450 || device == _device.elite1000 || device == _device.x22i || device == _device.x22i_v2 || device == _device.x22i_noadb || device == _device.x14i || device == _device.c1750 || device == _device.c1750_2021 || device == _device.c1750_2020  || device == _device.c1750_2020_kph || device == _device.proform_2000 || device == _device.proform_pro_9000 || device == _device.t85s  || device == _device.t95s || device == _device.t65s || device == _device.t75s || device == _device.grand_tour_pro || device == _device.s40 || device == _device.exp7i || device == _device.x32i || device == _device.x32i_NTL39221)
                         y1Inclination = y2;  //set new vertical position of inclination slider
                     lastSwipeMs = Calendar.getInstance().getTimeInMillis();
 					reqCachedInclination = -100;

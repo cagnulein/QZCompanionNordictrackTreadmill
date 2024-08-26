@@ -90,6 +90,12 @@
                         android:text="T8.5s Treadmill" />
 
                     <RadioButton
+                        android:id="@+id/t95s"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="T9.5s Treadmill" />
+
+                    <RadioButton
                         android:id="@+id/s40"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
