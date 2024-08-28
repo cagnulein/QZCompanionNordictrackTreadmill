@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Build;
@@ -29,6 +31,7 @@ import android.widget.TextView;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Logger;
@@ -49,6 +52,12 @@ import com.cgutman.androidremotedebugger.devconn.DeviceConnection;
 import com.cgutman.androidremotedebugger.devconn.DeviceConnectionListener;
 import com.cgutman.androidremotedebugger.service.ShellService;
 import com.cgutman.adblib.AdbCrypto;
+import com.equationl.paddleocr4android.OCR;
+import com.equationl.paddleocr4android.OcrConfig;
+import com.equationl.paddleocr4android.Util.paddle.OcrResultModel;
+import com.equationl.paddleocr4android.bean.OcrResult;
+import com.equationl.paddleocr4android.callback.OcrInitCallback;
+import com.equationl.paddleocr4android.callback.OcrRunCallback;
 
 public class MainActivity extends AppCompatActivity  implements DeviceConnectionListener {
     private ShellService.ShellServiceBinder binder;
@@ -58,6 +67,8 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
     private static String lastCommand = "";
     private static boolean ADBConnected = false;
     private static String appLogs = "";
+
+    private OCR ocr;
 
 	private final ShellRuntime shellRuntime = new ShellRuntime();
 
@@ -198,6 +209,54 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         setContentView(R.layout.activity_main);
         resultReceiver = new AndroidActivityResultReceiver(this);
         checkPermissions();
+
+        ocr = new OCR(this);
+
+        OcrConfig config = new OcrConfig();
+        //config.labelPath = null
+
+        config.setModelPath("models/ch_PP-OCRv2"); // 不使用 "/" 开头的路径表示安装包中 assets 目录下的文件，例如当前表示 assets/models/ocr_v2_for_cpu
+        //config.modelPath = "/sdcard/Android/data/com.equationl.paddleocr4android.app/files/models" // 使用 "/" 表示手机储存路径，测试时请将下载的三个模型放置于该目录下
+        config.setClsModelFilename("cls.nb"); // cls 模型文件名
+        config.setClsModelFilenameCustom("cls.nb");
+        config.setDetModelFilename("det_db.nb"); // det 模型文件名
+        config.setRecModelFilename("rec_crnn.nb"); // rec 模型文件名
+
+        // 运行全部模型
+        // 请根据需要配置，三项全开识别率最高；如果只开识别几乎无法正确识别，至少需要搭配检测或分类其中之一
+        // 也可单独运行 检测模型 获取文本位置
+        config.setRunDet(true);
+        config.setRunCls(true);
+        config.setRunRec(true);
+
+        ocr.initModel(config, new OcrInitCallback() {
+            @Override
+            public void onSuccess() {
+                Log.i(TAG, "onSuccess: 初始化成功");
+                Bitmap bitmap3 = BitmapFactory.decodeResource(getResources(), R.drawable.test4);
+                ocr.run(bitmap3, new OcrRunCallback() {
+                    @Override
+                    public void onSuccess(OcrResult result) {
+                        String simpleText = result.getSimpleText();
+                        Bitmap imgWithBox = result.getImgWithBox();
+                        long inferenceTime = (long) result.getInferenceTime();
+                        List<OcrResultModel> outputRawResult = result.getOutputRawResult();
+
+                        StringBuilder text = new StringBuilder("识别文字=\n" + simpleText + "\n识别时间=" + inferenceTime + " ms\n更多信息=\n");
+                    }
+
+                    @Override
+                    public void onFail(Throwable e) {
+                        Log.e(TAG, "onFail: 识别失败！", e);
+                    }
+                });
+            }
+
+            @Override
+            public void onFail(Throwable e) {
+                Log.e(TAG, "onFail: 初始化失败", e);
+            }
+        });
 
         sharedPreferences = getSharedPreferences("QZ",MODE_PRIVATE);
         radioGroup = findViewById(R.id.radiogroupDevice);
