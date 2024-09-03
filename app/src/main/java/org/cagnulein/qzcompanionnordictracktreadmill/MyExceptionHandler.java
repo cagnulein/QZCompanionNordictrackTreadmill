@@ -19,7 +19,6 @@ import android.util.Log;
 import android.widget.TextView;
 
 import android.content.SharedPreferences;
-import androidx.preference.PreferenceManager;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -38,7 +37,7 @@ public class MyExceptionHandler implements Thread.UncaughtExceptionHandler {
         String stackTraceString = sw.toString();
 
         // Salva l'errore nelle SharedPreferences
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefs = context.getSharedPreferences("CrashPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("last_crash", stackTraceString);
         editor.apply();
