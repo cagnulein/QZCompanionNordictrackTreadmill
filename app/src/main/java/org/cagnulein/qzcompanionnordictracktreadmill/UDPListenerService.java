@@ -330,7 +330,7 @@ public class UDPListenerService extends Service {
                         if (device == _device.s15i) {
                             x1 = 1848;
                             writeLog("lastResistanceFloat " + QZService.lastResistanceFloat);
-                            y1Resistance = 820 - (int) ((QZService.lastResistanceFloat) * 23.16);
+                            y1Resistance = 790 - (int) ((QZService.lastResistanceFloat) * 23.16);
                             //set speed slider to target position
                             y2 = y1Resistance - (int) ((reqResistance - QZService.lastResistanceFloat) * 23.16);
                         }
