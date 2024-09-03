@@ -248,6 +248,10 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                 } else if(i == R.id.t75s) {
                     UDPListenerService.setDevice(UDPListenerService._device.t75s);
                 } else if(i == R.id.t95s) {
+                    if (!isAccessibilityServiceEnabled(getApplicationContext(), MyAccessibilityService.class)) {
+                        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                        startActivity(intent);
+                    }                    
                     UDPListenerService.setDevice(UDPListenerService._device.t95s);                    
                 } else if(i == R.id.grand_tour_pro) {
                     UDPListenerService.setDevice(UDPListenerService._device.grand_tour_pro);
@@ -276,7 +280,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
             public void onClick(View view) {
                 int device = sharedPreferences.getInt("device", R.id.other);
                 // test
-                if(device == R.id.x22i_noadb)
+                if(device == R.id.x22i_noadb || device == R.id.t95s)
                     MyAccessibilityService.performSwipe(600, 600, 300, 400, 100);
 
 
