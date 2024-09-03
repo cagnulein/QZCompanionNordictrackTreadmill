@@ -175,6 +175,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         checkPermissions();
+        Thread.setDefaultUncaughtExceptionHandler(new MyExceptionHandler(this));
 
         sharedPreferences = getSharedPreferences("QZ",MODE_PRIVATE);
         radioGroup = findViewById(R.id.radiogroupDevice);
@@ -366,6 +367,22 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                 }
             }
         }
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                String lastCrash = prefs.getString("last_crash", null);
+                if (lastCrash != null) {
+                    // Mostra l'errore in un AlertDialog
+                    new AlertDialog.Builder(this)
+                        .setTitle("Errore precedente")
+                        .setMessage(lastCrash)
+                        .setPositiveButton("OK", (dialog, which) -> {
+                            // Pulisci l'errore salvato
+                            prefs.edit().remove("last_crash").apply();
+                        })
+                        .show();
+                }
+
+
     }
 
     private boolean isAccessibilityServiceEnabled(Context context, Class<?> accessibilityService) {
