@@ -47,6 +47,9 @@ import com.cgutman.androidremotedebugger.devconn.DeviceConnectionListener;
 import com.cgutman.androidremotedebugger.service.ShellService;
 import com.cgutman.adblib.AdbCrypto;
 
+import androidx.preference.PreferenceManager;
+import androidx.appcompat.app.AlertDialog;
+
 public class MainActivity extends AppCompatActivity  implements DeviceConnectionListener {
     private ShellService.ShellServiceBinder binder;
     private static DeviceConnection connection;

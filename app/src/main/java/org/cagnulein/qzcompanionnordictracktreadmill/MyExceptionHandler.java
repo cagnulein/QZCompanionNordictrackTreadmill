@@ -18,6 +18,11 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.widget.TextView;
 
+import android.content.SharedPreferences;
+import androidx.preference.PreferenceManager;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 public class MyExceptionHandler implements Thread.UncaughtExceptionHandler {
     private Context context;
 
