@@ -387,7 +387,7 @@ public class UDPListenerService extends Service {
                             x1 = 1845;
                             y1Speed = 817 - (int) (((QZService.lastSpeedFloat * 0.621371) - 1) * 42.5);
                             //set speed slider to target position
-                            y2 = y1Speed - (int) (((reqSpeed * 0.621371) - (QZService.lastSpeedFloat * 0.621371) - 1) * 42.5);
+                            y2 = y1Speed - (int) (((reqSpeed * 0.621371) - (QZService.lastSpeedFloat * 0.621371)) * 42.5);
 						} else if (device == _device.t85s) {
                             x1 = 1207;
                             y2 = (int) (629.81 - (20.81 * reqSpeed));
@@ -524,9 +524,9 @@ public class UDPListenerService extends Service {
                     } else if (device == _device.t95s) {
                         x1 = 76;
                         y2 = (int) (823 - (46 * reqInclination));    
-                        y1Inclination = 823 - (int) ((QZService.lastInclinationFloat) * 46);
+                        y1Inclination = 823 - (int) ((QZService.lastInclinationFloat) * 46.0);
                         //set speed slider to target position
-                        y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 46);
+                        y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 46.0);
                     } else if (device == _device.x32i_NTL39019) {
                         x1 = 74;
                         y2 = (int) (749 - (11.8424 * reqInclination));                        
