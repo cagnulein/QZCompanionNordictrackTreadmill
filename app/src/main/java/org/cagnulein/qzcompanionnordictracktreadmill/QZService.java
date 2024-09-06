@@ -41,6 +41,7 @@ public class QZService extends Service {
     static float lastSpeedFloat = 0;
     static float lastInclinationFloat = 0;
     static float lastResistanceFloat = 0;
+    static float lastGearFloat = 0;
     static String lastSpeed = "";
     static String lastInclination = "";
     String lastWattage = "";
@@ -133,6 +134,8 @@ public class QZService extends Service {
         String line;
         while ((line = is.readLine()) != null) {
             lastGear = line;
+            String[] b = line.split(" ");
+            lastGearFloat = Float.parseFloat(b[b.length-1]);
             sendBroadcast(line);
             return true;
         }
