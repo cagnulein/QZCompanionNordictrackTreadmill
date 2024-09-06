@@ -330,9 +330,10 @@ public class UDPListenerService extends Service {
                         if (device == _device.s15i) {
                             x1 = 1848;
                             writeLog("lastResistanceFloat " + QZService.lastResistanceFloat);
-                            y1Resistance = 820 - (int) ((QZService.lastResistanceFloat) * 23.16);
+                            writeLog("lastGearFloat " + QZService.lastGearFloat);                            
+                            y1Resistance = 790 - (int) ((QZService.lastGearFloat) * 23.16);
                             //set speed slider to target position
-                            y2 = y1Resistance - (int) ((reqResistance - QZService.lastResistanceFloat) * 23.16);
+                            y2 = y1Resistance - (int) ((reqResistance - QZService.lastGearFloat) * 23.16);
                         }
 
                         String command = "input swipe " + x1 + " " + y1Resistance + " " + x1 + " " + y2 + " 200";
@@ -385,9 +386,9 @@ public class UDPListenerService extends Service {
                             y2 = (int) (817.5 - (42.5 * reqSpeed * 0.621371));                            
                         } else if (device == _device.t95s) {
                             x1 = 1845;
-                            y1Speed = 817 - (int) (((QZService.lastSpeedFloat * 0.621371) - 1) * 42.5);
+                            y1Speed = 817 - (int) ((QZService.lastSpeedFloat - 1.0) * 10.0 * 3.0);
                             //set speed slider to target position
-                            y2 = y1Speed - (int) (((reqSpeed * 0.621371) - (QZService.lastSpeedFloat * 0.621371) - 1) * 42.5);
+                            y2 = y1Speed - (int) ((reqSpeed - QZService.lastSpeedFloat) * 10.0 * 3.0);
 						} else if (device == _device.t85s) {
                             x1 = 1207;
                             y2 = (int) (629.81 - (20.81 * reqSpeed));
@@ -460,7 +461,7 @@ public class UDPListenerService extends Service {
                             y2 = (int) ((-19.921 * reqSpeed) + 631.03);
                         }
 
-                        if(device == _device.x22i_noadb) {
+                        if(device == _device.x22i_noadb || device == _device.t95s) {
                             MyAccessibilityService.performSwipe(x1, y1Speed, x1, y2, 200);
                         } else {
                             String command = "input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
@@ -523,10 +524,9 @@ public class UDPListenerService extends Service {
                         y2 = (int) (844 - (46.833 * reqInclination));                        
                     } else if (device == _device.t95s) {
                         x1 = 76;
-                        y2 = (int) (823 - (46 * reqInclination));    
-                        y1Inclination = 823 - (int) ((QZService.lastInclinationFloat) * 46);
+                        y1Inclination = 846 - (int) ((QZService.lastInclinationFloat) * 46.0);
                         //set speed slider to target position
-                        y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 46);
+                        y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 46.0);
                     } else if (device == _device.x32i_NTL39019) {
                         x1 = 74;
                         y2 = (int) (749 - (11.8424 * reqInclination));                        
@@ -593,7 +593,7 @@ public class UDPListenerService extends Service {
                         y2 = (int) ((-21.804 * reqInclination) + 520.11);
                     }
 
-                    if(device == _device.x22i_noadb) {
+                    if(device == _device.x22i_noadb || device == _device.t95s) {
                         MyAccessibilityService.performSwipe(x1, y1Inclination, x1, y2, 200);
                     } else {
                         String command = " input swipe " + x1 + " " + y1Inclination + " " + x1 + " " + y2 + " 200";

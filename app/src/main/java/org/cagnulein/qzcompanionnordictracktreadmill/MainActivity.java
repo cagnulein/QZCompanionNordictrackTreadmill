@@ -53,6 +53,8 @@ import com.cgutman.androidremotedebugger.devconn.DeviceConnectionListener;
 import com.cgutman.androidremotedebugger.service.ShellService;
 import com.cgutman.adblib.AdbCrypto;
 
+import androidx.appcompat.app.AlertDialog;
+
 public class MainActivity extends AppCompatActivity  implements DeviceConnectionListener {
     private ShellService.ShellServiceBinder binder;
     private static DeviceConnection connection;
@@ -201,6 +203,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         setContentView(R.layout.activity_main);
         resultReceiver = new AndroidActivityResultReceiver(this);
         checkPermissions();
+        Thread.setDefaultUncaughtExceptionHandler(new MyExceptionHandler(this));
 
         sharedPreferences = getSharedPreferences("QZ",MODE_PRIVATE);
         radioGroup = findViewById(R.id.radiogroupDevice);
@@ -274,6 +277,10 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                 } else if(i == R.id.t75s) {
                     UDPListenerService.setDevice(UDPListenerService._device.t75s);
                 } else if(i == R.id.t95s) {
+                    if (!isAccessibilityServiceEnabled(getApplicationContext(), MyAccessibilityService.class)) {
+                        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                        startActivity(intent);
+                    }                    
                     UDPListenerService.setDevice(UDPListenerService._device.t95s);                    
                 } else if(i == R.id.grand_tour_pro) {
                     UDPListenerService.setDevice(UDPListenerService._device.grand_tour_pro);
@@ -302,7 +309,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
             public void onClick(View view) {
                 int device = sharedPreferences.getInt("device", R.id.other);
                 // test
-                if(device == R.id.x22i_noadb)
+                if(device == R.id.x22i_noadb || device == R.id.t95s)
                     MyAccessibilityService.performSwipe(600, 600, 300, 400, 100);
 
 
@@ -394,7 +401,22 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
             }
         }
 
+
         startOCR();
+
+        SharedPreferences prefs = getSharedPreferences("CrashPrefs", MODE_PRIVATE);
+        String lastCrash = prefs.getString("last_crash", null);
+        if (lastCrash != null) {
+            // Mostra l'errore in un AlertDialog
+            new AlertDialog.Builder(this)
+                .setTitle("Errore precedente")
+                .setMessage(lastCrash)
+                .setPositiveButton("OK", (dialog, which) -> {
+                    // Pulisci l'errore salvato
+                    prefs.edit().remove("last_crash").apply();
+                })
+                .show();
+        }
     }
 
     private boolean isAccessibilityServiceEnabled(Context context, Class<?> accessibilityService) {
