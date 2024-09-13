@@ -152,7 +152,7 @@ public class ScreenCaptureService extends Service {
 
                     // Create a new bitmap for the region of interest
                     //Bitmap roiBitmap = Bitmap.createBitmap(fullBitmap, 0, roiY, fullWidth, roiHeight);
-		    Bitmap roiBitmap = Bitmap.createBitmap(fullBitmap, 0, roiY, fullWidth, fullHeight);
+		            Bitmap roiBitmap = Bitmap.createBitmap(fullBitmap, 0, 0, fullWidth, fullHeight);
 
                     // Recycle the full bitmap as we no longer need it
                     fullBitmap.recycle();
@@ -179,6 +179,7 @@ public class ScreenCaptureService extends Service {
                         });
                 }
             } catch (Exception e) {
+                isRunning = false;
                 e.printStackTrace();
             }
         }
