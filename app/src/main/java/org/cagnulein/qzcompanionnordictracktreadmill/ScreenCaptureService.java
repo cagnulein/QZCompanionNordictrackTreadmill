@@ -23,6 +23,7 @@ import android.view.Display;
 import android.view.OrientationEventListener;
 import android.view.WindowManager;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -41,6 +42,11 @@ import com.google.android.gms.tasks.Task;
 
 import android.graphics.Rect;
 import android.graphics.Point;
+
+import java.io.ByteArrayOutputStream;
+import okhttp3.*;
+import org.json.JSONObject;
+import java.io.IOException;
 
 import androidx.core.util.Pair;
 import android.util.Log;
@@ -154,6 +160,14 @@ public class ScreenCaptureService extends Service {
                     // Recycle the full bitmap as we no longer need it
                     fullBitmap.recycle();
 
+                    // Convert bitmap to byte array
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    roiBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    byte[] byteArray = stream.toByteArray();
+
+                    // Send OCR request
+                    sendOcrRequest(byteArray);
+
                     // Use roiBitmap for OCR
                     InputImage inputImage = InputImage.fromBitmap(roiBitmap, 0);
 
@@ -189,6 +203,47 @@ public class ScreenCaptureService extends Service {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+
+        private static final String OCR_SERVER_URL = "http://192.168.1.4:32168/v1/image/ocr";
+        private final OkHttpClient client = new OkHttpClient();
+
+        private void sendOcrRequest(byte[] imageData) {
+            RequestBody requestBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("image", "image.png",
+                            RequestBody.create(MediaType.parse("image/png"), imageData))
+                    .build();
+    
+            Request request = new Request.Builder()
+                    .url(OCR_SERVER_URL)
+                    .post(requestBody)
+                    .build();
+    
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e(TAG, "OCR request failed", e);
+                    isRunning = false;
+                }
+    
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        String jsonData = response.body().string();
+                        try {
+                            JSONObject jsonObject = new JSONObject(jsonData);
+                            lastText = jsonObject.optString("text", "");
+                            Log.d("OCR", "processed " + lastText);
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error parsing OCR response", e);
+                        }
+                    } else {
+                        Log.e(TAG, "OCR request failed with code: " + response.code());
+                    }
+                    isRunning = false;
+                }
+            });
         }
     }
 
