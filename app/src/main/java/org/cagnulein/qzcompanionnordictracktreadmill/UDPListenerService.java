@@ -325,6 +325,7 @@ public class UDPListenerService extends Service {
                 //if (lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) 
                 {
                     if (QZService.lastResistanceFloat != reqResistance && reqResistance != -1 && reqResistance != -100) {
+                        boolean skip = false;
                         int x1 = 0;
                         int y2 = 0;
                         if (device == _device.s15i) {
@@ -334,14 +335,18 @@ public class UDPListenerService extends Service {
                             y1Resistance = 790 - (int) ((QZService.lastGearFloat) * 23.16);
                             //set speed slider to target position
                             y2 = y1Resistance - (int) ((reqResistance - QZService.lastGearFloat) * 23.16);
+                        } else {
+                            skip = true;
                         }
 
-                        String command = "input swipe " + x1 + " " + y1Resistance + " " + x1 + " " + y2 + " 200";
-                        MainActivity.sendCommand(command);
-                        writeLog(command);
+                        if(skip == false) {
+                            String command = "input swipe " + x1 + " " + y1Resistance + " " + x1 + " " + y2 + " 200";
+                            MainActivity.sendCommand(command);
+                            writeLog(command);
 
-                        lastReqResistance = reqResistance;
-                        lastSwipeMs = Calendar.getInstance().getTimeInMillis();
+                            lastReqResistance = reqResistance;
+                            lastSwipeMs = Calendar.getInstance().getTimeInMillis();
+                        }
                     }
                 }
             }            
