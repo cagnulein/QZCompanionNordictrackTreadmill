@@ -182,6 +182,32 @@ public class QZService extends Service {
                 }
 
             }
+	   if (lines[i].toLowerCase().contains("cadence")) {
+                try {                    
+                    QZService.lastCadence = "Changed RPM " + lines[i-1].trim();
+                } catch (Exception e) {
+                    QZService.lastCadence = "";
+                }
+
+            }
+	    if (lines[i].toLowerCase().contains("resistance")) {
+                try {                    
+                    QZService.lastResistance = "Changed Resistance " + lines[i-1].trim();
+                    QZService.lastResistanceFloat = Float.parseFloat(lines[i-1].trim());
+                } catch (Exception e) {
+                    QZService.lastResistance = "";
+                    QZService.lastResistanceFloat = 0.0f;
+                }
+
+            }
+	    if (lines[i].toLowerCase().contains("watt")) {
+                try {                    
+                    QZService.lastWattage = "Changed Watt " + lines[i-1].trim();
+                } catch (Exception e) {
+                    QZService.lastWattage = "";
+                }
+
+            }
             if (lines[i].toLowerCase().contains("speed")) {
                 try {                    
                     QZService.lastSpeed = "Changed KPH " + lines[i-1].trim();
