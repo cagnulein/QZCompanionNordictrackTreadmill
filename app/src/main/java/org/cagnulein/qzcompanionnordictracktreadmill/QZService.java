@@ -202,7 +202,7 @@ public class QZService extends Service {
             }
 	    if (lines[i].toLowerCase().contains("watt")) {
                 try {                    
-                    QZService.lastWattage = "Changed Watt " + lines[i-1].trim();
+                    QZService.lastWattage = "Changed Watts " + lines[i-1].trim();
                 } catch (Exception e) {
                     QZService.lastWattage = "";
                 }
