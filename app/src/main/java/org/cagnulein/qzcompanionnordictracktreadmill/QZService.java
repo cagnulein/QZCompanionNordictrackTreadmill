@@ -43,8 +43,8 @@ public class QZService extends Service {
     static float lastResistanceFloat = 0;
     static String lastSpeed = "";
     static String lastInclination = "";
-    String lastWattage = "";
-    String lastCadence = "";
+    static String lastWattage = "";
+    static String lastCadence = "";
     static String lastResistance = "";
     String lastGear = "";
     static String lastHeart = "";
