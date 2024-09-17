@@ -346,6 +346,12 @@ public class UDPListenerService extends Service {
                             y1Resistance = 790 - (int) ((QZService.lastGearFloat) * 23.16);
                             //set speed slider to target position
                             y2 = y1Resistance - (int) ((reqResistance - QZService.lastGearFloat) * 23.16);
+                        } else if (device == _device.proform_carbon_e7) {
+                            x1 = 950;
+                            writeLog("lastResistanceloat " + QZService.lastResistanceFloat);
+                            y1Resistance = 440 - (int) ((QZService.lastResistanceFloat) * 9.16);
+                            //set speed slider to target position
+                            y2 = y1Resistance - (int) ((reqResistance - QZService.lastResistanceFloat) * 9.16);
                         } else {
                             skip = true;
                         }
