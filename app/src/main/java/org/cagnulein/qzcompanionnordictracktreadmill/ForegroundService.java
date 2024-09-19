@@ -31,7 +31,7 @@ public class ForegroundService extends Service {
 					Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
 					 .setContentTitle("QZ is Running")
 					 .setContentText(input)
-					 .setSmallIcon(R.drawable.ic_launcher_round)
+					 .setSmallIcon(R.drawable.ic_launcher_foreground)
 					 .setContentIntent(pendingIntent)
 					 .build();
 

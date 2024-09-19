@@ -39,6 +39,7 @@ import java.io.InputStreamReader;
 
 
 import static android.content.ContentValues.TAG;
+import static android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE;
 
 import com.cgutman.androidremotedebugger.AdbUtils;
 import com.cgutman.androidremotedebugger.console.ConsoleBuffer;
@@ -50,6 +51,7 @@ import com.cgutman.adblib.AdbCrypto;
 import androidx.appcompat.app.AlertDialog;
 
 public class MainActivity extends AppCompatActivity  implements DeviceConnectionListener {
+    private static final String EXTRA_FOREGROUND_SERVICE_TYPE = "FOREGROUND_SERVICE_TYPE";
     private ShellService.ShellServiceBinder binder;
     private static DeviceConnection connection;
     private Intent service;
@@ -387,15 +389,15 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                 .show();
         }          
 
-        notificationServiceIntent = new Intent(context, ForegroundService.class);
+        notificationServiceIntent = new Intent(this, ForegroundService.class);
         notificationServiceIntent.putExtra("inputExtra", "QZ is Running");
             notificationServiceIntent.putExtra(EXTRA_FOREGROUND_SERVICE_TYPE,
                                     FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE);
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            context.startForegroundService(notificationServiceIntent);
+            this.startForegroundService(notificationServiceIntent);
         } else {
-            context.startService(notificationServiceIntent);
+            this.startService(notificationServiceIntent);
         }
 
     }
