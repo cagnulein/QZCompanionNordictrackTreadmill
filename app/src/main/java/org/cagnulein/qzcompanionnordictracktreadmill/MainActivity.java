@@ -173,6 +173,13 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         Date date = new Date();
         Timestamp timestamp2 = new Timestamp(date.getTime());
         appLogs = appLogs + "\n" + timestamp2 + " " + command;
+
+        byte[] bytes = appLogs.getBytes(StandardCharsets.UTF_8);
+        if (bytes.length > 1000000) {
+            int excessBytes = bytes.length - 1000000;
+            int cutIndex = new String(bytes, 0, excessBytes, StandardCharsets.UTF_8).length();
+            appLogs = appLogs.substring(cutIndex);
+        }        
     }
 
     @Override
