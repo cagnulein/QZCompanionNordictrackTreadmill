@@ -170,9 +170,9 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
     };
 
     public static void writeLog(String command) {
-        CheckBox debugLog = findViewById(R.id.debuglog);
+        CheckBox debugLog = MainActivity.findViewById(R.id.debuglog);
         if(!debugLog.isChecked()) return;
-        
+
         Date date = new Date();
         Timestamp timestamp2 = new Timestamp(date.getTime());
         appLogs = appLogs + "\n" + timestamp2 + " " + command;
