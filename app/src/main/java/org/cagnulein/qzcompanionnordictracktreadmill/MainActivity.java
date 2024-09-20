@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 
     // on below line we are creating variables.
     RadioGroup radioGroup;
+    static CheckBox debugLog
     SharedPreferences sharedPreferences;
 
     private boolean checkPermissions(){
@@ -169,8 +170,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         }
     };
 
-    public static void writeLog(String command) {
-        CheckBox debugLog = MainActivity.findViewById(R.id.debuglog);
+    public static void writeLog(String command) {        
         if(!debugLog.isChecked()) return;
 
         Date date = new Date();
@@ -187,6 +187,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 
         sharedPreferences = getSharedPreferences("QZ",MODE_PRIVATE);
         radioGroup = findViewById(R.id.radiogroupDevice);
+        debugLog = findViewById(R.id.debuglog);
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
