@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.CheckBox;
 
 import java.sql.Timestamp;
 import java.util.Date;
