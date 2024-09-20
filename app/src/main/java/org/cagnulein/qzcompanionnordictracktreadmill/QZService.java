@@ -64,7 +64,7 @@ public class QZService extends Service {
             runnable = new Runnable() {
                 @Override
                 public void run() {
-                    writeLog( "Service run"); parse(); getOCR();
+                    writeLog( "Service run"); /*parse();*/ getOCR();
                 }
             };
         } finally {
@@ -234,6 +234,7 @@ public class QZService extends Service {
             return result;
         }
         socket.close();
+        handler.postDelayed(runnable, 100);
         return result;
     }
 
