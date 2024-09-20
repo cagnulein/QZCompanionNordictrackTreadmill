@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 
     // on below line we are creating variables.
     RadioGroup radioGroup;
-    static CheckBox debugLog
+    static CheckBox debugLog;
     SharedPreferences sharedPreferences;
 
     private boolean checkPermissions(){
