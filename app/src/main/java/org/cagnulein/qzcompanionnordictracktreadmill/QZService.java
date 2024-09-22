@@ -305,8 +305,10 @@ public class QZService extends Service {
                                     sendBroadcast(lastCadence);
                                 if(!lastGear.equals(""))
                                     sendBroadcast(lastGear);
-                                if(!lastResistance.equals(""))
+                                if(!lastResistance.equals("")) {
                                     sendBroadcast(lastResistance);
+                                    sendBroadcast(lastResistance);
+                                }
 
                                 is.close();
                 
