@@ -171,10 +171,10 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
     public static void writeLog(String command) {        
         //if(!debugLog.isChecked()) return;
 	return;
-
+/*
         Date date = new Date();
         Timestamp timestamp2 = new Timestamp(date.getTime());
-        appLogs = appLogs + "\n" + timestamp2 + " " + command;
+        appLogs = appLogs + "\n" + timestamp2 + " " + command;*/
     }
 
     @Override
