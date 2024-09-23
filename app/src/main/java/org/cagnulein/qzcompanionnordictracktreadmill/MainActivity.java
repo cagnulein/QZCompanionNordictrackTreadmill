@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
     private static String lastCommand = "";
     private static boolean ADBConnected = false;
     private static String appLogs = "";
-    private static Intent notificationServiceIntent = null;
 
 	private final ShellRuntime shellRuntime = new ShellRuntime();
 
@@ -390,17 +389,6 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                     prefs.edit().remove("last_crash").apply();
                 })
                 .show();
-        }          
-
-        notificationServiceIntent = new Intent(context, ForegroundService.class);
-        notificationServiceIntent.putExtra("inputExtra", "QZ is Running");
-            notificationServiceIntent.putExtra(EXTRA_FOREGROUND_SERVICE_TYPE,
-                                    FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE);
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            context.startForegroundService(notificationServiceIntent);
-        } else {
-            context.startService(notificationServiceIntent);
         }
 
     }
