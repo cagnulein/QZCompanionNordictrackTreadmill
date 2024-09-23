@@ -39,11 +39,7 @@
                 android:name="android.accessibilityservice"
                 android:resource="@xml/accessibility_service_config" />
         </service>
-        <service
-            android:name=".ForegroundService"
-                android:enabled="true"
-            android:foregroundServiceType="connectedDevice"
-        android:exported="false"></service>
+
         <receiver android:name=".AlarmReceiver" android:process=":remote" />
         <receiver android:enabled="true" android:name=".BootUpReceiver"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
