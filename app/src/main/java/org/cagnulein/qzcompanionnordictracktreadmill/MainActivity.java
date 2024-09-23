@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.CheckBox;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 
     // on below line we are creating variables.
     RadioGroup radioGroup;
+    static CheckBox debugLog;
     SharedPreferences sharedPreferences;
 
     private boolean checkPermissions(){
@@ -166,10 +168,13 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         }
     };
 
-    public static void writeLog(String command) {
+    public static void writeLog(String command) {        
+        //if(!debugLog.isChecked()) return;
+	return;
+/*
         Date date = new Date();
         Timestamp timestamp2 = new Timestamp(date.getTime());
-        appLogs = appLogs + "\n" + timestamp2 + " " + command;
+        appLogs = appLogs + "\n" + timestamp2 + " " + command;*/
     }
 
     @Override
@@ -181,6 +186,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 
         sharedPreferences = getSharedPreferences("QZ",MODE_PRIVATE);
         radioGroup = findViewById(R.id.radiogroupDevice);
+        debugLog = findViewById(R.id.debuglog);
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
