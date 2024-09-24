@@ -1,5 +1,7 @@
 package org.cagnulein.qzcompanionnordictracktreadmill;
 
+import static android.content.ContentValues.TAG;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Notification;
@@ -8,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
@@ -23,24 +26,29 @@ import android.view.Display;
 import android.view.OrientationEventListener;
 import android.view.WindowManager;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.Objects;
 
-import com.google.mlkit.vision.common.InputImage;
-import com.google.mlkit.vision.text.Text;
-import com.google.mlkit.vision.text.TextRecognition;
-import com.google.mlkit.vision.text.TextRecognizer;
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
-import android.media.ImageReader.OnImageAvailableListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+import com.equationl.paddleocr4android.OCR;
+import com.equationl.paddleocr4android.OCR;
+import com.equationl.paddleocr4android.OcrConfig;
+import com.equationl.paddleocr4android.Util.paddle.OcrResultModel;
+import com.equationl.paddleocr4android.bean.OcrResult;
+import com.equationl.paddleocr4android.callback.OcrInitCallback;
+import com.equationl.paddleocr4android.callback.OcrRunCallback;
 
 import android.graphics.Rect;
 import android.graphics.Point;
+
+import java.io.ByteArrayOutputStream;
+import okhttp3.*;
+import org.json.JSONObject;
+import java.io.IOException;
 
 import androidx.core.util.Pair;
 import android.util.Log;
@@ -75,7 +83,7 @@ public class ScreenCaptureService extends Service {
     private int mRotation;
     private OrientationChangeCallback mOrientationChangeCallback;
 
-    private TextRecognizer recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS);
+    private OCR ocr;
 
 	 private static String lastText = "";
 	 private static String lastTextExtended = "";
@@ -149,46 +157,86 @@ public class ScreenCaptureService extends Service {
                     int roiY = fullHeight - roiHeight;
 
                     // Create a new bitmap for the region of interest
-                    Bitmap roiBitmap = Bitmap.createBitmap(fullBitmap, 0, roiY, fullWidth, roiHeight);
+                    //Bitmap roiBitmap = Bitmap.createBitmap(fullBitmap, 0, roiY, fullWidth, roiHeight);
+		            Bitmap roiBitmap = Bitmap.createBitmap(fullBitmap, 0, 0, fullWidth, fullHeight);
 
                     // Recycle the full bitmap as we no longer need it
                     fullBitmap.recycle();
 
-                    // Use roiBitmap for OCR
-                    InputImage inputImage = InputImage.fromBitmap(roiBitmap, 0);
+                    // Convert bitmap to byte array
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    roiBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    byte[] byteArray = stream.toByteArray();
 
-                    Task<Text> result = recognizer.process(inputImage)
-                        .addOnSuccessListener(new OnSuccessListener<Text>() {
+                    // Send OCR request
+                    sendOcrRequest(byteArray);
+
+                    // Use roiBitmap for OCR
+
+                        ocr.run(roiBitmap, new OcrRunCallback() {
                             @Override
-                            public void onSuccess(Text result) {
-                                Log.d("OCR","processed");
-                                // Process OCR result as before
-                                String resultText = result.getText();
-                                lastText = resultText;
-                                lastTextExtended = "";
-                                for (Text.TextBlock block : result.getTextBlocks()) {
-                                    String blockText = block.getText();
-                                    Rect blockFrame = block.getBoundingBox();
-                                    // Adjust the Y coordinate of the bounding box
-                                    if (blockFrame != null) {
-                                        blockFrame.offset(0, roiY);
-                                    }
-                                    lastTextExtended += blockText + "$$" + blockFrame.toString() + "§§";
-                                }
+                            public void onSuccess(OcrResult result) {
+                                lastText = result.getSimpleText();
+                                Log.d("OCR","processed " + lastText);
+                                /*Bitmap imgWithBox = result.getImgWithBox();
+                                long inferenceTime = (long) result.getInferenceTime();
+                                List<OcrResultModel> outputRawResult = result.getOutputRawResult();*/
                                 roiBitmap.recycle();
                                 isRunning = false;
                             }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
+
                             @Override
-                            public void onFailure(Exception e) {
+                            public void onFail(Throwable e) {
+                                Log.e(TAG, "onFail！", e);
                                 isRunning = false;
                             }
                         });
                 }
             } catch (Exception e) {
+                isRunning = false;
                 e.printStackTrace();
             }
+        }
+
+        private static final String OCR_SERVER_URL = "http://192.168.1.4:32168/v1/image/ocr";
+        private final OkHttpClient client = new OkHttpClient();
+
+        private void sendOcrRequest(byte[] imageData) {
+            RequestBody requestBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("image", "image.png",
+                            RequestBody.create(MediaType.parse("image/png"), imageData))
+                    .build();
+    
+            Request request = new Request.Builder()
+                    .url(OCR_SERVER_URL)
+                    .post(requestBody)
+                    .build();
+    
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    Log.e(TAG, "OCR request failed", e);
+                    isRunning = false;
+                }
+    
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        String jsonData = response.body().string();
+                        try {
+                            JSONObject jsonObject = new JSONObject(jsonData);
+                            lastText = jsonObject.optString("text", "");
+                            Log.d("OCR", "processed " + lastText);
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error parsing OCR response", e);
+                        }
+                    } else {
+                        Log.e(TAG, "OCR request failed with code: " + response.code());
+                    }
+                    isRunning = false;
+                }
+            });
         }
     }
 
@@ -258,6 +306,32 @@ public class ScreenCaptureService extends Service {
             Log.e(TAG, "failed to create file storage directory, getExternalFilesDir is null.");
             stopSelf();
         }
+
+        ocr = new OCR(getApplicationContext());
+
+        OcrConfig config = new OcrConfig();
+        //config.labelPath = null
+
+        config.setModelPath("models/ch_PP-OCRv2");
+        config.setClsModelFilename("cls.nb");
+        config.setClsModelFilenameCustom("cls.nb");
+        config.setDetModelFilename("det_db.nb");
+        config.setRecModelFilename("rec_crnn.nb");
+
+        config.setRunDet(true);
+        config.setRunCls(true);
+        config.setRunRec(true);
+
+        ocr.initModel(config, new OcrInitCallback() {
+            @Override
+            public void onSuccess() {
+                Log.i(TAG, "init onSuccess");
+            }
+                @Override
+                public void onFail(Throwable e) {
+                    Log.e(TAG, "onFail", e);
+                }
+            });
 
         // start capture handling thread
         new Thread() {
