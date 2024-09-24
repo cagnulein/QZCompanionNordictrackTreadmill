@@ -167,38 +167,6 @@ public class ScreenCaptureService extends Service {
 
                     // Send OCR request
                     sendOcrRequest(byteArray);
-
-                    // Use roiBitmap for OCR
-                    InputImage inputImage = InputImage.fromBitmap(roiBitmap, 0);
-
-                    Task<Text> result = recognizer.process(inputImage)
-                        .addOnSuccessListener(new OnSuccessListener<Text>() {
-                            @Override
-                            public void onSuccess(Text result) {
-                                Log.d("OCR","processed");
-                                // Process OCR result as before
-                                String resultText = result.getText();
-                                lastText = resultText;
-                                lastTextExtended = "";
-                                for (Text.TextBlock block : result.getTextBlocks()) {
-                                    String blockText = block.getText();
-                                    Rect blockFrame = block.getBoundingBox();
-                                    // Adjust the Y coordinate of the bounding box
-                                    if (blockFrame != null) {
-                                        blockFrame.offset(0, roiY);
-                                    }
-                                    lastTextExtended += blockText + "$$" + blockFrame.toString() + "§§";
-                                }
-                                roiBitmap.recycle();
-                                isRunning = false;
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(Exception e) {
-                                isRunning = false;
-                            }
-                        });
                 }
             } catch (Exception e) {
                 e.printStackTrace();
