@@ -202,11 +202,11 @@ public class QZService extends Service {
             }
 	    if (lines[i].toLowerCase().contains("watt")) {
                 try {                    
-                    String[] parts = lines[i-1].trim().split("\\s+");
-                    String lastPart = parts[parts.length - 1];
-
-                    if (lastPart.matches("-?\\d+(\\.\\d+)?")) {
-                        QZService.lastWattage = "Changed Watts " + lastPart;
+                    String numberStr = lines[i-1].trim().replaceAll("[^0-9]", " ").trim();
+                    String[] numbers = numberStr.split("\\s+");
+                    if (numbers.length > 0) {
+                        int watts = Integer.parseInt(numbers[numbers.length - 1]);
+                        QZService.lastWattage = "Changed Watts " + watts;
                     }
                 } catch (Exception e) {
                 }
@@ -230,6 +230,12 @@ public class QZService extends Service {
                 sendBroadcast(QZService.lastSpeed);
             if(!QZService.lastInclination.equals(""))
                 sendBroadcast(QZService.lastInclination);
+            if(!QZService.lastWattage.equals(""))
+                sendBroadcast(QZService.lastWattage);
+            if(!QZService.lastCadence.equals(""))
+                sendBroadcast(QZService.lastCadence);
+            if(!QZService.lastResistance.equals(""))
+                sendBroadcast(QZService.lastResistance);
         } catch (Exception ex) {
             ex.printStackTrace();
             return result;
