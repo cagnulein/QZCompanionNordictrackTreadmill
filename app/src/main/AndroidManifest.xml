@@ -63,7 +63,10 @@
         </activity>
             <service
         android:name=".ScreenCaptureService"
-        android:foregroundServiceType="mediaProjection" />      
+        android:foregroundServiceType="mediaProjection" />
+        <meta-data
+        android:name="com.google.mlkit.vision.DEPENDENCIES"
+        android:value="ocr" />        
     </application>
 
 </manifest>
