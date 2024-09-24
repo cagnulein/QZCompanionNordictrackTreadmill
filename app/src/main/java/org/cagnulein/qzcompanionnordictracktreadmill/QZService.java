@@ -41,10 +41,11 @@ public class QZService extends Service {
     static float lastSpeedFloat = 0;
     static float lastInclinationFloat = 0;
     static float lastResistanceFloat = 0;
+    static float lastGearFloat = 0;
     static String lastSpeed = "";
     static String lastInclination = "";
-    String lastWattage = "";
-    String lastCadence = "";
+    static String lastWattage = "";
+    static String lastCadence = "";
     static String lastResistance = "";
     String lastGear = "";
     static String lastHeart = "";
@@ -63,7 +64,7 @@ public class QZService extends Service {
             runnable = new Runnable() {
                 @Override
                 public void run() {
-                    writeLog( "Service run"); parse(); getOCR();
+                    writeLog( "Service run"); /*parse();*/ getOCR();
                 }
             };
         } finally {
@@ -133,6 +134,8 @@ public class QZService extends Service {
         String line;
         while ((line = is.readLine()) != null) {
             lastGear = line;
+            String[] b = line.split(" ");
+            lastGearFloat = Float.parseFloat(b[b.length-1]);
             sendBroadcast(line);
             return true;
         }
@@ -182,6 +185,36 @@ public class QZService extends Service {
                 }
 
             }
+	   if (lines[i].toLowerCase().contains("cadence")) {
+                try {                    
+                    QZService.lastCadence = "Changed RPM " + lines[i-1].trim();
+                } catch (Exception e) {
+                    QZService.lastCadence = "";
+                }
+
+            }
+	    if (lines[i].toLowerCase().contains("resistance")) {
+                try {                    
+                    QZService.lastResistance = "Changed Resistance " + lines[i-1].trim();
+                    QZService.lastResistanceFloat = Float.parseFloat(lines[i-1].trim());
+                } catch (Exception e) {
+                    QZService.lastResistance = "";
+                    QZService.lastResistanceFloat = 0.0f;
+                }
+
+            }
+	    if (lines[i].toLowerCase().contains("watt")) {
+                try {                    
+                    String numberStr = lines[i-1].trim().replaceAll("[^0-9]", " ").trim();
+                    String[] numbers = numberStr.split("\\s+");
+                    if (numbers.length > 0) {
+                        int watts = Integer.parseInt(numbers[numbers.length - 1]);
+                        QZService.lastWattage = "Changed Watts " + watts;
+                    }
+                } catch (Exception e) {
+                }
+
+            }
             if (lines[i].toLowerCase().contains("speed")) {
                 try {                    
                     QZService.lastSpeed = "Changed KPH " + lines[i-1].trim();
@@ -200,11 +233,18 @@ public class QZService extends Service {
                 sendBroadcast(QZService.lastSpeed);
             if(!QZService.lastInclination.equals(""))
                 sendBroadcast(QZService.lastInclination);
+            if(!QZService.lastWattage.equals(""))
+                sendBroadcast(QZService.lastWattage);
+            if(!QZService.lastCadence.equals(""))
+                sendBroadcast(QZService.lastCadence);
+            if(!QZService.lastResistance.equals(""))
+                sendBroadcast(QZService.lastResistance);
         } catch (Exception ex) {
             ex.printStackTrace();
             return result;
         }
         socket.close();
+        handler.postDelayed(runnable, 100);
         return result;
     }
 
@@ -312,7 +352,8 @@ public class QZService extends Service {
 						writeLog(e.getMessage());
                     }
                 } else if(UDPListenerService.device == UDPListenerService._device.grand_tour_pro ||
-                          UDPListenerService.device == UDPListenerService._device.NTEX71021) {
+                          UDPListenerService.device == UDPListenerService._device.NTEX71021 ||
+                          UDPListenerService.device == UDPListenerService._device.proform_carbon_c10) {
                         try {
                             //String command = "logcat -b all -d > /storage/sdcard0/logcat.log";
                             //MainActivity.sendCommand(command);

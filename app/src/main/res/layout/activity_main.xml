@@ -93,7 +93,7 @@
                         android:id="@+id/t95s"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="T9.5s Treadmill" />
+                        android:text="T9.5s Treadmill (No Adb)" />
 
                     <RadioButton
                         android:id="@+id/s40"
@@ -136,6 +136,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Proform Pro 9000 Treadmill" />
+
+                    <RadioButton
+                        android:id="@+id/proform_carbon_c10"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Proform Carbon C10" />
 
                     <RadioButton
                         android:id="@+id/proform_carbon_t14"

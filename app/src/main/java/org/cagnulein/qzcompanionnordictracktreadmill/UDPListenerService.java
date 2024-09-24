@@ -76,6 +76,7 @@ public class UDPListenerService extends Service {
         proform_pro_9000,
         proform_carbon_e7,
         t95s,
+        proform_carbon_c10,
     }
 
     public static _device device;
@@ -182,7 +183,11 @@ public class UDPListenerService extends Service {
             case grand_tour_pro:
                 y1Speed = 495;      //vertical position of slider at 2.0
                 y1Inclination = 585;    //vertical position of slider at 0.0                
-                break;                                
+                break;                      
+            case proform_carbon_c10:
+                y1Speed = 495;      //vertical position of slider at 2.0
+                y1Inclination = 585;    //vertical position of slider at 0.0                
+                break;                                                
             case c1750:
                 y1Speed = 793;      //vertical position of slider at 2.0
                 y1Inclination = 694;    //vertical position of slider at 0.0                
@@ -242,7 +247,7 @@ public class UDPListenerService extends Service {
 
         writeLog(message);
         String[] amessage = message.split(";");
-        if(device == _device.proform_carbon_e7 || device == _device.s15i || device == _device.s22i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22) {
+        if(device == _device.proform_carbon_e7 || device == _device.proform_carbon_c10 || device == _device.s15i || device == _device.s22i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22) {
             if (amessage.length > 0) {
                 String rResistance = amessage[0];
                 if(decimalSeparator != '.') {
@@ -292,6 +297,12 @@ public class UDPListenerService extends Service {
                             y1Resistance = 440 - (int) ((QZService.lastInclinationFloat) * 11);
                             //set speed slider to target position
                             y2 = y1Resistance - (int) ((reqResistance - QZService.lastInclinationFloat) * 11);
+                        } else if (device == _device.proform_carbon_c10) {
+                            x1 = 1205;
+                            writeLog("lastResistanceFloat " + QZService.lastResistanceFloat);
+                            y1Resistance = 632 - (int) ((QZService.lastResistanceFloat) * 18.45);
+                            //set speed slider to target position
+                            y2 = y1Resistance - (int) ((reqResistance - QZService.lastResistanceFloat) * 18.45);
 						} else {
 							x1 = 1828;
                             y2 = (int) (826.25 - (21.25 * reqResistance));
@@ -301,7 +312,7 @@ public class UDPListenerService extends Service {
                         MainActivity.sendCommand(command);
                         writeLog(command);
 
-                        if (device == _device.proform_carbon_e7 || device == _device.s15i || device == _device.s22i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22 || device == _device.NTEX71021)
+                        if (device == _device.proform_carbon_e7 || device == _device.proform_carbon_c10 || device == _device.s15i || device == _device.s22i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22 || device == _device.NTEX71021)
                             y1Resistance = y2;  //set new vertical position of speed slider
                         lastReqResistance = reqResistance;
                         lastSwipeMs = Calendar.getInstance().getTimeInMillis();
@@ -325,22 +336,34 @@ public class UDPListenerService extends Service {
                 //if (lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) 
                 {
                     if (QZService.lastResistanceFloat != reqResistance && reqResistance != -1 && reqResistance != -100) {
+                        boolean skip = false;
                         int x1 = 0;
                         int y2 = 0;
                         if (device == _device.s15i) {
                             x1 = 1848;
                             writeLog("lastResistanceFloat " + QZService.lastResistanceFloat);
-                            y1Resistance = 820 - (int) ((QZService.lastResistanceFloat) * 23.16);
+                            writeLog("lastGearFloat " + QZService.lastGearFloat);                            
+                            y1Resistance = 790 - (int) ((QZService.lastGearFloat) * 23.16);
                             //set speed slider to target position
-                            y2 = y1Resistance - (int) ((reqResistance - QZService.lastResistanceFloat) * 23.16);
+                            y2 = y1Resistance - (int) ((reqResistance - QZService.lastGearFloat) * 23.16);
+                        } else if (device == _device.proform_carbon_e7) {
+                            x1 = 950;
+                            writeLog("lastResistanceFloat " + QZService.lastResistanceFloat);
+                            y1Resistance = 440 - (int) ((QZService.lastResistanceFloat) * 9.16);
+                            //set speed slider to target position
+                            y2 = y1Resistance - (int) ((reqResistance - QZService.lastResistanceFloat) * 9.16);
+                        } else {
+                            skip = true;
                         }
 
-                        String command = "input swipe " + x1 + " " + y1Resistance + " " + x1 + " " + y2 + " 200";
-                        MainActivity.sendCommand(command);
-                        writeLog(command);
+                        if(skip == false) {
+                            String command = "input swipe " + x1 + " " + y1Resistance + " " + x1 + " " + y2 + " 200";
+                            MainActivity.sendCommand(command);
+                            writeLog(command);
 
-                        lastReqResistance = reqResistance;
-                        lastSwipeMs = Calendar.getInstance().getTimeInMillis();
+                            lastReqResistance = reqResistance;
+                            lastSwipeMs = Calendar.getInstance().getTimeInMillis();
+                        }
                     }
                 }
             }            
@@ -385,9 +408,9 @@ public class UDPListenerService extends Service {
                             y2 = (int) (817.5 - (42.5 * reqSpeed * 0.621371));                            
                         } else if (device == _device.t95s) {
                             x1 = 1845;
-                            y1Speed = 817 - (int) (((QZService.lastSpeedFloat * 0.621371) - 1) * 42.5);
+                            y1Speed = 817 - (int) ((QZService.lastSpeedFloat - 1.0) * 10.0 * 3.0);
                             //set speed slider to target position
-                            y2 = y1Speed - (int) (((reqSpeed * 0.621371) - (QZService.lastSpeedFloat * 0.621371) - 1) * 42.5);
+                            y2 = y1Speed - (int) ((reqSpeed - QZService.lastSpeedFloat) * 10.0 * 3.0);
 						} else if (device == _device.t85s) {
                             x1 = 1207;
                             y2 = (int) (629.81 - (20.81 * reqSpeed));
@@ -460,7 +483,7 @@ public class UDPListenerService extends Service {
                             y2 = (int) ((-19.921 * reqSpeed) + 631.03);
                         }
 
-                        if(device == _device.x22i_noadb) {
+                        if(device == _device.x22i_noadb || device == _device.t95s) {
                             MyAccessibilityService.performSwipe(x1, y1Speed, x1, y2, 200);
                         } else {
                             String command = "input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
@@ -523,10 +546,9 @@ public class UDPListenerService extends Service {
                         y2 = (int) (844 - (46.833 * reqInclination));                        
                     } else if (device == _device.t95s) {
                         x1 = 76;
-                        y2 = (int) (823 - (46 * reqInclination));    
-                        y1Inclination = 823 - (int) ((QZService.lastInclinationFloat) * 46);
+                        y1Inclination = 846 - (int) ((QZService.lastInclinationFloat) * 46.0);
                         //set speed slider to target position
-                        y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 46);
+                        y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 46.0);
                     } else if (device == _device.x32i_NTL39019) {
                         x1 = 74;
                         y2 = (int) (749 - (11.8424 * reqInclination));                        
@@ -593,7 +615,7 @@ public class UDPListenerService extends Service {
                         y2 = (int) ((-21.804 * reqInclination) + 520.11);
                     }
 
-                    if(device == _device.x22i_noadb) {
+                    if(device == _device.x22i_noadb || device == _device.t95s) {
                         MyAccessibilityService.performSwipe(x1, y1Inclination, x1, y2, 200);
                     } else {
                         String command = " input swipe " + x1 + " " + y1Inclination + " " + x1 + " " + y2 + " 200";
