@@ -1,5 +1,5 @@
 package org.cagnulein.qzcompanionnordictracktreadmill;
-
+ 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Notification;
