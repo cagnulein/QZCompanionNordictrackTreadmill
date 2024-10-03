@@ -229,6 +229,11 @@ public class ScreenCaptureService extends Service {
     
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
+	            Log.d("OCR", "Response Code: " + response.code());
+	            Log.d("OCR", "Response Message: " + response.message());
+	            Log.d("OCR", "Response URL: " + response.request().url());
+	            Log.d("OCR", "Response Headers: " + response.headers());
+	            Log.d("OCR", "Response Body: " + response.body().string());
                     if (response.isSuccessful()) {
                         String jsonData = response.body().string();
                         try {
