@@ -229,11 +229,13 @@ public class ScreenCaptureService extends Service {
     
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
+		    isRunning = false;
 	            Log.d("OCR", "Response Code: " + response.code());
 	            Log.d("OCR", "Response Message: " + response.message());
 	            Log.d("OCR", "Response URL: " + response.request().url());
 	            Log.d("OCR", "Response Headers: " + response.headers());
 	            Log.d("OCR", "Response Body: " + response.body().string());
+		    Log.d("OCR", "Respone Bool: " + response.isSuccessful());
                     if (response.isSuccessful()) {
                         String jsonData = response.body().string();
                         try {
@@ -245,8 +247,7 @@ public class ScreenCaptureService extends Service {
                         }
                     } else {
                         Log.e(TAG, "OCR request failed with code: " + response.code());
-                    }
-                    isRunning = false;
+                    }                    
                 }
             });
         }
