@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.CheckBox;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -39,6 +40,7 @@ import java.io.InputStreamReader;
 
 
 import static android.content.ContentValues.TAG;
+import static android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE;
 
 import com.cgutman.androidremotedebugger.AdbUtils;
 import com.cgutman.androidremotedebugger.console.ConsoleBuffer;
@@ -50,6 +52,7 @@ import com.cgutman.adblib.AdbCrypto;
 import androidx.appcompat.app.AlertDialog;
 
 public class MainActivity extends AppCompatActivity  implements DeviceConnectionListener {
+    private static final String EXTRA_FOREGROUND_SERVICE_TYPE = "FOREGROUND_SERVICE_TYPE";
     private ShellService.ShellServiceBinder binder;
     private static DeviceConnection connection;
     private Intent service;
@@ -57,11 +60,13 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
     private static String lastCommand = "";
     private static boolean ADBConnected = false;
     private static String appLogs = "";
+    private static Intent notificationServiceIntent = null;
 
 	private final ShellRuntime shellRuntime = new ShellRuntime();
 
     // on below line we are creating variables.
     RadioGroup radioGroup;
+    static CheckBox debugLog;
     SharedPreferences sharedPreferences;
 
     private boolean checkPermissions(){
@@ -166,7 +171,9 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         }
     };
 
-    public static void writeLog(String command) {
+    public static void writeLog(String command) {        
+        if(!debugLog.isChecked()) return;
+
         Date date = new Date();
         Timestamp timestamp2 = new Timestamp(date.getTime());
         appLogs = appLogs + "\n" + timestamp2 + " " + command;
@@ -181,6 +188,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 
         sharedPreferences = getSharedPreferences("QZ",MODE_PRIVATE);
         radioGroup = findViewById(R.id.radiogroupDevice);
+        debugLog = findViewById(R.id.debuglog);
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -384,6 +392,17 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                     prefs.edit().remove("last_crash").apply();
                 })
                 .show();
+        }          
+
+        notificationServiceIntent = new Intent(this, ForegroundService.class);
+        notificationServiceIntent.putExtra("inputExtra", "QZ is Running");
+            notificationServiceIntent.putExtra(EXTRA_FOREGROUND_SERVICE_TYPE,
+                                    FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            this.startForegroundService(notificationServiceIntent);
+        } else {
+            this.startService(notificationServiceIntent);
         }
 
     }
