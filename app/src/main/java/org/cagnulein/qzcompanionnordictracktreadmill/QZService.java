@@ -85,8 +85,8 @@ public class QZService extends Service {
         String line;
         while ((line = is.readLine()) != null) {
             writeLog(line);
-            lastSpeed = line;
             String[] b = line.split(" ");
+            lastSpeed = "Changed KPH " + b[b.length-2];
             lastSpeedFloat = Float.parseFloat(b[b.length-1]);
             sendBroadcast(line);
             return true;
@@ -98,9 +98,9 @@ public class QZService extends Service {
         BufferedReader is = new BufferedReader(new InputStreamReader(in));
         String line;
         while ((line = is.readLine()) != null) {
-            lastInclination = line;
             String[] b = line.split(" ");
-            lastInclinationFloat = Float.parseFloat(b[b.length-1]);
+            lastInclination = "Changed Grade " + b[b.length-2];
+            lastInclinationFloat = Float.parseFloat(b[b.length-2]);
             sendBroadcast(line);
             return true;
         }
@@ -332,9 +332,9 @@ public class QZService extends Service {
 						speed2InputStream.close();
 					}
 					speedInputStream.close();
-					InputStream inclineInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed Grade\" | tail -n1");
+					InputStream inclineInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed INCLINE\" | tail -n1");
 					if(!incline(inclineInputStream)) {
-						InputStream incline2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed Grade\" " + file + "  | tail -n1");
+						InputStream incline2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed INCLINE\" " + file + "  | tail -n1");
 						if(!incline(incline2InputStream)) {
 							sendBroadcast(lastInclination);
 						}
@@ -453,6 +453,9 @@ public class QZService extends Service {
 
     public static String pickLatestFileFromDownloads() {
 
+        MainActivity.sendCommand("tail -n5000 /sdcard/android/data/com.ifit.glassos_service/files/.valinorlogs/log.latest.txt | grep -a \"Changed\" > /tmp/qz.log");
+        return "/tmp/qz.log";
+/*
         String ret = pickLatestFileFromDownloadsInternal("/sdcard/.wolflogs/");
         if(ret.equals("")) {
             ret = pickLatestFileFromDownloadsInternal("/.wolflogs/");
@@ -463,7 +466,7 @@ public class QZService extends Service {
                 }
             }
         }
-        return ret;
+        return ret;*/
     }
 
     public static String pickLatestFileFromDownloadsInternal(String path) {
