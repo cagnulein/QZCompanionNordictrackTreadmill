@@ -87,7 +87,7 @@ public class QZService extends Service {
             writeLog(line);
             String[] b = line.split(" ");
             lastSpeed = "Changed KPH " + b[b.length-2];
-            lastSpeedFloat = Float.parseFloat(b[b.length-1]);
+            lastSpeedFloat = Float.parseFloat(b[b.length-2]);
             sendBroadcast(line);
             return true;
         }
@@ -453,7 +453,6 @@ public class QZService extends Service {
 
     public static String pickLatestFileFromDownloads() {
 
-        //MainActivity.sendCommand("tail -n5000 /sdcard/android/data/com.ifit.glassos_service/files/.valinorlogs/log.latest.txt | grep -a \"Changed\" > /tmp/qz.log");
         return "/sdcard/android/data/com.ifit.glassos_service/files/.valinorlogs/log.latest.txt";
 /*
         String ret = pickLatestFileFromDownloadsInternal("/sdcard/.wolflogs/");
