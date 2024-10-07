@@ -453,8 +453,8 @@ public class QZService extends Service {
 
     public static String pickLatestFileFromDownloads() {
 
-        MainActivity.sendCommand("tail -n5000 /sdcard/android/data/com.ifit.glassos_service/files/.valinorlogs/log.latest.txt | grep -a \"Changed\" > /tmp/qz.log");
-        return "/tmp/qz.log";
+        //MainActivity.sendCommand("tail -n5000 /sdcard/android/data/com.ifit.glassos_service/files/.valinorlogs/log.latest.txt | grep -a \"Changed\" > /tmp/qz.log");
+        return "/sdcard/android/data/com.ifit.glassos_service/files/.valinorlogs/log.latest.txt";
 /*
         String ret = pickLatestFileFromDownloadsInternal("/sdcard/.wolflogs/");
         if(ret.equals("")) {
