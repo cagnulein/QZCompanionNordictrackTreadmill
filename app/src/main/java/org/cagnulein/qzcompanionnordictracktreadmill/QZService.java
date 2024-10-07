@@ -88,7 +88,7 @@ public class QZService extends Service {
             String[] b = line.split(" ");
             lastSpeed = "Changed KPH " + b[b.length-2];
             lastSpeedFloat = Float.parseFloat(b[b.length-2]);
-            sendBroadcast(line);
+            sendBroadcast(lastSpeed);
             return true;
         }
         return  false;
@@ -101,7 +101,7 @@ public class QZService extends Service {
             String[] b = line.split(" ");
             lastInclination = "Changed Grade " + b[b.length-2];
             lastInclinationFloat = Float.parseFloat(b[b.length-2]);
-            sendBroadcast(line);
+            sendBroadcast(lastInclination);
             return true;
         }
         return  false;
@@ -403,7 +403,7 @@ public class QZService extends Service {
             byte[] sendData = messageStr.getBytes();
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, getBroadcastAddress(), this.clientPort);
             socket.send(sendPacket);
-            writeLog(messageStr);
+            writeLog("sendBroadcast " + messageStr);
         } catch (IOException e) {
             writeLog("IOException: " + e.getMessage());
         }
