@@ -50,6 +50,8 @@ public class QZService extends Service {
     String lastGear = "";
     static String lastHeart = "";
 
+    static bool ifit_v2 = false;
+
     int counterTruncate = 0;
 
     private final ShellRuntime shellRuntime = new ShellRuntime();
@@ -86,8 +88,13 @@ public class QZService extends Service {
         while ((line = is.readLine()) != null) {
             writeLog(line);
             String[] b = line.split(" ");
-            lastSpeed = "Changed KPH " + b[b.length-2];
-            lastSpeedFloat = Float.parseFloat(b[b.length-2]);
+            if(ifit_v2) {                
+                lastSpeed = "Changed KPH " + b[b.length-2];
+                lastSpeedFloat = Float.parseFloat(b[b.length-2]);
+            } else {
+                lastSpeed = line;
+                lastSpeedFloat = Float.parseFloat(b[b.length-1]);
+            }
             sendBroadcast(lastSpeed);
             return true;
         }
@@ -99,8 +106,13 @@ public class QZService extends Service {
         String line;
         while ((line = is.readLine()) != null) {
             String[] b = line.split(" ");
-            lastInclination = "Changed Grade " + b[b.length-2];
-            lastInclinationFloat = Float.parseFloat(b[b.length-2]);
+            if(ifit_v2) {  
+                lastInclination = "Changed Grade " + b[b.length-2];
+                lastInclinationFloat = Float.parseFloat(b[b.length-2]);
+            } else {
+                lastInclination = line;
+                lastInclinationFloat = Float.parseFloat(b[b.length-1]);                
+            }
             sendBroadcast(lastInclination);
             return true;
         }
@@ -332,9 +344,12 @@ public class QZService extends Service {
 						speed2InputStream.close();
 					}
 					speedInputStream.close();
-					InputStream inclineInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed INCLINE\" | tail -n1");
+                    String sIncline = "Grade";
+                    if(ifit_v2)
+                        sIncline = "INCLINE";
+					InputStream inclineInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed " + sIncline + "\" | tail -n1");
 					if(!incline(inclineInputStream)) {
-						InputStream incline2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed INCLINE\" " + file + "  | tail -n1");
+						InputStream incline2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed " + sIncline + "\" " + file + "  | tail -n1");
 						if(!incline(incline2InputStream)) {
 							sendBroadcast(lastInclination);
 						}
@@ -452,20 +467,23 @@ public class QZService extends Service {
     }
 
     public static String pickLatestFileFromDownloads() {
-
-        return "/sdcard/android/data/com.ifit.glassos_service/files/.valinorlogs/log.latest.txt";
-/*
-        String ret = pickLatestFileFromDownloadsInternal("/sdcard/.wolflogs/");
-        if(ret.equals("")) {
-            ret = pickLatestFileFromDownloadsInternal("/.wolflogs/");
+        File file = new File("/sdcard/android/data/com.ifit.glassos_service/files/.valinorlogs/log.latest.txt");
+        if (file.exists()) {
+            ifit_v2 = true;
+            return "/sdcard/android/data/com.ifit.glassos_service/files/.valinorlogs/log.latest.txt";
+        } else {
+            String ret = pickLatestFileFromDownloadsInternal("/sdcard/.wolflogs/");
             if(ret.equals("")) {
-                ret = pickLatestFileFromDownloadsInternal("/sdcard/eru/");
+                ret = pickLatestFileFromDownloadsInternal("/.wolflogs/");
                 if(ret.equals("")) {
-                    ret = pickLatestFileFromDownloadsInternal("/storage/emulated/0/.wolflogs/");
+                    ret = pickLatestFileFromDownloadsInternal("/sdcard/eru/");
+                    if(ret.equals("")) {
+                        ret = pickLatestFileFromDownloadsInternal("/storage/emulated/0/.wolflogs/");
+                    }
                 }
             }
+            return ret;
         }
-        return ret;*/
     }
 
     public static String pickLatestFileFromDownloadsInternal(String path) {
