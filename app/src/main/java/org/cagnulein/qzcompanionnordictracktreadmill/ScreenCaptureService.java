@@ -46,6 +46,8 @@ import android.graphics.Point;
 import java.io.ByteArrayOutputStream;
 import okhttp3.*;
 import org.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
 import java.io.IOException;
 
 import androidx.core.util.Pair;
