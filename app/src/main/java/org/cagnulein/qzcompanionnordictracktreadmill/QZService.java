@@ -50,6 +50,8 @@ public class QZService extends Service {
     String lastGear = "";
     static String lastHeart = "";
 
+    static boolean ifit_v2 = false;
+
     int counterTruncate = 0;
 
     private final ShellRuntime shellRuntime = new ShellRuntime();
@@ -85,10 +87,15 @@ public class QZService extends Service {
         String line;
         while ((line = is.readLine()) != null) {
             writeLog(line);
-            lastSpeed = line;
             String[] b = line.split(" ");
-            lastSpeedFloat = Float.parseFloat(b[b.length-1]);
-            sendBroadcast(line);
+            if(ifit_v2) {                
+                lastSpeed = "Changed KPH " + b[b.length-2];
+                lastSpeedFloat = Float.parseFloat(b[b.length-2]);
+            } else {
+                lastSpeed = line;
+                lastSpeedFloat = Float.parseFloat(b[b.length-1]);
+            }
+            sendBroadcast(lastSpeed);
             return true;
         }
         return  false;
@@ -98,10 +105,15 @@ public class QZService extends Service {
         BufferedReader is = new BufferedReader(new InputStreamReader(in));
         String line;
         while ((line = is.readLine()) != null) {
-            lastInclination = line;
             String[] b = line.split(" ");
-            lastInclinationFloat = Float.parseFloat(b[b.length-1]);
-            sendBroadcast(line);
+            if(ifit_v2) {  
+                lastInclination = "Changed Grade " + b[b.length-2];
+                lastInclinationFloat = Float.parseFloat(b[b.length-2]);
+            } else {
+                lastInclination = line;
+                lastInclinationFloat = Float.parseFloat(b[b.length-1]);                
+            }
+            sendBroadcast(lastInclination);
             return true;
         }
         return  false;
@@ -332,9 +344,12 @@ public class QZService extends Service {
 						speed2InputStream.close();
 					}
 					speedInputStream.close();
-					InputStream inclineInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed Grade\" | tail -n1");
+                    String sIncline = "Grade";
+                    if(ifit_v2)
+                        sIncline = "INCLINE";
+					InputStream inclineInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed " + sIncline + "\" | tail -n1");
 					if(!incline(inclineInputStream)) {
-						InputStream incline2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed Grade\" " + file + "  | tail -n1");
+						InputStream incline2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed " + sIncline + "\" " + file + "  | tail -n1");
 						if(!incline(incline2InputStream)) {
 							sendBroadcast(lastInclination);
 						}
@@ -403,7 +418,7 @@ public class QZService extends Service {
             byte[] sendData = messageStr.getBytes();
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, getBroadcastAddress(), this.clientPort);
             socket.send(sendPacket);
-            writeLog(messageStr);
+            writeLog("sendBroadcast " + messageStr);
         } catch (IOException e) {
             writeLog("IOException: " + e.getMessage());
         }
@@ -452,18 +467,23 @@ public class QZService extends Service {
     }
 
     public static String pickLatestFileFromDownloads() {
-
-        String ret = pickLatestFileFromDownloadsInternal("/sdcard/.wolflogs/");
-        if(ret.equals("")) {
-            ret = pickLatestFileFromDownloadsInternal("/.wolflogs/");
+        File file = new File("/sdcard/android/data/com.ifit.glassos_service/files/.valinorlogs/log.latest.txt");
+        if (file.exists()) {
+            ifit_v2 = true;
+            return "/sdcard/android/data/com.ifit.glassos_service/files/.valinorlogs/log.latest.txt";
+        } else {
+            String ret = pickLatestFileFromDownloadsInternal("/sdcard/.wolflogs/");
             if(ret.equals("")) {
-                ret = pickLatestFileFromDownloadsInternal("/sdcard/eru/");
+                ret = pickLatestFileFromDownloadsInternal("/.wolflogs/");
                 if(ret.equals("")) {
-                    ret = pickLatestFileFromDownloadsInternal("/storage/emulated/0/.wolflogs/");
+                    ret = pickLatestFileFromDownloadsInternal("/sdcard/eru/");
+                    if(ret.equals("")) {
+                        ret = pickLatestFileFromDownloadsInternal("/storage/emulated/0/.wolflogs/");
+                    }
                 }
             }
+            return ret;
         }
-        return ret;
     }
 
     public static String pickLatestFileFromDownloadsInternal(String path) {
