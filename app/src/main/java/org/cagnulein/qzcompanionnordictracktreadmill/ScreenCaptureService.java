@@ -229,20 +229,33 @@ public class ScreenCaptureService extends Service {
     
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
-		    isRunning = false;
-	            Log.d("OCR", "Response Code: " + response.code());
-	            Log.d("OCR", "Response Message: " + response.message());
-	            Log.d("OCR", "Response URL: " + response.request().url());
-	            Log.d("OCR", "Response Headers: " + response.headers());
-	            Log.d("OCR", "Response Body: " + response.body().string());
-		    Log.d("OCR", "Respone Bool: " + response.isSuccessful());
+                    isRunning = false;
+                    Log.d("OCR", "Response Code: " + response.code());
+                    Log.d("OCR", "Response Message: " + response.message());
+                    Log.d("OCR", "Response URL: " + response.request().url());
+                    Log.d("OCR", "Response Headers: " + response.headers());
+
                     if (response.isSuccessful()) {
                         String jsonData = response.body().string();
+                        Log.d("OCR", "Response Body: " + jsonData);
+                        Log.d("OCR", "Response Bool: " + response.isSuccessful());
+                        
                         try {
                             JSONObject jsonObject = new JSONObject(jsonData);
-                            lastText = jsonObject.optString("text", "");
+                            JSONArray predictions = jsonObject.optJSONArray("predictions");
+                            StringBuilder extractedText = new StringBuilder();
+                            
+                            if (predictions != null) {
+                                for (int i = 0; i < predictions.length(); i++) {
+                                    JSONObject prediction = predictions.getJSONObject(i);
+                                    String label = prediction.optString("label", "");
+                                    extractedText.append(label).append(" ");
+                                }
+                            }
+                            
+                            lastText = extractedText.toString().trim();
                             Log.d("OCR", "processed " + lastText);
-                        } catch (Exception e) {
+                        } catch (JSONException e) {
                             Log.e(TAG, "Error parsing OCR response", e);
                         }
                     } else {
