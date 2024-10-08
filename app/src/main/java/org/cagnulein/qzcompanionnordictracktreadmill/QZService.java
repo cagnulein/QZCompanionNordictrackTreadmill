@@ -50,7 +50,7 @@ public class QZService extends Service {
     String lastGear = "";
     static String lastHeart = "";
 
-    static bool ifit_v2 = false;
+    static boolean ifit_v2 = false;
 
     int counterTruncate = 0;
 
