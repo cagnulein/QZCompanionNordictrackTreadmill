@@ -86,7 +86,6 @@ public class QZService extends Service {
         BufferedReader is = new BufferedReader(new InputStreamReader(in));
         String line;
         while ((line = is.readLine()) != null) {
-            writeLog(line);
             String[] b = line.split(" ");
             if(ifit_v2) {                
                 lastSpeed = "Changed KPH " + b[b.length-2];
