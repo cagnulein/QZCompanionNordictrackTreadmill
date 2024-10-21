@@ -87,6 +87,7 @@ public class QZService extends Service {
         String line;
         while ((line = is.readLine()) != null) {
             String[] b = line.split(" ");
+            line = line.replaceAll(",", ".");
             if(ifit_v2) {                
                 lastSpeed = "Changed KPH " + b[b.length-2];
                 lastSpeedFloat = Float.parseFloat(b[b.length-2]);
