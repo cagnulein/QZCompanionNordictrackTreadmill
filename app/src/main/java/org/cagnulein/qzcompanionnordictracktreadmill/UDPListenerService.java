@@ -77,6 +77,7 @@ public class UDPListenerService extends Service {
         proform_carbon_e7,
         t95s,
         proform_carbon_c10,
+        elite900,
     }
 
     public static _device device;
@@ -478,6 +479,10 @@ public class UDPListenerService extends Service {
                             x1 = 1209;     //middle of slider
                             y1Speed = 600 - (int) (((QZService.lastSpeedFloat * 0.621371)) * 31.33);
                             y2 = y1Speed - (int) (((reqSpeed * 0.621371) - (QZService.lastSpeedFloat * 0.621371)) * 31.33);                                                                                    
+                        } else if (device == _device.elite900) {
+                            x1 = 950;     //middle of slider
+                            y1Speed = 450 - (int) (((QZService.lastSpeedFloat)) * 14.705);
+                            y2 = y1Speed - (int) (((reqSpeed) - (QZService.lastSpeedFloat)) * 14.705);
                         } else {
                             x1 = 1205;     //middle of slider
                             y2 = (int) ((-19.921 * reqSpeed) + 631.03);
@@ -610,6 +615,10 @@ public class UDPListenerService extends Service {
                         x1 = 76;
                         y1Inclination = 589 - (int) (QZService.lastInclinationFloat * 32.8);
                         y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 32.8);
+                    } else if (device == _device.elite900) {
+                        x1 = 76;
+                        y1Inclination = 450 - (int) (QZService.lastInclinationFloat * 20.83);
+                        y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 20.83);
                     } else {
                         x1 = 79;
                         y2 = (int) ((-21.804 * reqInclination) + 520.11);
