@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Objects;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.text.Text;
 import com.google.mlkit.vision.text.TextRecognition;
@@ -42,6 +43,7 @@ import com.google.android.gms.tasks.Task;
 import android.graphics.Rect;
 import android.graphics.Point;
 
+import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 import android.util.Log;
 import android.os.Build;
@@ -125,70 +127,147 @@ public class ScreenCaptureService extends Service {
     }
 
     private class ImageAvailableListener implements ImageReader.OnImageAvailableListener {
+        private static final String TAG = "OCR";
+        private static final int PROCESSING_TIMEOUT_MS = 5000;
+        private final Handler timeoutHandler = new Handler();
+
+        private class BitmapHolder {
+            Bitmap fullBitmap;
+            Bitmap roiBitmap;
+
+            void recycleBitmaps() {
+                if (fullBitmap != null && !fullBitmap.isRecycled()) {
+                    fullBitmap.recycle();
+                    Log.d(TAG, "Full bitmap recycled");
+                }
+                if (roiBitmap != null && !roiBitmap.isRecycled()) {
+                    roiBitmap.recycle();
+                    Log.d(TAG, "ROI bitmap recycled");
+                }
+            }
+        }
+
         @Override
         public void onImageAvailable(ImageReader reader) {
-            try (Image image = mImageReader.acquireLatestImage()) {
-                if (image != null && !isRunning) {
-                    Log.d("OCR","running");
-                    Image.Plane[] planes = image.getPlanes();
-                    ByteBuffer buffer = planes[0].getBuffer();
-                    int pixelStride = planes[0].getPixelStride();
-                    int rowStride = planes[0].getRowStride();
-                    int rowPadding = rowStride - pixelStride * mWidth;
+            Log.d(TAG, "onImageAvailable called");
 
-                    isRunning = true;
+            // If already processing, acquire and discard the image
+            if (isRunning) {
+                Log.d(TAG, "System busy - acquiring and discarding latest image");
+                Image skippedImage = mImageReader.acquireLatestImage();
+                if (skippedImage != null) {
+                    skippedImage.close();
+                    Log.d(TAG, "Skipped image closed");
+                }
+                return;
+            }
 
-                    // Create full bitmap
-                    int fullWidth = mWidth + rowPadding / pixelStride;
-                    int fullHeight = mHeight;
-                    Bitmap fullBitmap = Bitmap.createBitmap(fullWidth, fullHeight, Bitmap.Config.ARGB_8888);
-                    fullBitmap.copyPixelsFromBuffer(buffer);
+            final BitmapHolder bitmapHolder = new BitmapHolder();
+            Image image = null;
 
-                    // Calculate the region of interest (last 100 pixels)
-                    int roiHeight = Math.min(100, fullHeight);
-                    int roiY = fullHeight - roiHeight;
+            try {
+                // Acquire the most recent image
+                image = mImageReader.acquireLatestImage();
+                if (image == null) {
+                    Log.e(TAG, "Acquired image is null");
+                    return;
+                }
 
-                    // Create a new bitmap for the region of interest
-                    Bitmap roiBitmap = Bitmap.createBitmap(fullBitmap, 0, 0, fullWidth, 300);
+                isRunning = true;
+                Log.d(TAG, "Starting image processing");
 
-                    // Recycle the full bitmap as we no longer need it
-                    fullBitmap.recycle();
+                // Set timeout
+                timeoutHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isRunning) {
+                            isRunning = false;
+                            bitmapHolder.recycleBitmaps();
+                            Log.w(TAG, "Processing timeout reached - forcing reset");
+                        }
+                    }
+                }, PROCESSING_TIMEOUT_MS);
 
-                    // Use roiBitmap for OCR
-                    InputImage inputImage = InputImage.fromBitmap(roiBitmap, 0);
+                // Get image data
+                Image.Plane[] planes = image.getPlanes();
+                ByteBuffer buffer = planes[0].getBuffer();
+                int pixelStride = planes[0].getPixelStride();
+                int rowStride = planes[0].getRowStride();
+                int rowPadding = rowStride - pixelStride * mWidth;
 
-                    Task<Text> result = recognizer.process(inputImage)
+                // Create full bitmap
+                int fullWidth = mWidth + rowPadding / pixelStride;
+                int fullHeight = mHeight;
+                Log.d(TAG, "Creating bitmap with dimensions: " + fullWidth + "x" + fullHeight);
+
+                bitmapHolder.fullBitmap = Bitmap.createBitmap(fullWidth, fullHeight, Bitmap.Config.ARGB_8888);
+                bitmapHolder.fullBitmap.copyPixelsFromBuffer(buffer);
+
+                // Create ROI
+                int roiHeight = Math.min(300, fullHeight);
+                Log.d(TAG, "Creating ROI bitmap with height: " + roiHeight);
+
+                bitmapHolder.roiBitmap = Bitmap.createBitmap(bitmapHolder.fullBitmap, 0, 0, fullWidth, roiHeight);
+                bitmapHolder.fullBitmap.recycle();
+                Log.d(TAG, "Full bitmap recycled after ROI creation");
+
+                // Process OCR
+                InputImage inputImage = InputImage.fromBitmap(bitmapHolder.roiBitmap, 0);
+                Log.d(TAG, "Starting OCR processing");
+
+                recognizer.process(inputImage)
                         .addOnSuccessListener(new OnSuccessListener<Text>() {
                             @Override
                             public void onSuccess(Text result) {
-                                Log.d("OCR","processed");
-                                // Process OCR result as before
-                                String resultText = result.getText();
-                                lastText = resultText;
-                                lastTextExtended = "";
-                                for (Text.TextBlock block : result.getTextBlocks()) {
-                                    String blockText = block.getText();
-                                    Rect blockFrame = block.getBoundingBox();
-                                    // Adjust the Y coordinate of the bounding box
-                                    if (blockFrame != null) {
-                                        blockFrame.offset(0, roiY);
+                                Log.d(TAG, "OCR processing successful");
+                                try {
+                                    String resultText = result.getText();
+                                    lastText = resultText;
+                                    lastTextExtended = "";
+
+                                    for (Text.TextBlock block : result.getTextBlocks()) {
+                                        String blockText = block.getText();
+                                        Rect blockFrame = block.getBoundingBox();
+                                        if (blockFrame != null) {
+                                            blockFrame.offset(0, 0);
+                                        }
+                                        lastTextExtended += blockText + "$$" + blockFrame.toString() + "§§";
                                     }
-                                    lastTextExtended += blockText + "$$" + blockFrame.toString() + "§§";
+
+                                    Log.d(TAG, "Processed text length: " + resultText.length());
+                                    Log.d(TAG, "Number of text blocks: " + result.getTextBlocks().size());
+                                } catch (Exception e) {
+                                    Log.e(TAG, "Error processing OCR result", e);
                                 }
-                                roiBitmap.recycle();
-                                isRunning = false;
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {
                             @Override
-                            public void onFailure(Exception e) {
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e(TAG, "OCR processing failed", e);
+                            }
+                        })
+                        .addOnCompleteListener(new OnCompleteListener<Text>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Text> task) {
+                                Log.d(TAG, "OCR task completed");
+                                timeoutHandler.removeCallbacksAndMessages(null);
                                 isRunning = false;
+                                bitmapHolder.recycleBitmaps();
                             }
                         });
+
+            } catch (Exception e) {
+                Log.e(TAG, "Error in image processing", e);
+                isRunning = false;
+                if (bitmapHolder != null) {
+                    bitmapHolder.recycleBitmaps();
                 }
-            } catch (Exception e) {		
-                e.printStackTrace();
-		isRunning = false;
+            } finally {
+                if (image != null) {
+                    image.close();
+                    Log.d(TAG, "Image closed");
+                }
             }
         }
     }
