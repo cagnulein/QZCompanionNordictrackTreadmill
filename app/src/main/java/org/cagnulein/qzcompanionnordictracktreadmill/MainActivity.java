@@ -403,20 +403,6 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         }
 
         startOCR();
-        
-        SharedPreferences prefs = getSharedPreferences("CrashPrefs", MODE_PRIVATE);
-        String lastCrash = prefs.getString("last_crash", null);
-        if (lastCrash != null) {
-            // Mostra l'errore in un AlertDialog
-            new AlertDialog.Builder(this)
-                .setTitle("Errore precedente")
-                .setMessage(lastCrash)
-                .setPositiveButton("OK", (dialog, which) -> {
-                    // Pulisci l'errore salvato
-                    prefs.edit().remove("last_crash").apply();
-                })
-                .show();
-        }
 
         // With OCR we can't move it to back here, only after asking the permission, restore it somewhere
         /*if (savedInstanceState == null) {  // Verifica se è la prima creazione
