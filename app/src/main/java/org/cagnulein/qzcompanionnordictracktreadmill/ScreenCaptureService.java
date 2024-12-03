@@ -145,7 +145,8 @@ public class ScreenCaptureService extends Service {
                     fullBitmap.copyPixelsFromBuffer(buffer);
 
                     // Calculate the region of interest (last 100 pixels)
-                    int roiHeight = Math.min(100, fullHeight);
+                    //int roiHeight = Math.min(100, fullHeight);
+                    int roiHeight = fullHeight;
                     int roiY = fullHeight - roiHeight;
 
                     // Create a new bitmap for the region of interest
@@ -168,6 +169,7 @@ public class ScreenCaptureService extends Service {
                                 lastTextExtended = "";
                                 for (Text.TextBlock block : result.getTextBlocks()) {
                                     String blockText = block.getText();
+                                    Log.d("OCR",blockText);
                                     Rect blockFrame = block.getBoundingBox();
                                     // Adjust the Y coordinate of the bounding box
                                     if (blockFrame != null) {
