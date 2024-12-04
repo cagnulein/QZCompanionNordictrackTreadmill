@@ -129,7 +129,7 @@ public class ScreenCaptureService extends Service {
         public void onImageAvailable(ImageReader reader) {
             try (Image image = mImageReader.acquireLatestImage()) {
                 if (image != null && !isRunning) {
-                    Log.d("OCR","running");
+                    Log.i("OCR","running");
                     Image.Plane[] planes = image.getPlanes();
                     ByteBuffer buffer = planes[0].getBuffer();
                     int pixelStride = planes[0].getPixelStride();
@@ -162,14 +162,14 @@ public class ScreenCaptureService extends Service {
                         .addOnSuccessListener(new OnSuccessListener<Text>() {
                             @Override
                             public void onSuccess(Text result) {
-                                Log.d("OCR","processed");
+                                Log.i("OCR","processed");
                                 // Process OCR result as before
                                 String resultText = result.getText();
                                 lastText = resultText;
                                 lastTextExtended = "";
                                 for (Text.TextBlock block : result.getTextBlocks()) {
                                     String blockText = block.getText();
-                                    Log.d("OCR",blockText);
+                                    Log.i("OCR",blockText);
                                     Rect blockFrame = block.getBoundingBox();
                                     // Adjust the Y coordinate of the bounding box
                                     if (blockFrame != null) {
@@ -190,6 +190,7 @@ public class ScreenCaptureService extends Service {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                isRunning = false;
             }
         }
     }
