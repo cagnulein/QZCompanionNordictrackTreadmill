@@ -186,7 +186,7 @@ public class QZService extends Service {
         String[] lines = t.split("\\$\\$|\\n");
 
         for (int i = 1; i < lines.length; i++) {
-            Log.d("OCRlines", i + " " + lines[i]);
+            writeLog("OCRlines " + i + " " + lines[i]);
             if (lines[i].toLowerCase().contains("incline")) {
                 try {                    
                     QZService.lastInclination = "Changed Grade " + lines[i-1].trim();
@@ -605,5 +605,5 @@ public class QZService extends Service {
     private static void writeLog(String command) {
         MainActivity.writeLog(command);
         Log.i(LOG_TAG, command);
-    }
+    }  
 }
