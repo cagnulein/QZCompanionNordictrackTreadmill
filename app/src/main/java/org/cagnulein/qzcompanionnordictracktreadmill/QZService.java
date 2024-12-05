@@ -185,6 +185,8 @@ public class QZService extends Service {
         String[] result = new String[2];
         String[] lines = t.split("\\$\\$|\\n");
 
+        Log.i(LOG_TAG, "getOCR");
+
         for (int i = 1; i < lines.length; i++) {
             writeLog("OCRlines " + i + " " + lines[i]);
             if (lines[i].toLowerCase().contains("incline")) {
