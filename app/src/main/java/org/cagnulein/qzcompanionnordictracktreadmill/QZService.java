@@ -30,6 +30,7 @@ public class QZService extends Service {
     Handler handler = new Handler();
     Runnable runnable = null;
     static DatagramSocket socket = null;
+    static InetAddress broadcastAddress;
 
     byte[] lmessage = new byte[1024];
     DatagramPacket packet = new DatagramPacket(lmessage, lmessage.length);
@@ -58,6 +59,11 @@ public class QZService extends Service {
 
     @Override
     public void onCreate() {
+        try {
+            broadcastAddress = getBroadcastAddress();
+        } catch (Exception e) {
+            Log.e(LOG_TAG, e.toString());
+        }
   // The service is being created
         //Toast.makeText(this, "Service created!", Toast.LENGTH_LONG).show();
         writeLog( "Service onCreate");
@@ -501,24 +507,26 @@ public class QZService extends Service {
     }
 
     public static void sendBroadcast(String messageStr) {
-        socket = new DatagramSocket();
-        socket.setBroadcast(true);
-
-        StrictMode.ThreadPolicy policy = new   StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
 
         try {
+            socket = new DatagramSocket();
+            socket.setBroadcast(true);
+
+            StrictMode.ThreadPolicy policy = new   StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
 
             byte[] sendData = messageStr.getBytes();
-            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, getBroadcastAddress(), this.clientPort);
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, broadcastAddress, clientPort);
             socket.send(sendPacket);
+            socket.close();
         } catch (IOException e) {
             Log.e(LOG_TAG, "IOException: " + e.getMessage());
         }
 
-        socket.close();
+
     }
-    static InetAddress getBroadcastAddress() throws IOException {
+
+    InetAddress getBroadcastAddress() throws IOException {
         WifiManager wifi = (WifiManager)    getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         DhcpInfo dhcp = null;
         try {
