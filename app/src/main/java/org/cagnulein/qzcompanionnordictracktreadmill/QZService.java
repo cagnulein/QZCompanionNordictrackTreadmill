@@ -26,10 +26,10 @@ public class QZService extends Service {
     int startMode;       // indicates how to behave if the service is killed
     IBinder binder;      // interface for clients that bind
     boolean allowRebind; // indicates whether onRebind should be used    
-    int clientPort = 8002;
+    static int clientPort = 8002;
     Handler handler = new Handler();
     Runnable runnable = null;
-    DatagramSocket socket = null;
+    static DatagramSocket socket = null;
 
     byte[] lmessage = new byte[1024];
     DatagramPacket packet = new DatagramPacket(lmessage, lmessage.length);
@@ -240,9 +240,6 @@ public class QZService extends Service {
             }
         }
         try {
-            socket = new DatagramSocket();
-            socket.setBroadcast(true);
-
             if(!QZService.lastSpeed.equals(""))
                 sendBroadcast(QZService.lastSpeed);
             if(!QZService.lastInclination.equals(""))
@@ -257,7 +254,6 @@ public class QZService extends Service {
             ex.printStackTrace();
             return result;
         }
-        socket.close();
         handler.postDelayed(runnable, 100);
         return result;
     }
@@ -504,7 +500,10 @@ public class QZService extends Service {
         handler.postDelayed(runnable, 100);
     }
 
-    public void sendBroadcast(String messageStr) {
+    public static void sendBroadcast(String messageStr) {
+        socket = new DatagramSocket();
+        socket.setBroadcast(true);
+
         StrictMode.ThreadPolicy policy = new   StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -516,6 +515,8 @@ public class QZService extends Service {
         } catch (IOException e) {
             Log.e(LOG_TAG, "IOException: " + e.getMessage());
         }
+
+        socket.close();
     }
     InetAddress getBroadcastAddress() throws IOException {
         WifiManager wifi = (WifiManager)    getApplicationContext().getSystemService(Context.WIFI_SERVICE);
