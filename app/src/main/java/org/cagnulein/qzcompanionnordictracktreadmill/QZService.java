@@ -200,7 +200,7 @@ public class QZService extends Service {
                 }
 
             }
-	   if (lines[i].toLowerCase().contains("cadence")) {
+	   if (lines[i].toLowerCase().contains("cadence") || lines[i].toLowerCase().contains("rpm")) {
                 try {                    
                     QZService.lastCadence = "Changed RPM " + lines[i-1].trim();
                 } catch (Exception e) {
