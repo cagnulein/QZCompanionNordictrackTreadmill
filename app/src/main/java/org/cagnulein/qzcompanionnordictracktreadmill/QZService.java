@@ -513,9 +513,8 @@ public class QZService extends Service {
             byte[] sendData = messageStr.getBytes();
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, getBroadcastAddress(), this.clientPort);
             socket.send(sendPacket);
-            writeLog("sendBroadcast " + messageStr);
         } catch (IOException e) {
-            writeLog("IOException: " + e.getMessage());
+            Log.e(LOG_TAG, "IOException: " + e.getMessage());
         }
     }
     InetAddress getBroadcastAddress() throws IOException {
@@ -607,5 +606,6 @@ public class QZService extends Service {
     private static void writeLog(String command) {
         MainActivity.writeLog(command);
         Log.i(LOG_TAG, command);
+        sendBroadcast(command);
     }  
 }
