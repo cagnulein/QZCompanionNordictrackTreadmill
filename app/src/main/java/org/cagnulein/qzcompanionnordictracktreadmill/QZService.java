@@ -201,10 +201,21 @@ public class QZService extends Service {
 
             }
 	   if (lines[i].toLowerCase().contains("cadence") || lines[i].toLowerCase().contains("rpm")) {
-                try {                    
-                    QZService.lastCadence = "Changed RPM " + lines[i-1].trim();
+                try {
+                    String potentialNumber = lines[i-1].trim();
+                    // Try to parse the number to check if it's valid
+                    Double.parseDouble(potentialNumber);
+                    QZService.lastCadence = "Changed RPM " + potentialNumber;
                 } catch (Exception e) {
-                    QZService.lastCadence = "";
+                    // If lines[i-1] isn't a number, try lines[i-2]
+                    try {
+                        String fallbackNumber = lines[i-2].trim();
+                        Double.parseDouble(fallbackNumber);
+                        QZService.lastCadence = "Changed RPM " + fallbackNumber;
+                    } catch (Exception ex) {
+                        // If neither is a valid number, set to empty string
+                        QZService.lastCadence = "";
+                    }
                 }
 
             }
