@@ -518,7 +518,7 @@ public class QZService extends Service {
 
         socket.close();
     }
-    InetAddress getBroadcastAddress() throws IOException {
+    static InetAddress getBroadcastAddress() throws IOException {
         WifiManager wifi = (WifiManager)    getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         DhcpInfo dhcp = null;
         try {
