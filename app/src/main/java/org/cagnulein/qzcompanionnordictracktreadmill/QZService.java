@@ -26,13 +26,14 @@ public class QZService extends Service {
     int startMode;       // indicates how to behave if the service is killed
     IBinder binder;      // interface for clients that bind
     boolean allowRebind; // indicates whether onRebind should be used    
-    int clientPort = 8002;
+    static int clientPort = 8002;
     Handler handler = new Handler();
     Runnable runnable = null;
-    DatagramSocket socket = null;
+    static DatagramSocket socket = null;
 
     byte[] lmessage = new byte[1024];
     DatagramPacket packet = new DatagramPacket(lmessage, lmessage.length);
+    static InetAddress broadcastAddress;
 
     AtomicLong filePointer = new AtomicLong();
     String fileName = "";
@@ -58,7 +59,14 @@ public class QZService extends Service {
 
     @Override
     public void onCreate() {
-  // The service is being created
+
+        try {
+            broadcastAddress = getBroadcastAddress();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, e.getMessage());
+        }
+
+        // The service is being created
         //Toast.makeText(this, "Service created!", Toast.LENGTH_LONG).show();
         writeLog( "Service onCreate");
 
@@ -189,7 +197,7 @@ public class QZService extends Service {
         Log.i(LOG_TAG, "getOCR");
 
         for (int i = 1; i < lines.length; i++) {
-            Log.i("OCRlines", i + " " + lines[i]);
+            writeLog("OCRlines " + i + " " + lines[i]);
             if (lines[i].toLowerCase().contains("incline")) {
                 try {                    
                     QZService.lastInclination = "Changed Grade " + lines[i-1].trim();
@@ -252,9 +260,6 @@ public class QZService extends Service {
             }
         }
         try {
-            socket = new DatagramSocket();
-            socket.setBroadcast(true);
-
             if(!QZService.lastSpeed.equals(""))
                 sendBroadcast(QZService.lastSpeed);
             if(!QZService.lastInclination.equals(""))
@@ -269,7 +274,6 @@ public class QZService extends Service {
             ex.printStackTrace();
             return result;
         }
-        socket.close();
         return result;
     }
 
@@ -515,20 +519,24 @@ public class QZService extends Service {
         handler.postDelayed(runnable, 100);
     }
 
-    public void sendBroadcast(String messageStr) {
-        StrictMode.ThreadPolicy policy = new   StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
+    public static void sendBroadcast(String messageStr) {
         try {
+            socket = new DatagramSocket();
+            socket.setBroadcast(true);
+
+            StrictMode.ThreadPolicy policy = new   StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
 
             byte[] sendData = messageStr.getBytes();
-            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, getBroadcastAddress(), this.clientPort);
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, broadcastAddress, clientPort);
             socket.send(sendPacket);
-            writeLog("sendBroadcast " + messageStr);
+
+            socket.close();
         } catch (IOException e) {
-            writeLog("IOException: " + e.getMessage());
+            Log.e(LOG_TAG, "IOException: " + e.getMessage());
         }
     }
+
     InetAddress getBroadcastAddress() throws IOException {
         WifiManager wifi = (WifiManager)    getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         DhcpInfo dhcp = null;
@@ -618,5 +626,6 @@ public class QZService extends Service {
     private static void writeLog(String command) {
         MainActivity.writeLog(command);
         Log.i(LOG_TAG, command);
+        sendBroadcast(command);
     }
 }
