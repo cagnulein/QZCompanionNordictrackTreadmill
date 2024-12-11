@@ -200,8 +200,8 @@ public class QZService extends Service {
             writeLog("OCRlines " + i + " " + lines[i]);
             if (lines[i].toLowerCase().contains("incline")) {
                 try {                    
-                    QZService.lastInclination = "Changed Grade " + lines[i-1].trim();
-                    QZService.lastInclinationFloat = Float.parseFloat(lines[i-1].trim());
+                    QZService.lastInclination = "Changed Grade " + lines[i-1].trim().replace(',', '.');
+                    QZService.lastInclinationFloat = Float.parseFloat(lines[i-1].trim().replace(',', '.'));
                 } catch (Exception e) {
                     QZService.lastInclination = "";
                     QZService.lastInclinationFloat = 0.0f;
