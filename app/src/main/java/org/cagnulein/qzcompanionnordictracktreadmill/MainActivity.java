@@ -272,6 +272,8 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                     UDPListenerService.setDevice(UDPListenerService._device.c1750_2020_kph);                    
                 } else if(i == R.id.elite1000) {
                     UDPListenerService.setDevice(UDPListenerService._device.elite1000);
+                } else if(i == R.id.elite900) {
+                    UDPListenerService.setDevice(UDPListenerService._device.elite900);
                 } else if(i == R.id.t65s) {
                     UDPListenerService.setDevice(UDPListenerService._device.t65s);
                 } else if(i == R.id.t75s) {
@@ -284,6 +286,8 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                     UDPListenerService.setDevice(UDPListenerService._device.t95s);                    
                 } else if(i == R.id.grand_tour_pro) {
                     UDPListenerService.setDevice(UDPListenerService._device.grand_tour_pro);
+                } else if(i == R.id.proform_carbon_c10) {
+                    UDPListenerService.setDevice(UDPListenerService._device.proform_carbon_c10);
                 } else if(i == R.id.proform_studio_bike_pro22) {
                     UDPListenerService.setDevice(UDPListenerService._device.proform_studio_bike_pro22);                    
                 } else if(i == R.id.NTEX71021) {

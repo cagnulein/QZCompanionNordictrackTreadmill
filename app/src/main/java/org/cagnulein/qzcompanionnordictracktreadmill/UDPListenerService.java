@@ -76,6 +76,8 @@ public class UDPListenerService extends Service {
         proform_pro_9000,
         proform_carbon_e7,
         t95s,
+        proform_carbon_c10,
+        elite900,
     }
 
     public static _device device;
@@ -182,7 +184,11 @@ public class UDPListenerService extends Service {
             case grand_tour_pro:
                 y1Speed = 495;      //vertical position of slider at 2.0
                 y1Inclination = 585;    //vertical position of slider at 0.0                
-                break;                                
+                break;                      
+            case proform_carbon_c10:
+                y1Speed = 495;      //vertical position of slider at 2.0
+                y1Inclination = 585;    //vertical position of slider at 0.0                
+                break;                                                
             case c1750:
                 y1Speed = 793;      //vertical position of slider at 2.0
                 y1Inclination = 694;    //vertical position of slider at 0.0                
@@ -242,7 +248,7 @@ public class UDPListenerService extends Service {
 
         writeLog(message);
         String[] amessage = message.split(";");
-        if(device == _device.proform_carbon_e7 || device == _device.s15i || device == _device.s22i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22) {
+        if(device == _device.proform_carbon_e7 || device == _device.proform_carbon_c10 || device == _device.s15i || device == _device.s22i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22) {
             if (amessage.length > 0) {
                 String rResistance = amessage[0];
                 if(decimalSeparator != '.') {
@@ -292,6 +298,12 @@ public class UDPListenerService extends Service {
                             y1Resistance = 440 - (int) ((QZService.lastInclinationFloat) * 11);
                             //set speed slider to target position
                             y2 = y1Resistance - (int) ((reqResistance - QZService.lastInclinationFloat) * 11);
+                        } else if (device == _device.proform_carbon_c10) {
+                            x1 = 1205;
+                            writeLog("lastResistanceFloat " + QZService.lastResistanceFloat);
+                            y1Resistance = 632 - (int) ((QZService.lastResistanceFloat) * 18.45);
+                            //set speed slider to target position
+                            y2 = y1Resistance - (int) ((reqResistance - QZService.lastResistanceFloat) * 18.45);
 						} else {
 							x1 = 1828;
                             y2 = (int) (826.25 - (21.25 * reqResistance));
@@ -301,7 +313,7 @@ public class UDPListenerService extends Service {
                         MainActivity.sendCommand(command);
                         writeLog(command);
 
-                        if (device == _device.proform_carbon_e7 || device == _device.s15i || device == _device.s22i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22 || device == _device.NTEX71021)
+                        if (device == _device.proform_carbon_e7 || device == _device.proform_carbon_c10 || device == _device.s15i || device == _device.s22i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22 || device == _device.NTEX71021)
                             y1Resistance = y2;  //set new vertical position of speed slider
                         lastReqResistance = reqResistance;
                         lastSwipeMs = Calendar.getInstance().getTimeInMillis();
@@ -335,6 +347,12 @@ public class UDPListenerService extends Service {
                             y1Resistance = 790 - (int) ((QZService.lastGearFloat) * 23.16);
                             //set speed slider to target position
                             y2 = y1Resistance - (int) ((reqResistance - QZService.lastGearFloat) * 23.16);
+                        } else if (device == _device.proform_carbon_e7) {
+                            x1 = 950;
+                            writeLog("lastResistanceFloat " + QZService.lastResistanceFloat);
+                            y1Resistance = 440 - (int) ((QZService.lastResistanceFloat) * 9.16);
+                            //set speed slider to target position
+                            y2 = y1Resistance - (int) ((reqResistance - QZService.lastResistanceFloat) * 9.16);
                         } else {
                             skip = true;
                         }
@@ -461,6 +479,10 @@ public class UDPListenerService extends Service {
                             x1 = 1209;     //middle of slider
                             y1Speed = 600 - (int) (((QZService.lastSpeedFloat * 0.621371)) * 31.33);
                             y2 = y1Speed - (int) (((reqSpeed * 0.621371) - (QZService.lastSpeedFloat * 0.621371)) * 31.33);                                                                                    
+                        } else if (device == _device.elite900) {
+                            x1 = 950;     //middle of slider
+                            y1Speed = 450 - (int) (((QZService.lastSpeedFloat)) * 14.705);
+                            y2 = y1Speed - (int) (((reqSpeed) - (QZService.lastSpeedFloat)) * 14.705);
                         } else {
                             x1 = 1205;     //middle of slider
                             y2 = (int) ((-19.921 * reqSpeed) + 631.03);
@@ -593,6 +615,10 @@ public class UDPListenerService extends Service {
                         x1 = 76;
                         y1Inclination = 589 - (int) (QZService.lastInclinationFloat * 32.8);
                         y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 32.8);
+                    } else if (device == _device.elite900) {
+                        x1 = 76;
+                        y1Inclination = 450 - (int) (QZService.lastInclinationFloat * 20.83);
+                        y2 = y1Inclination - (int) ((reqInclination - QZService.lastInclinationFloat) * 20.83);
                     } else {
                         x1 = 79;
                         y2 = (int) ((-21.804 * reqInclination) + 520.11);
