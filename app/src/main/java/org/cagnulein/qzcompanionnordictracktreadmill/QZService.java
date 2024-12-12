@@ -3,6 +3,7 @@ package org.cagnulein.qzcompanionnordictracktreadmill;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
@@ -50,6 +51,7 @@ public class QZService extends Service {
     static String lastResistance = "";
     String lastGear = "";
     static String lastHeart = "";
+    static SharedPreferences sharedPreferences;
 
     static boolean ifit_v2 = false;
 
@@ -59,6 +61,8 @@ public class QZService extends Service {
 
     @Override
     public void onCreate() {
+
+        sharedPreferences = getSharedPreferences("QZ",MODE_PRIVATE);
         try {
             broadcastAddress = getBroadcastAddress();
         } catch (Exception e) {
@@ -614,8 +618,11 @@ public class QZService extends Service {
     }
 
     private static void writeLog(String command) {
-        MainActivity.writeLog(command);
-        Log.i(LOG_TAG, command);
-        sendBroadcast(command);
-    }  
+
+        if(sharedPreferences.getBoolean("debugLog", true)) {
+            MainActivity.writeLog(command);
+            Log.i(LOG_TAG, command);
+            sendBroadcast(command);
+        }
+    }
 }
