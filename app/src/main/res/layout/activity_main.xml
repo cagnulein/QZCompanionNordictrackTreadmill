@@ -32,6 +32,12 @@
                 android:focusable="true"
                 android:longClickable="true"
                 android:typeface="serif" />
+
+            <CheckBox
+                android:id="@+id/debuglog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Debug Log" />
         </LinearLayout>
 
         <ScrollView
