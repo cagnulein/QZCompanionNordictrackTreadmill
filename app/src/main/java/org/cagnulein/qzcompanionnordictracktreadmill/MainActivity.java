@@ -23,6 +23,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -204,6 +205,16 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 
         sharedPreferences = getSharedPreferences("QZ",MODE_PRIVATE);
         radioGroup = findViewById(R.id.radiogroupDevice);
+        CheckBox debugLog = findViewById(R.id.debuglog);
+
+        debugLog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                myEdit.putBoolean("debugLog", debugLog.isChecked());
+                myEdit.commit();
+            }
+        });
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -299,6 +310,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         });
 
         int device = sharedPreferences.getInt("device", R.id.other);
+        debugLog.setChecked(sharedPreferences.getBoolean("debugLog", true));
         RadioButton radioButton;
         radioButton = findViewById(device);
         if(radioButton != null)
