@@ -207,7 +207,8 @@ public class QZService extends Service {
             }
 	   if (lines[i].toLowerCase().contains("cadence")) {
                 try {                    
-                    QZService.lastCadence = "Changed RPM " + lines[i-1].trim();
+                    if(Integer.parseInt(lines[i-1].trim()) > 30 && Integer.parseInt(lines[i-1].trim()) < 120)
+                        QZService.lastCadence = "Changed RPM " + lines[i-1].trim();
                 } catch (Exception e) {
                     QZService.lastCadence = "";
                 }
