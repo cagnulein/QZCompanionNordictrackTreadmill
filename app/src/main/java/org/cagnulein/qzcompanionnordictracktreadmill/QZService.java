@@ -213,8 +213,8 @@ public class QZService extends Service {
                 try {
                     String potentialNumber = lines[i-1].trim();
                     // Try to parse the number to check if it's valid
-                    Double.parseDouble(potentialNumber);
-                    if(potentialNumber > 30.0 && potentialNumber < 120.0)
+                    Double dd = Double.parseDouble(potentialNumber);
+                    if(dd > 30.0 && dd < 120.0)
                       QZService.lastCadence = "Changed RPM " + potentialNumber;
                 } catch (Exception e) {
                     // If lines[i-1] isn't a number, try lines[i-2]
