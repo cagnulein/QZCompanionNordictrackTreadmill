@@ -415,6 +415,11 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         }
 
         startOCR();
+
+        // With OCR we can't move it to back here, only after asking the permission, restore it somewhere
+        /*if (savedInstanceState == null) {  // Verifica se è la prima creazione
+            moveTaskToBack(true);  // Sposta l'Activity in background
+        }*/
     }
 
     private boolean isAccessibilityServiceEnabled(Context context, Class<?> accessibilityService) {

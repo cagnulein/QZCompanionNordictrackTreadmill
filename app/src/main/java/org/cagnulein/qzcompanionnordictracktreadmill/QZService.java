@@ -65,11 +65,9 @@ public class QZService extends Service {
         sharedPreferences = getSharedPreferences("QZ",MODE_PRIVATE);
         try {
             broadcastAddress = getBroadcastAddress();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, e.getMessage());
+        } catch (Exception e) {
+            Log.e(LOG_TAG, e.toString());
         }
-
-        // The service is being created
         //Toast.makeText(this, "Service created!", Toast.LENGTH_LONG).show();
         writeLog( "Service onCreate");
 
@@ -78,7 +76,6 @@ public class QZService extends Service {
                 @Override
                 public void run() {
                     writeLog( "Service run"); /*parse();*/ getOCR();
-                    handler.postDelayed(runnable, 100);
                 }
             };
         } finally {
@@ -211,12 +208,14 @@ public class QZService extends Service {
                 }
 
             }
+
 	   if (lines[i].toLowerCase().contains("cadence") || lines[i].toLowerCase().contains("rpm")) {
                 try {
                     String potentialNumber = lines[i-1].trim();
                     // Try to parse the number to check if it's valid
-                    Double.parseDouble(potentialNumber);
-                    QZService.lastCadence = "Changed RPM " + potentialNumber;
+                    Double dd = Double.parseDouble(potentialNumber);
+                    if(dd > 30.0 && dd < 120.0)
+                      QZService.lastCadence = "Changed RPM " + potentialNumber;
                 } catch (Exception e) {
                     // If lines[i-1] isn't a number, try lines[i-2]
                     try {
@@ -277,6 +276,7 @@ public class QZService extends Service {
             ex.printStackTrace();
             return result;
         }
+        handler.postDelayed(runnable, 100);
         return result;
     }
 
@@ -533,11 +533,12 @@ public class QZService extends Service {
             byte[] sendData = messageStr.getBytes();
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, broadcastAddress, clientPort);
             socket.send(sendPacket);
-
             socket.close();
         } catch (IOException e) {
             Log.e(LOG_TAG, "IOException: " + e.getMessage());
         }
+
+
     }
 
     InetAddress getBroadcastAddress() throws IOException {
