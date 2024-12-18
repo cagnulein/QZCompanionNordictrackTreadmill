@@ -31,10 +31,10 @@ public class QZService extends Service {
     Handler handler = new Handler();
     Runnable runnable = null;
     static DatagramSocket socket = null;
-    static InetAddress broadcastAddress;
 
     byte[] lmessage = new byte[1024];
     DatagramPacket packet = new DatagramPacket(lmessage, lmessage.length);
+    static InetAddress broadcastAddress;
 
     AtomicLong filePointer = new AtomicLong();
     String fileName = "";
@@ -68,7 +68,6 @@ public class QZService extends Service {
         } catch (Exception e) {
             Log.e(LOG_TAG, e.toString());
         }
-  // The service is being created
         //Toast.makeText(this, "Service created!", Toast.LENGTH_LONG).show();
         writeLog( "Service onCreate");
 
@@ -201,20 +200,32 @@ public class QZService extends Service {
             writeLog("OCRlines " + i + " " + lines[i]);
             if (lines[i].toLowerCase().contains("incline")) {
                 try {                    
-                    QZService.lastInclination = "Changed Grade " + lines[i-1].trim();
-                    QZService.lastInclinationFloat = Float.parseFloat(lines[i-1].trim());
+                    QZService.lastInclination = "Changed Grade " + lines[i-1].trim().replace(',', '.');
+                    QZService.lastInclinationFloat = Float.parseFloat(lines[i-1].trim().replace(',', '.'));
                 } catch (Exception e) {
                     QZService.lastInclination = "";
                     QZService.lastInclinationFloat = 0.0f;
                 }
 
             }
-	   if (lines[i].toLowerCase().contains("cadence")) {
-                try {                    
-                    if(Integer.parseInt(lines[i-1].trim()) > 30 && Integer.parseInt(lines[i-1].trim()) < 120)
-                        QZService.lastCadence = "Changed RPM " + lines[i-1].trim();
+
+	   if (lines[i].toLowerCase().contains("cadence") || lines[i].toLowerCase().contains("rpm")) {
+                try {
+                    String potentialNumber = lines[i-1].trim();
+                    // Try to parse the number to check if it's valid
+                    Double.parseDouble(potentialNumber);
+                    if(potentialNumber > 30 && potentialNumber < 120)
+                      QZService.lastCadence = "Changed RPM " + potentialNumber;
                 } catch (Exception e) {
-                    QZService.lastCadence = "";
+                    // If lines[i-1] isn't a number, try lines[i-2]
+                    try {
+                        String fallbackNumber = lines[i-2].trim();
+                        Double.parseDouble(fallbackNumber);
+                        QZService.lastCadence = "Changed RPM " + fallbackNumber;
+                    } catch (Exception ex) {
+                        // If neither is a valid number, set to empty string
+                        QZService.lastCadence = "";
+                    }
                 }
 
             }
@@ -512,7 +523,6 @@ public class QZService extends Service {
     }
 
     public static void sendBroadcast(String messageStr) {
-
         try {
             socket = new DatagramSocket();
             socket.setBroadcast(true);
