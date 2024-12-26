@@ -245,7 +245,9 @@ public class QZService extends Service {
                     String[] numbers = numberStr.split("\\s+");
                     if (numbers.length > 0) {
                         int watts = Integer.parseInt(numbers[numbers.length - 1]);
-                        QZService.lastWattage = "Changed Watts " + watts;
+			if(watts > 20) { // filtering wrong reading from OCR
+                           QZService.lastWattage = "Changed Watts " + watts;
+			}
                     }
                 } catch (Exception e) {
                 }
