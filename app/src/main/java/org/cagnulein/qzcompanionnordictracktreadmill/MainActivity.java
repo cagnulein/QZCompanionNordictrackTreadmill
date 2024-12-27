@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,9 +23,11 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.content.DialogInterface;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -39,6 +42,8 @@ import java.io.InputStreamReader;
 
 
 import static android.content.ContentValues.TAG;
+
+import static org.cagnulein.qzcompanionnordictracktreadmill.MediaProjection.REQUEST_CODE;
 
 import com.cgutman.androidremotedebugger.AdbUtils;
 import com.cgutman.androidremotedebugger.console.ConsoleBuffer;
@@ -59,6 +64,8 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
     private static String appLogs = "";
 
 	private final ShellRuntime shellRuntime = new ShellRuntime();
+
+    private AndroidActivityResultReceiver resultReceiver;
 
     // on below line we are creating variables.
     RadioGroup radioGroup;
@@ -172,15 +179,73 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         appLogs = appLogs + "\n" + timestamp2 + " " + command;
     }
 
+    public void startOCR() {
+        final int REQUEST_CODE = 100;
+        MediaProjectionManager mediaProjectionManager =
+                (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+
+        Intent intent = mediaProjectionManager.createScreenCaptureIntent();
+        startActivityForResult(intent, REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE) {
+            resultReceiver.handleActivityResult(requestCode, resultCode, data);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        resultReceiver = new AndroidActivityResultReceiver(this);
         checkPermissions();
         Thread.setDefaultUncaughtExceptionHandler(new MyExceptionHandler(this));
 
         sharedPreferences = getSharedPreferences("QZ",MODE_PRIVATE);
         radioGroup = findViewById(R.id.radiogroupDevice);
+        CheckBox debugLog = findViewById(R.id.debuglog);
+        CheckBox OCR = findViewById(R.id.checkOCR);
+
+        debugLog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                myEdit.putBoolean("debugLog", debugLog.isChecked());
+                myEdit.commit();
+
+                new AlertDialog.Builder(view.getContext())
+                        .setTitle("Settings Saved")
+                        .setMessage("Please restart the device to apply the new settings")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+        });
+
+        OCR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                myEdit.putBoolean("OCR", OCR.isChecked());
+                myEdit.commit();
+
+                new AlertDialog.Builder(view.getContext())
+                        .setTitle("Settings Saved")
+                        .setMessage("Please restart the device to apply the new settings")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+        });
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -276,6 +341,8 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         });
 
         int device = sharedPreferences.getInt("device", R.id.other);
+        debugLog.setChecked(sharedPreferences.getBoolean("debugLog", true));
+        OCR.setChecked(sharedPreferences.getBoolean("OCR", false));
         RadioButton radioButton;
         radioButton = findViewById(device);
         if(radioButton != null)
@@ -332,7 +399,12 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         }*/
 
         AlarmReceiver alarm = new AlarmReceiver();
-        alarm.setAlarm(this);
+        //alarm.setAlarm(this); // TODO RESTORE THIS IF POSSIBLE
+        Intent inServer = new Intent(getApplicationContext(), UDPListenerService.class);
+        getApplicationContext().startService(inServer);
+        Intent in = new Intent(getApplicationContext(), QZService.class);
+        getApplicationContext().startService(in);
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             /* If we have old RSA keys, just use them */
@@ -374,22 +446,12 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
             }
         }
 
-        SharedPreferences prefs = getSharedPreferences("CrashPrefs", MODE_PRIVATE);
-        String lastCrash = prefs.getString("last_crash", null);
-        if (lastCrash != null) {
-            // Mostra l'errore in un AlertDialog
-            new AlertDialog.Builder(this)
-                .setTitle("Errore precedente")
-                .setMessage(lastCrash)
-                .setPositiveButton("OK", (dialog, which) -> {
-                    // Pulisci l'errore salvato
-                    prefs.edit().remove("last_crash").apply();
-                })
-                .show();
-        }
-
-        if (savedInstanceState == null) {  // Verifica se è la prima creazione
-            moveTaskToBack(true);  // Sposta l'Activity in background
+        if(sharedPreferences.getBoolean("OCR", false))
+            startOCR();
+        else {
+            if (savedInstanceState == null) {
+                moveTaskToBack(true);
+            }
         }
     }
 

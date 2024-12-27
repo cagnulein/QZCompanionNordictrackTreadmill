@@ -3,6 +3,7 @@ package org.cagnulein.qzcompanionnordictracktreadmill;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
@@ -26,13 +27,14 @@ public class QZService extends Service {
     int startMode;       // indicates how to behave if the service is killed
     IBinder binder;      // interface for clients that bind
     boolean allowRebind; // indicates whether onRebind should be used    
-    int clientPort = 8002;
+    static int clientPort = 8002;
     Handler handler = new Handler();
     Runnable runnable = null;
-    DatagramSocket socket = null;
+    static DatagramSocket socket = null;
 
     byte[] lmessage = new byte[1024];
     DatagramPacket packet = new DatagramPacket(lmessage, lmessage.length);
+    static InetAddress broadcastAddress;
 
     AtomicLong filePointer = new AtomicLong();
     String fileName = "";
@@ -44,11 +46,12 @@ public class QZService extends Service {
     static float lastGearFloat = 0;
     static String lastSpeed = "";
     static String lastInclination = "";
-    String lastWattage = "";
-    String lastCadence = "";
+    static String lastWattage = "";
+    static String lastCadence = "";
     static String lastResistance = "";
     String lastGear = "";
     static String lastHeart = "";
+    static SharedPreferences sharedPreferences;
 
     static boolean ifit_v2 = false;
 
@@ -58,7 +61,15 @@ public class QZService extends Service {
 
     @Override
     public void onCreate() {
-  // The service is being created
+
+        sharedPreferences = getSharedPreferences("QZ",MODE_PRIVATE);
+        try {
+            broadcastAddress = getBroadcastAddress();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, e.getMessage());
+        }
+
+        // The service is being created
         //Toast.makeText(this, "Service created!", Toast.LENGTH_LONG).show();
         writeLog( "Service onCreate");
 
@@ -66,7 +77,13 @@ public class QZService extends Service {
             runnable = new Runnable() {
                 @Override
                 public void run() {
-                    writeLog( "Service run"); parse();
+                    writeLog( "Service run");
+                    if(sharedPreferences.getBoolean("OCR", false)) {
+                        getOCR();
+                        handler.postDelayed(runnable, 100);
+                    }
+                    else
+                        parse();
                 }
             };
         } finally {
@@ -78,7 +95,7 @@ public class QZService extends Service {
 
         if(runnable != null) {
             writeLog( "Service postDelayed");
-            handler.postDelayed(runnable, 500);
+            handler.postDelayed(runnable, 100);
         }
     }
 
@@ -165,6 +182,107 @@ public class QZService extends Service {
             return true;
         }
         return  false;
+    }
+
+    public String[] getOCR() {
+        String text = ScreenCaptureService.getLastText();
+        String t = text;
+
+        String textExtended = ScreenCaptureService.getLastTextExtended();
+        String tt = textExtended;
+
+        int w = ScreenCaptureService.getImageWidth();
+        int h = ScreenCaptureService.getImageHeight();
+
+        String tExtended = textExtended;
+
+        String packageName = MediaProjection.getPackageName();
+
+        // Extract incline and speed values
+        String[] result = new String[2];
+        String[] lines = t.split("\\$\\$|\\n");
+
+        Log.i(LOG_TAG, "getOCR");
+
+        for (int i = 1; i < lines.length; i++) {
+            writeLog("OCRlines " + i + " " + lines[i]);
+            if (lines[i].toLowerCase().contains("incline")) {
+                try {                    
+                    QZService.lastInclination = "Changed Grade " + lines[i-1].trim().replace(',', '.');
+                    QZService.lastInclinationFloat = Float.parseFloat(lines[i-1].trim().replace(',', '.'));
+                } catch (Exception e) {
+                    QZService.lastInclination = "";
+                    QZService.lastInclinationFloat = 0.0f;
+                }
+
+            }
+	   if (lines[i].toLowerCase().contains("cadence") || lines[i].toLowerCase().contains("rpm")) {
+                try {
+                    String potentialNumber = lines[i-1].trim();
+                    // Try to parse the number to check if it's valid
+                    Double.parseDouble(potentialNumber);
+                    QZService.lastCadence = "Changed RPM " + potentialNumber;
+                } catch (Exception e) {
+                    // If lines[i-1] isn't a number, try lines[i-2]
+                    try {
+                        String fallbackNumber = lines[i-2].trim();
+                        Double.parseDouble(fallbackNumber);
+                        QZService.lastCadence = "Changed RPM " + fallbackNumber;
+                    } catch (Exception ex) {
+                        // If neither is a valid number, set to empty string
+                        QZService.lastCadence = "";
+                    }
+                }
+
+            }
+	    if (lines[i].toLowerCase().contains("resistance")) {
+                try {                    
+                    QZService.lastResistance = "Changed Resistance " + lines[i-1].trim();
+                    QZService.lastResistanceFloat = Float.parseFloat(lines[i-1].trim());
+                } catch (Exception e) {
+                    QZService.lastResistance = "";
+                    QZService.lastResistanceFloat = 0.0f;
+                }
+
+            }
+	    if (lines[i].toLowerCase().contains("watt")) {
+                try {                    
+                    String numberStr = lines[i-1].trim().replaceAll("[^0-9]", " ").trim();
+                    String[] numbers = numberStr.split("\\s+");
+                    if (numbers.length > 0) {
+                        int watts = Integer.parseInt(numbers[numbers.length - 1]);
+                        QZService.lastWattage = "Changed Watts " + watts;
+                    }
+                } catch (Exception e) {
+                }
+
+            }
+            if (lines[i].toLowerCase().contains("speed")) {
+                try {                    
+                    QZService.lastSpeed = "Changed KPH " + lines[i-1].trim();
+                    QZService.lastSpeedFloat = Float.parseFloat(lines[i-1].trim());
+                } catch (Exception e) {
+                    QZService.lastSpeed = "";
+                    QZService.lastSpeedFloat = 0.0f;
+                }
+            }
+        }
+        try {
+            if(!QZService.lastSpeed.equals(""))
+                sendBroadcast(QZService.lastSpeed);
+            if(!QZService.lastInclination.equals(""))
+                sendBroadcast(QZService.lastInclination);
+            if(!QZService.lastWattage.equals(""))
+                sendBroadcast(QZService.lastWattage);
+            if(!QZService.lastCadence.equals(""))
+                sendBroadcast(QZService.lastCadence);
+            if(!QZService.lastResistance.equals(""))
+                sendBroadcast(QZService.lastResistance);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return result;
+        }
+        return result;
     }
 
     private void parse() {
@@ -406,23 +524,27 @@ public class QZService extends Service {
             socket.close();
         }
 
-        handler.postDelayed(runnable, 500);
+        handler.postDelayed(runnable, 100);
     }
 
-    public void sendBroadcast(String messageStr) {
-        StrictMode.ThreadPolicy policy = new   StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
+    public static void sendBroadcast(String messageStr) {
         try {
+            socket = new DatagramSocket();
+            socket.setBroadcast(true);
+
+            StrictMode.ThreadPolicy policy = new   StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
 
             byte[] sendData = messageStr.getBytes();
-            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, getBroadcastAddress(), this.clientPort);
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, broadcastAddress, clientPort);
             socket.send(sendPacket);
-            writeLog("sendBroadcast " + messageStr);
+
+            socket.close();
         } catch (IOException e) {
-            writeLog("IOException: " + e.getMessage());
+            Log.e(LOG_TAG, "IOException: " + e.getMessage());
         }
     }
+
     InetAddress getBroadcastAddress() throws IOException {
         WifiManager wifi = (WifiManager)    getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         DhcpInfo dhcp = null;
@@ -510,7 +632,11 @@ public class QZService extends Service {
     }
 
     private static void writeLog(String command) {
-        MainActivity.writeLog(command);
-        Log.i(LOG_TAG, command);
+
+        if(sharedPreferences.getBoolean("debugLog", true)) {
+            MainActivity.writeLog(command);
+            Log.i(LOG_TAG, command);
+            sendBroadcast(command);
+        }
     }
 }
