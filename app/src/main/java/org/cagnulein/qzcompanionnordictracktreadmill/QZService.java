@@ -78,11 +78,12 @@ public class QZService extends Service {
                 @Override
                 public void run() {
                     writeLog( "Service run");
-                    if(sharedPreferences.getBoolean("OCR", false))
+                    if(sharedPreferences.getBoolean("OCR", false)) {
                         getOCR();
+                        handler.postDelayed(runnable, 100);
+                    }
                     else
                         parse();
-                    handler.postDelayed(runnable, 100);
                 }
             };
         } finally {
