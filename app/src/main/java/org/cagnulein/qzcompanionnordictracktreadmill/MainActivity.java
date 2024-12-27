@@ -448,6 +448,11 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 
         if(sharedPreferences.getBoolean("OCR", false))
             startOCR();
+        else {
+            if (savedInstanceState == null) {
+                moveTaskToBack(true);
+            }
+        }
     }
 
     private boolean isAccessibilityServiceEnabled(Context context, Class<?> accessibilityService) {
