@@ -33,11 +33,24 @@
                 android:longClickable="true"
                 android:typeface="serif" />
 
-            <CheckBox
-                android:id="@+id/debuglog"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Debug Log" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/debuglog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Debug Log" />
+
+                <CheckBox
+                    android:id="@+id/checkOCR"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="OCR" />
+            </LinearLayout>
         </LinearLayout>
 
         <ScrollView

@@ -27,6 +27,7 @@ import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.content.DialogInterface;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -206,6 +207,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         sharedPreferences = getSharedPreferences("QZ",MODE_PRIVATE);
         radioGroup = findViewById(R.id.radiogroupDevice);
         CheckBox debugLog = findViewById(R.id.debuglog);
+        CheckBox OCR = findViewById(R.id.checkOCR);
 
         debugLog.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -213,6 +215,35 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                 SharedPreferences.Editor myEdit = sharedPreferences.edit();
                 myEdit.putBoolean("debugLog", debugLog.isChecked());
                 myEdit.commit();
+
+                new AlertDialog.Builder(view.getContext())
+                        .setTitle("Settings Saved")
+                        .setMessage("Please restart the device to apply the new settings")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+        });
+
+        OCR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                myEdit.putBoolean("OCR", OCR.isChecked());
+                myEdit.commit();
+
+                new AlertDialog.Builder(view.getContext())
+                        .setTitle("Settings Saved")
+                        .setMessage("Please restart the device to apply the new settings")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
             }
         });
 
@@ -311,6 +342,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 
         int device = sharedPreferences.getInt("device", R.id.other);
         debugLog.setChecked(sharedPreferences.getBoolean("debugLog", true));
+        OCR.setChecked(sharedPreferences.getBoolean("OCR", false));
         RadioButton radioButton;
         radioButton = findViewById(device);
         if(radioButton != null)
@@ -414,7 +446,8 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
             }
         }
 
-        startOCR();
+        if(sharedPreferences.getBoolean("OCR", false))
+            startOCR();
     }
 
     private boolean isAccessibilityServiceEnabled(Context context, Class<?> accessibilityService) {

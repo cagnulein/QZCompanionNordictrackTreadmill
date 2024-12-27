@@ -77,7 +77,11 @@ public class QZService extends Service {
             runnable = new Runnable() {
                 @Override
                 public void run() {
-                    writeLog( "Service run"); /*parse();*/ getOCR();
+                    writeLog( "Service run");
+                    if(sharedPreferences.getBoolean("OCR", false))
+                        getOCR();
+                    else
+                        parse();
                     handler.postDelayed(runnable, 100);
                 }
             };
