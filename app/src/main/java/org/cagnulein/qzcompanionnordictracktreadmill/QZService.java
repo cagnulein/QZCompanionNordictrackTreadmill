@@ -247,14 +247,11 @@ public class QZService extends Service {
             }
 	    if (lines[i].toLowerCase().contains("watt")) {
                 try {                    
-                    String prevLine = lines[i-1].trim();
-                    if (!prevLine.toLowerCase().contains("incline")) {
-                        String numberStr = prevLine.replaceAll("[^0-9]", " ").trim();
-                        String[] numbers = numberStr.split("\\s+");
-                        if (numbers.length > 0) {
-                            int watts = Integer.parseInt(numbers[numbers.length - 1]);
-                            QZService.lastWattage = "Changed Watts " + watts;
-                        }
+                    String numberStr = lines[i-1].trim().replaceAll("[^0-9]", " ").trim();
+                    String[] numbers = numberStr.split("\\s+");
+                    if (numbers.length > 0) {
+                        int watts = Integer.parseInt(numbers[numbers.length - 1]);
+                        QZService.lastWattage = "Changed Watts " + watts;
                     }
                 } catch (Exception e) {
                 }
