@@ -206,10 +206,11 @@ public class QZService extends Service {
 
         for (int i = 1; i < lines.length; i++) {
             writeLog("OCRlines " + i + " " + lines[i]);
-            if (lines[i].toLowerCase().contains("incline")) {
+            if (lines[i].toLowerCase().contains("incline")) {                
                 try {                    
                     QZService.lastInclination = "Changed Grade " + lines[i-1].trim().replace(',', '.');
                     QZService.lastInclinationFloat = Float.parseFloat(lines[i-1].trim().replace(',', '.'));
+                    writeLog("OCRlines incline found!");
                 } catch (Exception e) {
                     QZService.lastInclination = "";
                     QZService.lastInclinationFloat = 0.0f;
@@ -222,12 +223,14 @@ public class QZService extends Service {
                     // Try to parse the number to check if it's valid
                     Double.parseDouble(potentialNumber);
                     QZService.lastCadence = "Changed RPM " + potentialNumber;
+                    writeLog("OCRlines cadence found!");
                 } catch (Exception e) {
                     // If lines[i-1] isn't a number, try lines[i-2]
                     try {
                         String fallbackNumber = lines[i-2].trim();
                         Double.parseDouble(fallbackNumber);
                         QZService.lastCadence = "Changed RPM " + fallbackNumber;
+                        writeLog("OCRlines cadence2 found!");
                     } catch (Exception ex) {
                         // If neither is a valid number, set to empty string
                         QZService.lastCadence = "";
@@ -239,6 +242,7 @@ public class QZService extends Service {
                 try {                    
                     QZService.lastResistance = "Changed Resistance " + lines[i-1].trim();
                     QZService.lastResistanceFloat = Float.parseFloat(lines[i-1].trim());
+                    writeLog("OCRlines resistance found!");
                 } catch (Exception e) {
                     QZService.lastResistance = "";
                     QZService.lastResistanceFloat = 0.0f;
@@ -252,6 +256,7 @@ public class QZService extends Service {
                     if (numbers.length > 0) {
                         int watts = Integer.parseInt(numbers[numbers.length - 1]);
                         QZService.lastWattage = "Changed Watts " + watts;
+                        writeLog("OCRlines watts found!");
                     }
                 } catch (Exception e) {
                 }
@@ -261,6 +266,7 @@ public class QZService extends Service {
                 try {                    
                     QZService.lastSpeed = "Changed KPH " + lines[i-1].trim();
                     QZService.lastSpeedFloat = Float.parseFloat(lines[i-1].trim());
+                    writeLog("OCRlines speed found!");
                 } catch (Exception e) {
                     QZService.lastSpeed = "";
                     QZService.lastSpeedFloat = 0.0f;
