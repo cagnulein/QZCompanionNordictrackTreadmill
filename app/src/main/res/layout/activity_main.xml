@@ -247,6 +247,12 @@
                         android:text="C1750 2020 Treadmill (Kph)" />	
 
 					<RadioButton
+                        android:id="@+id/c1750_mph_minus3grade"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="C1750 Treadmill (Mph) with -3% Inc." />	
+
+					<RadioButton
                         android:id="@+id/elite900"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
