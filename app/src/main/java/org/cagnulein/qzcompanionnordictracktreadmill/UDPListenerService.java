@@ -114,8 +114,8 @@ public class UDPListenerService extends Service {
                 y1Inclination = 717;    //vertical position of slider at 0.0
                 break;
             case c1750_mph_minus3grade:
-                y1Speed = 450;      //vertical position of slider at 0.0 MPH
-                y1Inclination = 450;    //vertical position of slider at 0.0
+                y1Speed = 603;      // vertical position of slider at 0.5 MPH
+                y1Inclination = 603;    // vertical position of slider at -3.0%
                 break;                
             case proform_2000:
                 y1Speed = 598;      //vertical position of slider at 2.0
@@ -413,12 +413,19 @@ public class UDPListenerService extends Service {
                             x1 = 1845;
                             y2 = (int) (817.5 - (42.5 * reqSpeed * 0.621371));                            
                         } else if (device == _device.c1750_mph_minus3grade) {
-                            x1 = 1205;     // X coordinate matches the UI
-                            // Convert KPH to MPH for display (0.621371 conversion factor)
+                            x1 = 1206;     // Exact X coordinate from user
+                            // Convert KPH to MPH since lastSpeedFloat is in KPH
                             double currentSpeedMph = QZService.lastSpeedFloat * 0.621371;
                             double targetSpeedMph = reqSpeed * 0.621371;
-                            y1Speed = c1750_mph_minus3grade_speed_lookup(currentSpeedMph);
-                            y2 = c1750_mph_minus3grade_speed_lookup(targetSpeedMph);                            
+                            
+                            // Speed must be at least 0.5 MPH
+                            if (currentSpeedMph < 0.5) currentSpeedMph = 0.5;
+                            if (targetSpeedMph < 0.5) targetSpeedMph = 0.5;
+                            if (targetSpeedMph > 12.0) targetSpeedMph = 12.0;
+                            
+                            // Calculate Y positions: 603 is base position, subtract pixels for each unit above 0.5
+                            y1Speed = 603 - (int)((currentSpeedMph - 0.5) * 34.0);
+                            y2 = 603 - (int)((targetSpeedMph - 0.5) * 34.0);                           
                         } else if (device == _device.t95s) {
                             x1 = 1845;
                             y1Speed = 817 - (int) ((QZService.lastSpeedFloat - 1.0) * 10.0 * 3.0);
@@ -548,9 +555,11 @@ public class UDPListenerService extends Service {
                         y1Inclination = 658 - (int) (QZService.lastInclinationFloat * 12);
                         y2 = (int) (658 - (12 * reqInclination));
                     } else if (device == _device.c1750_mph_minus3grade) {
-                        x1 = 75;      // X coordinate matches the UI
-                        y1Inclination = c1750_mph_minus3grade_inclination_lookup(QZService.lastInclinationFloat);
-                        y2 = c1750_mph_minus3grade_inclination_lookup(reqInclination);
+                        x1 = 75;      // Exact X coordinate from user
+
+                        // Calculate Y positions: 603 is base position, subtract pixels for each unit above -3
+                        y1Inclination = 603 - (int)((QZService.lastInclinationFloat + 3.0) * 21.7222222);
+                        y2 = 603 - (int)((reqInclination + 3.0) * 21.7222222);
                     } else if (device == _device.x22i_v2) {
                         x1 = 75;
                         // 742 = 0% 266 = 40%
@@ -914,22 +923,4 @@ public class UDPListenerService extends Service {
 
         return y2;
     }
-
-    private int c1750_mph_minus3grade_inclination_lookup(double reqInclination) {
-        // Y coordinates for inclination from -3% to +15%
-        if (reqInclination <= -3) return 450;
-        if (reqInclination >= 15) return 150;
-        
-        // Linear interpolation: 20 pixels per 1% change
-        return (int)(450 - ((reqInclination + 3) * 20));
-    }
-    
-    private int c1750_mph_minus3grade_speed_lookup(double reqSpeedMph) {
-        // Y coordinates for speed from 0 to 12 MPH (input is already converted to MPH)
-        if (reqSpeedMph <= 0) return 450;
-        if (reqSpeedMph >= 12) return 150;
-        
-        // Linear interpolation: 25 pixels per 1 MPH
-        return (int)(450 - (reqSpeedMph * 25));
-    }    
 }
