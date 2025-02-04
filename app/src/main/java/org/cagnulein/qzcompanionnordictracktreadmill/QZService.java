@@ -222,7 +222,7 @@ public class QZService extends Service {
                     String potentialNumber = lines[i-1].trim();
                     // Try to parse the number to check if it's valid
                     Double.parseDouble(potentialNumber);
-                    if(potentialNumber > 20) {
+                    if(Double.parseDouble(potentialNumber) > 20) {
                         QZService.lastCadence = "Changed RPM " + potentialNumber;
                         writeLog("OCRlines cadence found!");
                     }
@@ -231,7 +231,7 @@ public class QZService extends Service {
                     try {
                         String fallbackNumber = lines[i-2].trim();
                         Double.parseDouble(fallbackNumber);
-                        if(fallbackNumber > 20) {
+                        if(Double.parseDouble(fallbackNumber) > 20) {
                             QZService.lastCadence = "Changed RPM " + fallbackNumber;
                             writeLog("OCRlines cadence2 found!");
                         }
