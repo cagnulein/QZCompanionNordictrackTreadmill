@@ -223,8 +223,10 @@ public class UDPListenerService extends Service {
     }
 
     private void writeLog(String command) {
-        MainActivity.writeLog(command);
-        Log.i(LOG_TAG, command);
+        if(sharedPreferences.getBoolean("debugLog", false)) {
+            MainActivity.writeLog(command);
+            Log.i(LOG_TAG, command);
+        }
     }
 
     private void listenAndWaitAndThrowIntent(InetAddress broadcastIP, Integer port) throws Exception {

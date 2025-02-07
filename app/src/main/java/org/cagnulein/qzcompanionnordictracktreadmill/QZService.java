@@ -645,7 +645,7 @@ public class QZService extends Service {
 
     private static void writeLog(String command) {
 
-        if(sharedPreferences.getBoolean("debugLog", true)) {
+        if(sharedPreferences.getBoolean("debugLog", false)) {
             MainActivity.writeLog(command);
             Log.i(LOG_TAG, command);
             sendBroadcast(command);
