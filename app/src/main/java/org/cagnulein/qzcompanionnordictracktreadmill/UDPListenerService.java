@@ -7,7 +7,7 @@ import java.net.InetAddress;
 import java.text.DecimalFormatSymbols;
 import java.util.Calendar;
 import java.util.Locale;
-
+import android.content.SharedPreferences;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -39,6 +39,8 @@ public class UDPListenerService extends Service {
     static double reqCachedSpeed = -1;
     static double reqCachedResistance = -1;
     static double reqCachedInclination = -100;
+
+    static SharedPreferences sharedPreferences;
 
     public enum _device {
         x11i,
@@ -229,8 +231,10 @@ public class UDPListenerService extends Service {
     }
 
     private void writeLog(String command) {
-        MainActivity.writeLog(command);
-        Log.i(LOG_TAG, command);
+        if(sharedPreferences.getBoolean("debugLog", false)) {
+            MainActivity.writeLog(command);
+            Log.i(LOG_TAG, command);
+        }
     }
 
     private void listenAndWaitAndThrowIntent(InetAddress broadcastIP, Integer port) throws Exception {
@@ -757,6 +761,7 @@ public class UDPListenerService extends Service {
 
     @Override
     public void onCreate() {
+        sharedPreferences = getSharedPreferences("QZ",MODE_PRIVATE);
     }
 
     @Override

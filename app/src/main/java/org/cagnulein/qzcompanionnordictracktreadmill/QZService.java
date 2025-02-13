@@ -222,15 +222,19 @@ public class QZService extends Service {
                     String potentialNumber = lines[i-1].trim();
                     // Try to parse the number to check if it's valid
                     Double.parseDouble(potentialNumber);
-                    QZService.lastCadence = "Changed RPM " + potentialNumber;
-                    writeLog("OCRlines cadence found!");
+                    if(Double.parseDouble(potentialNumber) > 20) {
+                        QZService.lastCadence = "Changed RPM " + potentialNumber;
+                        writeLog("OCRlines cadence found!");
+                    }
                 } catch (Exception e) {
                     // If lines[i-1] isn't a number, try lines[i-2]
                     try {
                         String fallbackNumber = lines[i-2].trim();
                         Double.parseDouble(fallbackNumber);
-                        QZService.lastCadence = "Changed RPM " + fallbackNumber;
-                        writeLog("OCRlines cadence2 found!");
+                        if(Double.parseDouble(fallbackNumber) > 20) {
+                            QZService.lastCadence = "Changed RPM " + fallbackNumber;
+                            writeLog("OCRlines cadence2 found!");
+                        }
                     } catch (Exception ex) {
                         // If neither is a valid number, set to empty string
                         QZService.lastCadence = "";
@@ -255,8 +259,10 @@ public class QZService extends Service {
                     String[] numbers = numberStr.split("\\s+");
                     if (numbers.length > 0) {
                         int watts = Integer.parseInt(numbers[numbers.length - 1]);
-                        QZService.lastWattage = "Changed Watts " + watts;
-                        writeLog("OCRlines watts found!");
+                        if(watts > 20) {
+                            QZService.lastWattage = "Changed Watts " + watts;
+                            writeLog("OCRlines watts found!");
+                        }
                     }
                 } catch (Exception e) {
                 }
@@ -639,7 +645,7 @@ public class QZService extends Service {
 
     private static void writeLog(String command) {
 
-        if(sharedPreferences.getBoolean("debugLog", true)) {
+        if(sharedPreferences.getBoolean("debugLog", false)) {
             MainActivity.writeLog(command);
             Log.i(LOG_TAG, command);
             sendBroadcast(command);

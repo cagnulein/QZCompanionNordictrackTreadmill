@@ -345,7 +345,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         });
 
         int device = sharedPreferences.getInt("device", R.id.other);
-        debugLog.setChecked(sharedPreferences.getBoolean("debugLog", true));
+        debugLog.setChecked(sharedPreferences.getBoolean("debugLog", false));
         OCR.setChecked(sharedPreferences.getBoolean("OCR", false));
         RadioButton radioButton;
         radioButton = findViewById(device);
