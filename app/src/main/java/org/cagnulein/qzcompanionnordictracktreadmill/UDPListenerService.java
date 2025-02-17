@@ -437,6 +437,7 @@ public class UDPListenerService extends Service {
                             y2 = y1Speed - (int) ((reqSpeed - QZService.lastSpeedFloat) * 10.0 * 3.0);
 						} else if (device == _device.t85s) {
                             x1 = 1207;
+                            y1Speed = (int) (629.81 - (20.81 *  QZService.lastSpeedFloat));
                             y2 = (int) (629.81 - (20.81 * reqSpeed));
                         } else if (device == _device.s40) {
                             x1 = 949;
@@ -588,6 +589,7 @@ public class UDPListenerService extends Service {
                         y2 = (int) (749 - (11.8424 * reqInclination));                        
 					} else if (device == _device.t85s) {
                         x1 = 75;
+                        y1Inclination = (int) (609 - (36.417 * QZService.lastInclinationFloat));
                         y2 = (int) (609 - (36.417 * reqInclination));
                     } else if (device == _device.s40) {
                         x1 = 75;
