@@ -81,6 +81,7 @@ public class UDPListenerService extends Service {
         proform_carbon_c10,
         elite900,
         c1750_mph_minus3grade,
+        s27i,
     }
 
     public static _device device;
@@ -218,6 +219,11 @@ public class UDPListenerService extends Service {
             case NTEX71021:
                 y1Resistance = 480;      //vertical position of slider at 1.0
                 break;                      
+            case s27i:
+                lastReqResistance = 1; // Starting from min resistance
+                y1Resistance = 803;    // bottomY position for both incline and resistance
+                break;
+    
             default:
                 break;
         }
@@ -257,7 +263,7 @@ public class UDPListenerService extends Service {
 
         writeLog(message);
         String[] amessage = message.split(";");
-        if(device == _device.proform_carbon_e7 || device == _device.proform_carbon_c10 || device == _device.s15i || device == _device.s22i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22) {
+        if(device == _device.proform_carbon_e7 || device == _device.proform_carbon_c10 || device == _device.s15i || device == _device.s22i || device == _device.s27i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22) {
             if (amessage.length > 0) {
                 String rResistance = amessage[0];
                 if(decimalSeparator != '.') {
@@ -313,6 +319,12 @@ public class UDPListenerService extends Service {
                             y1Resistance = 632 - (int) ((QZService.lastResistanceFloat) * 18.45);
                             //set speed slider to target position
                             y2 = y1Resistance - (int) ((reqResistance - QZService.lastResistanceFloat) * 18.45);
+                        } else if (device == _device.s27i) {
+                            x1 = 76;      // inclineX
+                            // Calculate incline position
+                            double incline_scale = (803.0 - 248.0) / 30.0;  // (bottomY - topY) / (max_incline - min_incline)
+                            y1Resistance = 803 - (int)((QZService.lastInclinationFloat + 10) * incline_scale);
+                            y2 = y1Resistance - (int)((reqResistance - QZService.lastInclinationFloat) * incline_scale);
 						} else {
 							x1 = 1828;
                             y2 = (int) (826.25 - (21.25 * reqResistance));
@@ -322,7 +334,7 @@ public class UDPListenerService extends Service {
                         MainActivity.sendCommand(command);
                         writeLog(command);
 
-                        if (device == _device.proform_carbon_e7 || device == _device.proform_carbon_c10 || device == _device.s15i || device == _device.s22i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22 || device == _device.NTEX71021)
+                        if (device == _device.proform_carbon_e7 || device == _device.proform_carbon_c10 || device == _device.s15i || device == _device.s22i || device == _device.s27i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22 || device == _device.NTEX71021)
                             y1Resistance = y2;  //set new vertical position of speed slider
                         lastReqResistance = reqResistance;
                         lastSwipeMs = Calendar.getInstance().getTimeInMillis();
@@ -362,6 +374,12 @@ public class UDPListenerService extends Service {
                             y1Resistance = 440 - (int) ((QZService.lastResistanceFloat) * 9.16);
                             //set speed slider to target position
                             y2 = y1Resistance - (int) ((reqResistance - QZService.lastResistanceFloat) * 9.16);
+                        } else if (device == _device.s27i) {
+                            x1 = 1847;    // resistanceX
+                            // Calculate resistance position
+                            double resistance_scale = (803.0 - 248.0) / 23.0;  // (bottomY - topY) / (max_resistance - min_resistance)
+                            y1Resistance = 803 - (int)((QZService.lastResistanceFloat - 1) * resistance_scale);
+                            y2 = y1Resistance - (int)((reqResistance - QZService.lastResistanceFloat) * resistance_scale);
                         } else {
                             skip = true;
                         }
