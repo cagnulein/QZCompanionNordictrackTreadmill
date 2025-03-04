@@ -6,33 +6,40 @@ on:
       - master
   pull_request_target:
     branches:
-      - '**'  # This will run on pull requests to all branches
-
+      - '**'
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+
+    - name: Checkout for pull request
+      if: github.event_name == 'pull_request_target'
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+        fetch-depth: 0
+    
+    - name: Checkout for push/dispatch
+      if: github.event_name != 'pull_request_target'
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
       
     - name: Use Java8
       uses: actions/setup-java@v1
       with:
           java-version: 11
-
     - name: Get the version
       id: get_version
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-
     - name: Build release apk
       run: chmod a+x gradlew && ./gradlew clean assembleRelease
-
     - name: Setup build tool version variable
       shell: bash
       run: |
         BUILD_TOOL_VERSION=$(ls /usr/local/lib/android/sdk/build-tools/ | tail -n 1)
         echo "BUILD_TOOL_VERSION=$BUILD_TOOL_VERSION" >> $GITHUB_ENV
         echo Last build tool version is: $BUILD_TOOL_VERSION
-
     - uses: r0adkll/sign-android-release@v1
       name: Sign app APK
       id: sign_app
@@ -44,7 +51,6 @@ jobs:
         keyPassword: ${{ secrets.KEY_PASSWORD }}
       env:
         BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}        
-
     - name: Archive apk
       uses: actions/upload-artifact@v4
       with:
@@ -54,7 +60,6 @@ jobs:
     - name: Update the InstallPackage
       if: github.event_name == 'push' && github.ref == 'refs/heads/master'
       run: cp ${{steps.sign_app.outputs.signedReleaseFile}} ./InstallPackage/QZCompanionNordictrackTreadmill.apk
-
     - name: Commit InstallPackage
       if: github.event_name == 'push' && github.ref == 'refs/heads/master'
       uses: EndBug/add-and-commit@v9
