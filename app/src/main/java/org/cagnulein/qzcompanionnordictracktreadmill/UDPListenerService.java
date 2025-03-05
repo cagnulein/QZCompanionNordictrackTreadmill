@@ -264,7 +264,9 @@ public class UDPListenerService extends Service {
         writeLog(message);
         String[] amessage = message.split(";");
         if(device == _device.proform_carbon_e7 || device == _device.proform_carbon_c10 || device == _device.s15i || device == _device.s22i || device == _device.s27i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22) {
-            if (amessage.length > 0) {
+            // bike inclination
+			//if (amessage.length > 0) {
+			if (amessage.length == 2) { // Changed to check for exactly two elements (nordictrackadbbike_resistance false)
                 String rResistance = amessage[0];
                 if(decimalSeparator != '.') {
                     rResistance = rResistance.replace('.', decimalSeparator);
@@ -345,9 +347,11 @@ public class UDPListenerService extends Service {
                 }
             }
 
-            // resistance
-            if (amessage.length > 1) {
-                String rResistance = amessage[1];
+            // bike resistance
+            //if (amessage.length > 1) {
+            if (amessage.length == 1) { // Changed to check for exactly one element (nordictrackadbbike_resistance true)		
+                //String rResistance = amessage[1];
+                String rResistance = amessage[0]; // Changed to first string
                 if(decimalSeparator != '.') {
                     rResistance = rResistance.replace('.', decimalSeparator);
                 }
@@ -355,8 +359,7 @@ public class UDPListenerService extends Service {
                 reqResistance = Math.round((reqResistance) * 10) / 10.0;
                 writeLog("requestResistance: " + reqResistance + " " + lastReqResistance);
 
-                //if (lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) 
-                {
+                if (lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) { // Changed to enable delay
                     if (QZService.lastResistanceFloat != reqResistance && reqResistance != -1 && reqResistance != -100) {
                         boolean skip = false;
                         int x1 = 0;
@@ -396,7 +399,9 @@ public class UDPListenerService extends Service {
                 }
             }            
         } else {
-            if (amessage.length > 0) {
+            // treadmill speed
+			//if (amessage.length > 0) {
+			if (amessage.length == 2) { // Changed to check for exactly two elements			
                 String rSpeed = amessage[0];
                 if(decimalSeparator != '.') {
                     rSpeed = rSpeed.replace('.', decimalSeparator);
@@ -552,7 +557,9 @@ public class UDPListenerService extends Service {
                 }
             }
 
-            if (amessage.length > 1 && lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) {
+            // treadmill incline
+			//if (amessage.length > 1 && lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) {
+            if (amessage.length == 2 && lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) { // Changed to check for exactly two elements				
                 String rInclination = amessage[1];
                 if(decimalSeparator != '.') {
                     rInclination = rInclination.replace('.', decimalSeparator);
@@ -690,7 +697,9 @@ public class UDPListenerService extends Service {
                     lastSwipeMs = Calendar.getInstance().getTimeInMillis();
 					reqCachedInclination = -100;
                 }
-            } else if(amessage.length > 1) {
+            // treadmill incline not handled due to lastSwipeMs
+			//} else if(amessage.length > 1) {
+			} else if (amessage.length == 2) { // Changed to check for exactly two elements				
                 String rInclination = amessage[1];
                 double reqInclination = roundToHalf(Double.parseDouble(rInclination));
                 if(reqInclination != -100) {
