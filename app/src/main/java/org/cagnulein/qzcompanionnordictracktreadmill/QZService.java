@@ -310,13 +310,13 @@ public class QZService extends Service {
                 writeLog("Device: " + UDPListenerService.device);
 
 				// this device doesn't have tail and grep capabilities
-				if(UDPListenerService.device == UDPListenerService._device.c1750 || 
+				if((UDPListenerService.device == UDPListenerService._device.c1750 ||
                 UDPListenerService.device == UDPListenerService._device.c1750_2021 || 
                 UDPListenerService.device == UDPListenerService._device.c1750_2020 || 
                 UDPListenerService.device == UDPListenerService._device.c1750_2020_kph || 
                 UDPListenerService.device == UDPListenerService._device.x22i ||
                 UDPListenerService.device == UDPListenerService._device.x14i ||
-                UDPListenerService.device == UDPListenerService.device.proform_carbon_t14) {
+                UDPListenerService.device == UDPListenerService.device.proform_carbon_t14) && !sharedPreferences.getBoolean("ADBLog", false)) {
 					try {
 						InputStream speed2InputStream = shellRuntime.execAndGetOutput("cat " + file);
 						BufferedReader is = new BufferedReader(new InputStreamReader(speed2InputStream));
@@ -359,7 +359,7 @@ public class QZService extends Service {
 						writeLog(e.getMessage());
                     }					
                 } // this device doesn't log on the wolflog file
-				else if(UDPListenerService.device == UDPListenerService._device.t75s) {
+				else if(UDPListenerService.device == UDPListenerService._device.t75s && !sharedPreferences.getBoolean("ADBLog", false)) {
 					try {
                         String command = "logcat -b all -d > /sdcard/logcat.log";
                         MainActivity.sendCommand(command);
@@ -402,7 +402,7 @@ public class QZService extends Service {
                     }
                 } else if(UDPListenerService.device == UDPListenerService._device.grand_tour_pro ||
                           UDPListenerService.device == UDPListenerService._device.NTEX71021 ||
-                          UDPListenerService.device == UDPListenerService._device.proform_carbon_c10) {
+                          UDPListenerService.device == UDPListenerService._device.proform_carbon_c10 || sharedPreferences.getBoolean("ADBLog", false)) {
                         try {
                             //String command = "logcat -b all -d > /storage/sdcard0/logcat.log";
                             //MainActivity.sendCommand(command);

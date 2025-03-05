@@ -50,6 +50,13 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="OCR" />
+
+                <CheckBox
+                    android:id="@+id/checkADBLog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Use ADB Log" />
             </LinearLayout>
         </LinearLayout>
 

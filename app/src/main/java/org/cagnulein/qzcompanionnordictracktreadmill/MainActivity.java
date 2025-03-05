@@ -208,6 +208,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         radioGroup = findViewById(R.id.radiogroupDevice);
         CheckBox debugLog = findViewById(R.id.debuglog);
         CheckBox OCR = findViewById(R.id.checkOCR);
+        CheckBox ADBLog = findViewById(R.id.checkADBLog);
 
         debugLog.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -233,6 +234,25 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
             public void onClick(View view) {
                 SharedPreferences.Editor myEdit = sharedPreferences.edit();
                 myEdit.putBoolean("OCR", OCR.isChecked());
+                myEdit.commit();
+
+                new AlertDialog.Builder(view.getContext())
+                        .setTitle("Settings Saved")
+                        .setMessage("Please restart the device to apply the new settings")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+        });
+
+        ADBLog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                myEdit.putBoolean("ADBLog", ADBLog.isChecked());
                 myEdit.commit();
 
                 new AlertDialog.Builder(view.getContext())
@@ -347,6 +367,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         int device = sharedPreferences.getInt("device", R.id.other);
         debugLog.setChecked(sharedPreferences.getBoolean("debugLog", false));
         OCR.setChecked(sharedPreferences.getBoolean("OCR", false));
+        ADBLog.setChecked(sharedPreferences.getBoolean("ADBLog", false));
         RadioButton radioButton;
         radioButton = findViewById(device);
         if(radioButton != null)
