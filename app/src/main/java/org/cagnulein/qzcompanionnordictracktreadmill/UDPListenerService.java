@@ -221,7 +221,7 @@ public class UDPListenerService extends Service {
                 break;                      
             case s27i:
                 lastReqResistance = 1; // Starting from min resistance
-                y1Resistance = 803;    // bottomY position for both incline and resistance
+                y1Resistance = 803;    // bottomY position for both incline and resistance sliders
                 break;
     
             default:
@@ -268,7 +268,7 @@ public class UDPListenerService extends Service {
             // bike inclination
 			//if (amessage.length > 0) {
 			if (amessage.length == 2) { // Changed to check for exactly two elements (nordictrackadbbike_resistance false)
-                String rResistance = amessage[0];
+                String rResistance = amessage[0];  // first string
                 if (decimalSeparator != '.') {
                     rResistance = rResistance.replace('.', decimalSeparator);
                 }
@@ -337,7 +337,6 @@ public class UDPListenerService extends Service {
                         MainActivity.sendCommand(command);
                         writeLog(command);
 
-                        // Can the following if statement be removed? Is it necessary?
 						if (device == _device.proform_carbon_e7 || device == _device.proform_carbon_c10 || device == _device.s15i || device == _device.s22i || device == _device.s27i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22 || device == _device.NTEX71021)
                             y1Resistance = y2;  //set new vertical position of incline slider
                         lastReqResistance = reqResistance;
@@ -363,7 +362,7 @@ public class UDPListenerService extends Service {
 
                 if (lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) { // Changed to enable delay
 
-                    // Should we use same block as incline?
+                    // Should we use same block as incline to include ?
 					//if (reqResistance != -1 && reqResistance != -100 && lastReqResistance != reqResistance || (reqCachedResistance != -1 && reqCachedResistance != -100)) {
                     //    if (reqCachedResistance != -1 && reqCachedResistance != -100) {
                     //        reqResistance = reqCachedResistance;
@@ -408,12 +407,16 @@ public class UDPListenerService extends Service {
                         }
                     }
                 }
+				// Add if needed
+                //} else {
+                //    reqCachedResistance = reqResist
             }            
+
+        // treadmill speed
         } else {
-            // treadmill speed
 			//if (amessage.length > 0) {
 			if (amessage.length == 2) { // Changed to check for exactly two elements			
-                String rSpeed = amessage[0];
+                String rSpeed = amessage[0];  // first string
                 if (decimalSeparator != '.') {
                     rSpeed = rSpeed.replace('.', decimalSeparator);
                 }
@@ -571,7 +574,7 @@ public class UDPListenerService extends Service {
             // treadmill incline
 			//if (amessage.length > 1 && lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) {
             if (amessage.length == 2 && lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) { // Changed to check for exactly two elements				
-                String rInclination = amessage[1];
+                String rInclination = amessage[1];  // second string
                 if (decimalSeparator != '.') {
                     rInclination = rInclination.replace('.', decimalSeparator);
                 }
@@ -712,7 +715,7 @@ public class UDPListenerService extends Service {
             // treadmill incline not handled due to lastSwipeMs
 			//} else if(amessage.length > 1) {
 			} else if (amessage.length == 2) { // Changed to check for exactly two elements				
-                String rInclination = amessage[1];
+                String rInclination = amessage[1];  // second string
                 double reqInclination = roundToHalf(Double.parseDouble(rInclination));
                 if (reqInclination != -100) {
                     writeLog("requestInclination not handled due to lastSwipeMs: " + reqInclination);
