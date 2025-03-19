@@ -234,6 +234,7 @@ public class UDPListenerService extends Service {
         if(sharedPreferences.getBoolean("debugLog", false)) {
             MainActivity.writeLog(command);
             Log.i(LOG_TAG, command);
+            QZService.sendBroadcast(command);
         }
     }
 
