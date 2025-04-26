@@ -25,6 +25,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    lintOptions {
+        checkReleaseBuilds false
+        ignore 'D8'
+    }    
 }
 dependencies {
     implementation 'com.google.mlkit:text-recognition:16.0.0-beta6'
