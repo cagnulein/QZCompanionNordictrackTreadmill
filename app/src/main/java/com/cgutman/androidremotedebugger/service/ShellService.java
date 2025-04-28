@@ -42,7 +42,7 @@ public class ShellService extends Service implements DeviceConnectionListener {
 	
 	private int foregroundId;
 
-	private final static boolean notificationCreated = false;
+	private static boolean notificationCreated = false;
 	
 	public class ShellServiceBinder extends Binder {
 		public DeviceConnection createConnection(String host, int port) {
