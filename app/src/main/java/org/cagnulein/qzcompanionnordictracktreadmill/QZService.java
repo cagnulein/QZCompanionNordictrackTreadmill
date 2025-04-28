@@ -34,7 +34,7 @@ public class QZService extends Service {
 
     byte[] lmessage = new byte[1024];
     DatagramPacket packet = new DatagramPacket(lmessage, lmessage.length);
-    static InetAddress broadcastAddress;
+    static InetAddress broadcastAddress = null;
 
     AtomicLong filePointer = new AtomicLong();
     String fileName = "";
@@ -63,11 +63,6 @@ public class QZService extends Service {
     public void onCreate() {
 
         sharedPreferences = getSharedPreferences("QZ",MODE_PRIVATE);
-        try {
-            broadcastAddress = getBroadcastAddress();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, e.getMessage());
-        }
 
         // The service is being created
         //Toast.makeText(this, "Service created!", Toast.LENGTH_LONG).show();
@@ -546,6 +541,15 @@ public class QZService extends Service {
 
             StrictMode.ThreadPolicy policy = new   StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
+
+            if (broadcastAddress == null) {
+                try {
+                    broadcastAddress = getBroadcastAddress();
+                } catch (IOException e) {
+                    Log.e(LOG_TAG, e.getMessage());
+                    return;
+                }
+            }
 
             byte[] sendData = messageStr.getBytes();
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, broadcastAddress, clientPort);
