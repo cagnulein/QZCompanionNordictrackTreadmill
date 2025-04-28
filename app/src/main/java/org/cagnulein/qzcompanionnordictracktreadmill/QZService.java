@@ -63,6 +63,11 @@ public class QZService extends Service {
     public void onCreate() {
 
         sharedPreferences = getSharedPreferences("QZ",MODE_PRIVATE);
+        try {
+            broadcastAddress = getBroadcastAddress();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, e.getMessage());
+        }
 
         // The service is being created
         //Toast.makeText(this, "Service created!", Toast.LENGTH_LONG).show();
@@ -543,12 +548,8 @@ public class QZService extends Service {
             StrictMode.setThreadPolicy(policy);
 
             if (broadcastAddress == null) {
-                try {
-                    broadcastAddress = getBroadcastAddress();
-                } catch (IOException e) {
-                    Log.e(LOG_TAG, e.getMessage());
-                    return;
-                }
+                Log.e(LOG_TAG, "Broadcast address is null, cannot send packet");
+                return;
             }
 
             byte[] sendData = messageStr.getBytes();
