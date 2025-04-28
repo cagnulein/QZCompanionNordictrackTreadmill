@@ -41,6 +41,8 @@ public class ShellService extends Service implements DeviceConnectionListener {
 	private final static String CHANNEL_ID = "connectionInfo";
 	
 	private int foregroundId;
+
+	private final static boolean notificationCreated = false;
 	
 	public class ShellServiceBinder extends Binder {
 		public DeviceConnection createConnection(String host, int port) {
@@ -113,10 +115,11 @@ public class ShellService extends Service implements DeviceConnectionListener {
 	public void onCreate() {
 		super.onCreate();
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !notificationCreated) {
 			NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Connection Info", NotificationManager.IMPORTANCE_DEFAULT);
 			NotificationManager notificationManager = getSystemService(NotificationManager.class);
 			notificationManager.createNotificationChannel(channel);
+			notificationCreated = true;
 		}
 
 		WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
