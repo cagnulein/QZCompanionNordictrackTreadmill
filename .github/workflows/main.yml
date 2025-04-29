@@ -21,7 +21,7 @@ jobs:
      id: get_version
      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
    - name: Build release apk
-     run: chmod a+x gradlew && ./gradlew clean assembleRelease
+     run: chmod a+x gradlew && ./gradlew clean assembleRelease -q
    - name: Setup build tool version variable
      shell: bash
      run: |
