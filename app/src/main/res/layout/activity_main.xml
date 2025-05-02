@@ -32,6 +32,32 @@
                 android:focusable="true"
                 android:longClickable="true"
                 android:typeface="serif" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/debuglog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Debug Log" />
+
+                <CheckBox
+                    android:id="@+id/checkOCR"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="OCR" />
+
+                <CheckBox
+                    android:id="@+id/checkADBLog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Use ADB Log" />
+            </LinearLayout>
         </LinearLayout>
 
         <ScrollView
@@ -168,6 +194,12 @@
                         android:text="S22i Bike (NTEX02121.5)" />
 
                     <RadioButton
+                        android:id="@+id/s27i"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="S27i Bike" />                        
+
+                    <RadioButton
                         android:id="@+id/tdf10"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -226,6 +258,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="C1750 2020 Treadmill (Kph)" />	
+
+					<RadioButton
+                        android:id="@+id/c1750_mph_minus3grade"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="C1750 Treadmill (Mph) with -3% Inc." />	
 
 					<RadioButton
                         android:id="@+id/elite900"

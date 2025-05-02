@@ -131,7 +131,7 @@ public class ScreenCaptureService extends Service {
         public void onImageAvailable(ImageReader reader) {
             try (Image image = mImageReader.acquireLatestImage()) {
                 if (image != null && !isRunning) {
-                    Log.d("OCR","running");
+                    Log.i("OCR","running");
                     Image.Plane[] planes = image.getPlanes();
                     ByteBuffer buffer = planes[0].getBuffer();
                     int pixelStride = planes[0].getPixelStride();
@@ -147,7 +147,8 @@ public class ScreenCaptureService extends Service {
                     fullBitmap.copyPixelsFromBuffer(buffer);
 
                     // Calculate the region of interest (last 100 pixels)
-                    int roiHeight = Math.min(100, fullHeight);
+                    //int roiHeight = Math.min(100, fullHeight);
+                    int roiHeight = fullHeight;
                     int roiY = fullHeight - roiHeight;
 
                     // Create a new bitmap for the region of interest
@@ -181,6 +182,7 @@ public class ScreenCaptureService extends Service {
             } catch (Exception e) {
                 isRunning = false;
                 e.printStackTrace();
+                isRunning = false;
             }
         }
     }

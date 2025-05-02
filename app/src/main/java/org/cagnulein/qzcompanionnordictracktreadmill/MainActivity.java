@@ -25,9 +25,11 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.content.DialogInterface;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -207,6 +209,66 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 
         sharedPreferences = getSharedPreferences("QZ",MODE_PRIVATE);
         radioGroup = findViewById(R.id.radiogroupDevice);
+        CheckBox debugLog = findViewById(R.id.debuglog);
+        CheckBox OCR = findViewById(R.id.checkOCR);
+        CheckBox ADBLog = findViewById(R.id.checkADBLog);
+
+        debugLog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                myEdit.putBoolean("debugLog", debugLog.isChecked());
+                myEdit.commit();
+
+                new AlertDialog.Builder(view.getContext())
+                        .setTitle("Settings Saved")
+                        .setMessage("Please restart the device to apply the new settings")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+        });
+
+        OCR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                myEdit.putBoolean("OCR", OCR.isChecked());
+                myEdit.commit();
+
+                new AlertDialog.Builder(view.getContext())
+                        .setTitle("Settings Saved")
+                        .setMessage("Please restart the device to apply the new settings")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+        });
+
+        ADBLog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                myEdit.putBoolean("ADBLog", ADBLog.isChecked());
+                myEdit.commit();
+
+                new AlertDialog.Builder(view.getContext())
+                        .setTitle("Settings Saved")
+                        .setMessage("Please restart the device to apply the new settings")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+        });
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -254,6 +316,8 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                     UDPListenerService.setDevice(UDPListenerService._device.s15i);
                 } else if(i == R.id.s22i) {
                     UDPListenerService.setDevice(UDPListenerService._device.s22i);
+                } else if(i == R.id.s27i) {
+                    UDPListenerService.setDevice(UDPListenerService._device.s27i);
                 } else if(i == R.id.s22i_NTEX02121_5) {
                     UDPListenerService.setDevice(UDPListenerService._device.s22i_NTEX02121_5);
                 } else if(i == R.id.tdf10) {
@@ -274,6 +338,8 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                     UDPListenerService.setDevice(UDPListenerService._device.elite1000);
                 } else if(i == R.id.elite900) {
                     UDPListenerService.setDevice(UDPListenerService._device.elite900);
+                } else if(i == R.id.c1750_mph_minus3grade) {
+                    UDPListenerService.setDevice(UDPListenerService._device.c1750_mph_minus3grade);                    
                 } else if(i == R.id.t65s) {
                     UDPListenerService.setDevice(UDPListenerService._device.t65s);
                 } else if(i == R.id.t75s) {
@@ -302,6 +368,9 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
         });
 
         int device = sharedPreferences.getInt("device", R.id.other);
+        debugLog.setChecked(sharedPreferences.getBoolean("debugLog", false));
+        OCR.setChecked(sharedPreferences.getBoolean("OCR", false));
+        ADBLog.setChecked(sharedPreferences.getBoolean("ADBLog", false));
         RadioButton radioButton;
         radioButton = findViewById(device);
         if(radioButton != null)
@@ -405,21 +474,12 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
             }
         }
 
-
-        startOCR();
-
-        SharedPreferences prefs = getSharedPreferences("CrashPrefs", MODE_PRIVATE);
-        String lastCrash = prefs.getString("last_crash", null);
-        if (lastCrash != null) {
-            // Mostra l'errore in un AlertDialog
-            new AlertDialog.Builder(this)
-                .setTitle("Errore precedente")
-                .setMessage(lastCrash)
-                .setPositiveButton("OK", (dialog, which) -> {
-                    // Pulisci l'errore salvato
-                    prefs.edit().remove("last_crash").apply();
-                })
-                .show();
+        if(sharedPreferences.getBoolean("OCR", false))
+            startOCR();
+        else {
+            if (savedInstanceState == null) {
+                moveTaskToBack(true);
+            }
         }
     }
 
