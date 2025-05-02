@@ -61,7 +61,7 @@ public class ScreenCaptureService extends Service {
     private static int IMAGES_PRODUCED;
 
     private static final String EXTRA_FOREGROUND_SERVICE_TYPE = "FOREGROUND_SERVICE_TYPE";
-    private static final int FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE = 0x10;
+    private static final int FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE = 0x20;
 
     private MediaProjection mMediaProjection;
     private String mStoreDir;
@@ -333,9 +333,6 @@ public class ScreenCaptureService extends Service {
                 WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
                 mDisplay = windowManager.getDefaultDisplay();
 
-                // create virtual display depending on device width / height
-                createVirtualDisplay();
-
                 // register orientation change callback
                 mOrientationChangeCallback = new OrientationChangeCallback(this);
                 if (mOrientationChangeCallback.canDetectOrientation()) {
@@ -344,6 +341,9 @@ public class ScreenCaptureService extends Service {
 
                 // register media projection stop callback
                 mMediaProjection.registerCallback(new MediaProjectionStopCallback(), mHandler);
+
+                // create virtual display depending on device width / height
+                createVirtualDisplay();
             }
         }
     }
