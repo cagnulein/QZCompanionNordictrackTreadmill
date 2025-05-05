@@ -39,9 +39,9 @@ import com.equationl.fastdeployocr.OcrConfig;
 import com.equationl.fastdeployocr.RunPrecision;
 import com.equationl.fastdeployocr.RunType;
 import com.equationl.fastdeployocr.bean.OcrResult;
+import com.equationl.fastdeployocr.bean.OcrResultModel;
 import com.equationl.fastdeployocr.callback.OcrInitCallback;
 import com.equationl.fastdeployocr.callback.OcrRunCallback;
-import com.equationl.paddleocr4android.Util.paddle.OcrResultModel;
 
 import android.graphics.Rect;
 import android.graphics.Point;
@@ -168,7 +168,7 @@ public class ScreenCaptureService extends Service {
                                 lastText = result.getSimpleText();
                                 List<OcrResultModel> outputRawResult = result.getOutputRawResult();
         
-                                StringBuilder text = new StringBuilder("inferenceTime=" + inferenceTime + " ms\n");
+                                StringBuilder text = new StringBuilder("inferenceTime=" + result.getInferenceTime() + " ms\n");
                                 
                                 for (int index = 0; index < outputRawResult.size(); index++) {
                                     OcrResultModel ocrResultModel = outputRawResult.get(index);
