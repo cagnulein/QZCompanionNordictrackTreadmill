@@ -165,7 +165,23 @@ public class ScreenCaptureService extends Service {
                             @Override
                             public void onSuccess(OcrResult result) {
                                 lastText = result.getSimpleText();
+                                List<OcrResultModel> outputRawResult = result.getOutputRawResult();
+        
+                                StringBuilder text = new StringBuilder("inferenceTime=" + inferenceTime + " ms\n");
+                                
+                                for (int index = 0; index < outputRawResult.size(); index++) {
+                                    OcrResultModel ocrResultModel = outputRawResult.get(index);
+                                    // 文字方向 ocrResultModel.clsLabel 可能为 "0" 或 "180"
+                                    text.append(index)
+                                        .append("；confidence ")
+                                        .append(ocrResultModel.getConfidence())
+                                        .append("；points：")
+                                        .append(ocrResultModel.getPoints())
+                                        .append("\n");
+                                }                          
+
                                 Log.d("OCR","processed " + lastText);
+                                Log.d("OCR","rawprocessed " + text);
                                 /*Bitmap imgWithBox = result.getImgWithBox();
                                 long inferenceTime = (long) result.getInferenceTime();
                                 List<OcrResultModel> outputRawResult = result.getOutputRawResult();*/
