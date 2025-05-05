@@ -278,8 +278,8 @@ public class UDPListenerService extends Service {
                 writeLog("requestResistance: " + reqResistance + " " + lastReqResistance);
 
                 if (lastSwipeMs + 500 < Calendar.getInstance().getTimeInMillis()) {
-                    if (reqResistance != -1 && reqResistance != -100 && lastReqResistance != reqResistance || (reqCachedResistance != -1 && reqCachedResistance != -100)) {
-                        if (reqCachedResistance != -1 && reqCachedResistance != -100) {
+                    if (reqResistance != -100 && lastReqResistance != reqResistance || (reqCachedResistance != -1 && reqCachedResistance != -100)) {
+                        if (reqCachedResistance != -100) {
                             reqResistance = reqCachedResistance;
                         }
                         int x1 = 0;
