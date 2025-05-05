@@ -265,6 +265,12 @@
                         android:layout_height="wrap_content"
                         android:text="C1750 Treadmill (Mph) with -3% Inc." />	
 
+                    <RadioButton
+                        android:id="@+id/c1750_NTL14122_2_MPH"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="C1750 NTL14122.2 Treadmill (Mph) with -3% Inc." />	                        
+
 					<RadioButton
                         android:id="@+id/elite900"
                         android:layout_width="match_parent"

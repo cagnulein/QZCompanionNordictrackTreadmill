@@ -82,6 +82,7 @@ public class UDPListenerService extends Service {
         elite900,
         c1750_mph_minus3grade,
         s27i,
+        c1750_NTL14122_2_MPH,
     }
 
     public static _device device;
@@ -139,6 +140,10 @@ public class UDPListenerService extends Service {
                 lastReqResistance = 0;
                 y1Resistance = 618;
                 break;
+            case c1750_NTL14122_2_MPH:
+                y1Speed = 787;      // vertical position of slider at 0 MPH
+                y1Inclination = 787;    // vertical position of slider at -3%
+                break;                
             case s22i_NTEX02121_5:
                 lastReqResistance = 0;
                 y1Resistance = 535;
@@ -468,6 +473,10 @@ public class UDPListenerService extends Service {
                             // Calculate Y positions: 603 is base position, subtract pixels for each unit above 0.5
                             y1Speed = 603 - (int)((currentSpeedMph - 0.5) * 34.0);
                             y2 = 603 - (int)((targetSpeedMph - 0.5) * 34.0);                           
+                        } else if (device == _device.c1750_NTL14122_2_MPH) {
+                            x1 = 1850;     // X coordinate for speed slider
+                            y1Speed = 787 - (int)(QZService.lastSpeedFloat * 43.5);
+                            y2 = 787 - (int)(reqSpeed * 43.5);
                         } else if (device == _device.t95s) {
                             x1 = 1845;
                             y1Speed = 817 - (int) ((QZService.lastSpeedFloat - 1.0) * 10.0 * 3.0);
@@ -628,6 +637,10 @@ public class UDPListenerService extends Service {
                     } else if (device == _device.x32i_NTL39019) {
                         x1 = 74;
                         y2 = (int) (749 - (11.8424 * reqInclination));                        
+                    } else if (device == _device.c1750_NTL14122_2_MPH) {
+                        x1 = 70;      // X coordinate for inclination slider
+                        y1Inclination = 787 - (int)((QZService.lastInclinationFloat + 3) * 29);
+                        y2 = 787 - (int)((reqInclination + 3) * 29);
 					} else if (device == _device.t85s) {
                         x1 = 75;
                         y1Inclination = (int) (609 - (36.417 * QZService.lastInclinationFloat));
