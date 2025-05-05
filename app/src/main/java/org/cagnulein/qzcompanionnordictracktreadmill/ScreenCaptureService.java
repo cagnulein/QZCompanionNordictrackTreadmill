@@ -41,6 +41,7 @@ import com.equationl.fastdeployocr.RunType;
 import com.equationl.fastdeployocr.bean.OcrResult;
 import com.equationl.fastdeployocr.callback.OcrInitCallback;
 import com.equationl.fastdeployocr.callback.OcrRunCallback;
+import com.equationl.paddleocr4android.Util.paddle.OcrResultModel;
 
 import android.graphics.Rect;
 import android.graphics.Point;
