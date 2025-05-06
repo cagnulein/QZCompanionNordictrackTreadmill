@@ -129,6 +129,114 @@ public class ScreenCaptureService extends Service {
     }
 
     private class ImageAvailableListener implements ImageReader.OnImageAvailableListener {
+
+        private String processOcrResults(OcrResult result) {
+            List<OcrResultModel> outputResults = result.getOutputRawResult();
+            StringBuilder processedText = new StringBuilder();
+            
+            // Create arrays to store detected text and their bounding boxes
+            String[] texts = new String[outputResults.size()];
+            Rect[] bounds = new Rect[outputResults.size()];
+            
+            // First pass: collect all text and their bounds
+            for (int i = 0; i < outputResults.size(); i++) {
+                OcrResultModel model = outputResults.get(i);
+                texts[i] = model.getText();
+                
+                // Create bounding rectangle from points
+                List<Point> points = model.getPoints();
+                if (points.size() >= 4) {
+                    int left = Integer.MAX_VALUE;
+                    int top = Integer.MAX_VALUE;
+                    int right = 0;
+                    int bottom = 0;
+                    
+                    for (Point p : points) {
+                        left = Math.min(left, p.x);
+                        top = Math.min(top, p.y);
+                        right = Math.max(right, p.x);
+                        bottom = Math.max(bottom, p.y);
+                    }
+                    
+                    bounds[i] = new Rect(left, top, right, bottom);
+                }
+            }
+            
+            // Second pass: categorize text as either a label or a value
+            List<Integer> labelIndices = new ArrayList<>();
+            List<Integer> valueIndices = new ArrayList<>();
+            
+            for (int i = 0; i < texts.length; i++) {
+                if (bounds[i] == null || texts[i] == null) continue;
+                
+                String text = texts[i].trim().toUpperCase();
+                
+                // Identify labels - they typically contain these words
+                if (text.contains("INCLINE") || text.contains("SPEED") || 
+                    text.contains("DISTANCE") || text.contains("TIME") || 
+                    text.contains("CALORIES") || text.contains("LAP")) {
+                    labelIndices.add(i);
+                }
+                // Identify values - they are typically numeric
+                else if (text.matches(".*[0-9]+.*")) {
+                    valueIndices.add(i);
+                }
+            }
+            
+            // Third pass: match each label with the closest value
+            for (int labelIdx : labelIndices) {
+                Rect labelBounds = bounds[labelIdx];
+                int closestValueIdx = -1;
+                double closestDistance = Double.MAX_VALUE;
+                
+                for (int valueIdx : valueIndices) {
+                    Rect valueBounds = bounds[valueIdx];
+                    
+                    // Calculate distance between centers of rectangles
+                    double labelCenterX = (labelBounds.left + labelBounds.right) / 2.0;
+                    double labelCenterY = (labelBounds.top + labelBounds.bottom) / 2.0;
+                    double valueCenterX = (valueBounds.left + valueBounds.right) / 2.0;
+                    double valueCenterY = (valueBounds.top + valueBounds.bottom) / 2.0;
+                    
+                    // For treadmill displays, values are typically above labels
+                    // So we prioritize values that are above (smaller Y) and aligned horizontally
+                    if (valueCenterY < labelCenterY) { // Value is above the label
+                        // Calculate horizontal distance
+                        double horizontalDist = Math.abs(labelCenterX - valueCenterX);
+                        // Calculate vertical distance
+                        double verticalDist = labelCenterY - valueCenterY;
+                        
+                        // Use a weighted distance that prioritizes horizontal alignment
+                        double distance = horizontalDist * 3 + verticalDist;
+                        
+                        if (distance < closestDistance) {
+                            closestDistance = distance;
+                            closestValueIdx = valueIdx;
+                        }
+                    }
+                }
+                
+                // If we found a matching value
+                if (closestValueIdx >= 0) {
+                    processedText.append(texts[closestValueIdx]).append("\n")
+                            .append(texts[labelIdx]).append("\n");
+                }
+            }
+            
+            // Add any remaining important information (like iFIT status, etc.)
+            for (int i = 0; i < texts.length; i++) {
+                if (texts[i] != null && 
+                    (texts[i].contains("iFIT") || 
+                    texts[i].contains("Workout") || 
+                    texts[i].contains("END") || 
+                    texts[i].contains("BEGIN"))) {
+                    processedText.append(texts[i]).append("\n");
+                }
+            }
+            
+            return processedText.toString();
+        }
+
         @Override
         public void onImageAvailable(ImageReader reader) {
             try (Image image = mImageReader.acquireLatestImage()) {
@@ -165,7 +273,7 @@ public class ScreenCaptureService extends Service {
                         ocr.run(roiBitmap, new OcrRunCallback() {
                             @Override
                             public void onSuccess(OcrResult result) {
-                                lastText = result.getSimpleText();
+                                lastText = processOcrResults(result);
                                 List<OcrResultModel> outputRawResult = result.getOutputRawResult();
         
                                 StringBuilder text = new StringBuilder("inferenceTime=" + result.getInferenceTime() + " ms\n");
