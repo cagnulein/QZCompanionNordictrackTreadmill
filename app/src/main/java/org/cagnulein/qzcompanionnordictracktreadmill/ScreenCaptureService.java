@@ -132,8 +132,12 @@ public class ScreenCaptureService extends Service {
     private class ImageAvailableListener implements ImageReader.OnImageAvailableListener {
 
         private String processOcrResults(OcrResult result) {
+            final String DEBUG_TAG = "OCRDEBUG_PROCESS"; // Specific tag for debug logs in this method
+            
             List<OcrResultModel> outputResults = result.getOutputRawResult();
             StringBuilder processedText = new StringBuilder();
+            
+            Log.d(DEBUG_TAG, "Starting OCR processing with " + outputResults.size() + " detected text elements");
             
             // Create arrays to store detected text and their bounding boxes
             String[] texts = new String[outputResults.size()];
@@ -143,6 +147,8 @@ public class ScreenCaptureService extends Service {
             for (int i = 0; i < outputResults.size(); i++) {
                 OcrResultModel model = outputResults.get(i);
                 texts[i] = model.getLabel();
+                
+                Log.d(DEBUG_TAG, "Text element " + i + ": " + texts[i] + ", confidence: " + model.getConfidence());
                 
                 // Create bounding rectangle from points
                 List<Point> points = model.getPoints();
@@ -160,6 +166,7 @@ public class ScreenCaptureService extends Service {
                     }
                     
                     bounds[i] = new Rect(left, top, right, bottom);
+                    Log.d(DEBUG_TAG, "Bounds for element " + i + ": " + bounds[i].toString());
                 }
             }
             
@@ -177,18 +184,26 @@ public class ScreenCaptureService extends Service {
                     text.contains("DISTANCE") || text.contains("TIME") || 
                     text.contains("CALORIES") || text.contains("LAP")) {
                     labelIndices.add(i);
+                    Log.d(DEBUG_TAG, "Identified LABEL: " + text + " at index " + i);
                 }
                 // Identify values - they are typically numeric
                 else if (text.matches(".*[0-9]+.*")) {
                     valueIndices.add(i);
+                    Log.d(DEBUG_TAG, "Identified VALUE: " + text + " at index " + i);
+                } else {
+                    Log.d(DEBUG_TAG, "Unclassified text: " + text + " at index " + i);
                 }
             }
+            
+            Log.d(DEBUG_TAG, "Found " + labelIndices.size() + " labels and " + valueIndices.size() + " values");
             
             // Third pass: match each label with the closest value
             for (int labelIdx : labelIndices) {
                 Rect labelBounds = bounds[labelIdx];
                 int closestValueIdx = -1;
                 double closestDistance = Double.MAX_VALUE;
+                
+                Log.d(DEBUG_TAG, "Finding match for label: " + texts[labelIdx]);
                 
                 for (int valueIdx : valueIndices) {
                     Rect valueBounds = bounds[valueIdx];
@@ -210,17 +225,29 @@ public class ScreenCaptureService extends Service {
                         // Use a weighted distance that prioritizes horizontal alignment
                         double distance = horizontalDist * 3 + verticalDist;
                         
+                        Log.d(DEBUG_TAG, "  Candidate value: " + texts[valueIdx] + 
+                            ", horizontalDist: " + horizontalDist + 
+                            ", verticalDist: " + verticalDist + 
+                            ", weighted distance: " + distance);
+                        
                         if (distance < closestDistance) {
                             closestDistance = distance;
                             closestValueIdx = valueIdx;
+                            Log.d(DEBUG_TAG, "  New closest value: " + texts[valueIdx] + 
+                                " with distance: " + closestDistance);
                         }
                     }
                 }
                 
                 // If we found a matching value
                 if (closestValueIdx >= 0) {
+                    Log.d(DEBUG_TAG, "MATCH FOUND: Label '" + texts[labelIdx] + 
+                        "' matched with value '" + texts[closestValueIdx] + "'");
+                    
                     processedText.append(texts[closestValueIdx]).append("\n")
                             .append(texts[labelIdx]).append("\n");
+                } else {
+                    Log.d(DEBUG_TAG, "No match found for label: " + texts[labelIdx]);
                 }
             }
             
@@ -231,10 +258,12 @@ public class ScreenCaptureService extends Service {
                     texts[i].contains("Workout") || 
                     texts[i].contains("END") || 
                     texts[i].contains("BEGIN"))) {
+                    Log.d(DEBUG_TAG, "Adding special text: " + texts[i]);
                     processedText.append(texts[i]).append("\n");
                 }
             }
             
+            Log.d(DEBUG_TAG, "Final processed text:\n" + processedText.toString());
             return processedText.toString();
         }
 
