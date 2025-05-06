@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -141,7 +142,7 @@ public class ScreenCaptureService extends Service {
             // First pass: collect all text and their bounds
             for (int i = 0; i < outputResults.size(); i++) {
                 OcrResultModel model = outputResults.get(i);
-                texts[i] = model.getText();
+                texts[i] = model.getLabel();
                 
                 // Create bounding rectangle from points
                 List<Point> points = model.getPoints();
