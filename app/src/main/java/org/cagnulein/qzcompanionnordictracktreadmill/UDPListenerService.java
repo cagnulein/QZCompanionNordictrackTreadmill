@@ -398,7 +398,7 @@ public class UDPListenerService extends Service {
                         }
                     }
                 } else {
-                    reqCachedInclination = reqInclination;
+                    reqCachedResistance = reqResistance;
             }            
 
         // device is treadmill
