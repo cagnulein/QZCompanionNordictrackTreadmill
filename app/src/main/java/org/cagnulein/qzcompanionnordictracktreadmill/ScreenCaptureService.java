@@ -291,9 +291,14 @@ public class ScreenCaptureService extends Service {
                     int roiHeight = fullHeight;
                     int roiY = fullHeight - roiHeight;
 
-                    // Create a new bitmap for the region of interest
+                    // Create a new bitmap for the region of interest (upper)                    
+                    Bitmap roiBitmap = Bitmap.createBitmap(fullBitmap, 0, 0, fullWidth, fullHeight / 5);
+
+                    // Create a new bitmap for the region of interest (bottom)                    
                     //Bitmap roiBitmap = Bitmap.createBitmap(fullBitmap, 0, roiY, fullWidth, roiHeight);
-		            Bitmap roiBitmap = Bitmap.createBitmap(fullBitmap, 0, 0, fullWidth, fullHeight);
+		            
+                    // full image
+                    //Bitmap roiBitmap = Bitmap.createBitmap(fullBitmap, 0, 0, fullWidth, fullHeight);
 
                     // Recycle the full bitmap as we no longer need it
                     fullBitmap.recycle();
