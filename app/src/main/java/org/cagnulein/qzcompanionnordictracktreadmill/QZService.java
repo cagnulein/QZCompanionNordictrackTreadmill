@@ -80,7 +80,7 @@ public class QZService extends Service {
                     writeLog( "Service run");
                     if(sharedPreferences.getBoolean("OCR", false)) {
                         getOCR();
-                        handler.postDelayed(runnable, 100);
+                        handler.postDelayed(runnable, 1000);
                     }
                     else
                         parse();
@@ -269,9 +269,15 @@ public class QZService extends Service {
 
             }
             if (lines[i].toLowerCase().contains("speed")) {
-                try {                    
-                    QZService.lastSpeed = "Changed KPH " + lines[i-1].trim();
-                    QZService.lastSpeedFloat = Float.parseFloat(lines[i-1].trim());
+                try {
+                    float speedValue = Float.parseFloat(lines[i-1].trim());
+                    
+                    if (lines[i].toLowerCase().contains("mph")) {
+                        speedValue = speedValue * 1.60934f;
+                    }
+                                            
+                    QZService.lastSpeed = "Changed KPH " + speedValue;                    
+                    QZService.lastSpeedFloat = speedValue;
                     writeLog("OCRlines speed found!");
                 } catch (Exception e) {
                     QZService.lastSpeed = "";

@@ -1,5 +1,7 @@
 package org.cagnulein.qzcompanionnordictracktreadmill;
 
+import static android.content.ContentValues.TAG;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Notification;
@@ -8,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
@@ -27,17 +30,19 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-import com.google.mlkit.vision.common.InputImage;
-import com.google.mlkit.vision.text.Text;
-import com.google.mlkit.vision.text.TextRecognition;
-import com.google.mlkit.vision.text.TextRecognizer;
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions;
-import android.media.ImageReader.OnImageAvailableListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+import com.baidu.paddle.fastdeploy.LitePowerMode;
+import com.equationl.fastdeployocr.OCR;
+import com.equationl.fastdeployocr.OcrConfig;
+import com.equationl.fastdeployocr.RunPrecision;
+import com.equationl.fastdeployocr.RunType;
+import com.equationl.fastdeployocr.bean.OcrResult;
+import com.equationl.fastdeployocr.bean.OcrResultModel;
+import com.equationl.fastdeployocr.callback.OcrInitCallback;
+import com.equationl.fastdeployocr.callback.OcrRunCallback;
 
 import android.graphics.Rect;
 import android.graphics.Point;
@@ -59,7 +64,7 @@ public class ScreenCaptureService extends Service {
     private static int IMAGES_PRODUCED;
 
     private static final String EXTRA_FOREGROUND_SERVICE_TYPE = "FOREGROUND_SERVICE_TYPE";
-    private static final int FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE = 0x10;
+    private static final int FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE = 0x20;
 
     private MediaProjection mMediaProjection;
     private String mStoreDir;
@@ -75,7 +80,7 @@ public class ScreenCaptureService extends Service {
     private int mRotation;
     private OrientationChangeCallback mOrientationChangeCallback;
 
-    private TextRecognizer recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS);
+    private OCR ocr;
 
 	 private static String lastText = "";
 	 private static String lastTextExtended = "";
@@ -125,6 +130,143 @@ public class ScreenCaptureService extends Service {
     }
 
     private class ImageAvailableListener implements ImageReader.OnImageAvailableListener {
+
+        private String processOcrResults(OcrResult result) {
+            final String DEBUG_TAG = "OCRDEBUG_PROCESS"; // Specific tag for debug logs in this method
+            
+            List<OcrResultModel> outputResults = result.getOutputRawResult();
+            StringBuilder processedText = new StringBuilder();
+            
+            Log.d(DEBUG_TAG, "Starting OCR processing with " + outputResults.size() + " detected text elements");
+            
+            // Create arrays to store detected text and their bounding boxes
+            String[] texts = new String[outputResults.size()];
+            Rect[] bounds = new Rect[outputResults.size()];
+            
+            // First pass: collect all text and their bounds
+            for (int i = 0; i < outputResults.size(); i++) {
+                OcrResultModel model = outputResults.get(i);
+                texts[i] = model.getLabel();
+                
+                Log.d(DEBUG_TAG, "Text element " + i + ": " + texts[i] + ", confidence: " + model.getConfidence());
+                
+                // Create bounding rectangle from points
+                List<Point> points = model.getPoints();
+                if (points.size() >= 4) {
+                    int left = Integer.MAX_VALUE;
+                    int top = Integer.MAX_VALUE;
+                    int right = 0;
+                    int bottom = 0;
+                    
+                    for (Point p : points) {
+                        left = Math.min(left, p.x);
+                        top = Math.min(top, p.y);
+                        right = Math.max(right, p.x);
+                        bottom = Math.max(bottom, p.y);
+                    }
+                    
+                    bounds[i] = new Rect(left, top, right, bottom);
+                    Log.d(DEBUG_TAG, "Bounds for element " + i + ": " + bounds[i].toString());
+                }
+            }
+            
+            // Second pass: categorize text as either a label or a value
+            List<Integer> labelIndices = new ArrayList<>();
+            List<Integer> valueIndices = new ArrayList<>();
+            
+            for (int i = 0; i < texts.length; i++) {
+                if (bounds[i] == null || texts[i] == null) continue;
+                
+                String text = texts[i].trim().toUpperCase();
+                
+                // Identify labels - they typically contain these words
+                if (text.contains("INCLINE") || text.contains("SPEED") || 
+                    text.contains("DISTANCE") || text.contains("TIME") || 
+                    text.contains("CALORIES") || text.contains("LAP")) {
+                    labelIndices.add(i);
+                    Log.d(DEBUG_TAG, "Identified LABEL: " + text + " at index " + i);
+                }
+                // Identify values - they are typically numeric
+                else if (text.matches(".*[0-9]+.*")) {
+                    valueIndices.add(i);
+                    Log.d(DEBUG_TAG, "Identified VALUE: " + text + " at index " + i);
+                } else {
+                    Log.d(DEBUG_TAG, "Unclassified text: " + text + " at index " + i);
+                }
+            }
+            
+            Log.d(DEBUG_TAG, "Found " + labelIndices.size() + " labels and " + valueIndices.size() + " values");
+            
+            // Third pass: match each label with the closest value
+            for (int labelIdx : labelIndices) {
+                Rect labelBounds = bounds[labelIdx];
+                int closestValueIdx = -1;
+                double closestDistance = Double.MAX_VALUE;
+                
+                Log.d(DEBUG_TAG, "Finding match for label: " + texts[labelIdx]);
+                
+                for (int valueIdx : valueIndices) {
+                    Rect valueBounds = bounds[valueIdx];
+                    
+                    // Calculate distance between centers of rectangles
+                    double labelCenterX = (labelBounds.left + labelBounds.right) / 2.0;
+                    double labelCenterY = (labelBounds.top + labelBounds.bottom) / 2.0;
+                    double valueCenterX = (valueBounds.left + valueBounds.right) / 2.0;
+                    double valueCenterY = (valueBounds.top + valueBounds.bottom) / 2.0;
+                    
+                    // For treadmill displays, values are typically above labels
+                    // So we prioritize values that are above (smaller Y) and aligned horizontally
+                    if (valueCenterY < labelCenterY) { // Value is above the label
+                        // Calculate horizontal distance
+                        double horizontalDist = Math.abs(labelCenterX - valueCenterX);
+                        // Calculate vertical distance
+                        double verticalDist = labelCenterY - valueCenterY;
+                        
+                        // Use a weighted distance that prioritizes horizontal alignment
+                        double distance = horizontalDist * 3 + verticalDist;
+                        
+                        Log.d(DEBUG_TAG, "  Candidate value: " + texts[valueIdx] + 
+                            ", horizontalDist: " + horizontalDist + 
+                            ", verticalDist: " + verticalDist + 
+                            ", weighted distance: " + distance);
+                        
+                        if (distance < closestDistance) {
+                            closestDistance = distance;
+                            closestValueIdx = valueIdx;
+                            Log.d(DEBUG_TAG, "  New closest value: " + texts[valueIdx] + 
+                                " with distance: " + closestDistance);
+                        }
+                    }
+                }
+                
+                // If we found a matching value
+                if (closestValueIdx >= 0) {
+                    Log.d(DEBUG_TAG, "MATCH FOUND: Label '" + texts[labelIdx] + 
+                        "' matched with value '" + texts[closestValueIdx] + "'");
+                    
+                    processedText.append(texts[closestValueIdx]).append("\n")
+                            .append(texts[labelIdx]).append("\n");
+                } else {
+                    Log.d(DEBUG_TAG, "No match found for label: " + texts[labelIdx]);
+                }
+            }
+            
+            // Add any remaining important information (like iFIT status, etc.)
+            for (int i = 0; i < texts.length; i++) {
+                if (texts[i] != null && 
+                    (texts[i].contains("iFIT") || 
+                    texts[i].contains("Workout") || 
+                    texts[i].contains("END") || 
+                    texts[i].contains("BEGIN"))) {
+                    Log.d(DEBUG_TAG, "Adding special text: " + texts[i]);
+                    processedText.append(texts[i]).append("\n");
+                }
+            }
+            
+            Log.d(DEBUG_TAG, "Final processed text:\n" + processedText.toString());
+            return processedText.toString();
+        }
+
         @Override
         public void onImageAvailable(ImageReader reader) {
             try (Image image = mImageReader.acquireLatestImage()) {
@@ -149,46 +291,57 @@ public class ScreenCaptureService extends Service {
                     int roiHeight = fullHeight;
                     int roiY = fullHeight - roiHeight;
 
-                    // Create a new bitmap for the region of interest
-                    Bitmap roiBitmap = Bitmap.createBitmap(fullBitmap, 0, roiY, fullWidth, roiHeight);
+                    // Create a new bitmap for the region of interest (upper)                    
+                    Bitmap roiBitmap = Bitmap.createBitmap(fullBitmap, 0, 0, fullWidth, fullHeight / 5);
+
+                    // Create a new bitmap for the region of interest (bottom)                    
+                    //Bitmap roiBitmap = Bitmap.createBitmap(fullBitmap, 0, roiY, fullWidth, roiHeight);
+		            
+                    // full image
+                    //Bitmap roiBitmap = Bitmap.createBitmap(fullBitmap, 0, 0, fullWidth, fullHeight);
 
                     // Recycle the full bitmap as we no longer need it
                     fullBitmap.recycle();
 
                     // Use roiBitmap for OCR
-                    InputImage inputImage = InputImage.fromBitmap(roiBitmap, 0);
 
-                    Task<Text> result = recognizer.process(inputImage)
-                        .addOnSuccessListener(new OnSuccessListener<Text>() {
+                        ocr.run(roiBitmap, new OcrRunCallback() {
                             @Override
-                            public void onSuccess(Text result) {
-                                Log.i("OCR","processed");
-                                // Process OCR result as before
-                                String resultText = result.getText();
-                                lastText = resultText;
-                                lastTextExtended = "";
-                                for (Text.TextBlock block : result.getTextBlocks()) {
-                                    String blockText = block.getText();
-                                    Log.i("OCR",blockText);
-                                    Rect blockFrame = block.getBoundingBox();
-                                    // Adjust the Y coordinate of the bounding box
-                                    if (blockFrame != null) {
-                                        blockFrame.offset(0, roiY);
-                                    }
-                                    lastTextExtended += blockText + "$$" + blockFrame.toString() + "§§";
-                                }
+                            public void onSuccess(OcrResult result) {
+                                lastText = processOcrResults(result);
+                                List<OcrResultModel> outputRawResult = result.getOutputRawResult();
+        
+                                StringBuilder text = new StringBuilder("inferenceTime=" + result.getInferenceTime() + " ms\n");
+                                
+                                for (int index = 0; index < outputRawResult.size(); index++) {
+                                    OcrResultModel ocrResultModel = outputRawResult.get(index);
+                                    // 文字方向 ocrResultModel.clsLabel 可能为 "0" 或 "180"
+                                    text.append(index)
+                                        .append("；confidence ")
+                                        .append(ocrResultModel.getConfidence())
+                                        .append("；points：")
+                                        .append(ocrResultModel.getPoints())
+                                        .append("\n");
+                                }                          
+
+                                Log.d("OCR","processed " + lastText);
+                                Log.d("OCR","rawprocessed " + text);
+                                /*Bitmap imgWithBox = result.getImgWithBox();
+                                long inferenceTime = (long) result.getInferenceTime();
+                                List<OcrResultModel> outputRawResult = result.getOutputRawResult();*/
                                 roiBitmap.recycle();
                                 isRunning = false;
                             }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
+
                             @Override
-                            public void onFailure(Exception e) {
+                            public void onFail(Throwable e) {
+                                Log.e(TAG, "onFail！", e);
                                 isRunning = false;
                             }
                         });
                 }
             } catch (Exception e) {
+                isRunning = false;
                 e.printStackTrace();
                 isRunning = false;
             }
@@ -262,6 +415,42 @@ public class ScreenCaptureService extends Service {
             stopSelf();
         }
 
+        ocr = new OCR(getApplicationContext());
+
+        OcrConfig config = new OcrConfig();
+// Use the proper Kotlin property access pattern for Java
+// Instead of direct field access, use the setter methods generated by Kotlin
+
+// Set model path to assets/models/ch_PP-OCRv2
+        config.setModelPath("models/ch_PP-OCRv2"); // Models in assets directory
+
+// Set model file names
+        config.setClsModelFileName("cls");
+        config.setDetModelFileName("det");
+        config.setRecModelFileName("rec");
+
+// Set run type to run all OCR steps
+        config.setRunType(RunType.All);
+
+// Use full CPU power for better performance
+        config.setCpuPowerMode(LitePowerMode.LITE_POWER_HIGH); // Note: LITE_POWER_FULL seems to be missing from enum, using HIGH
+
+// Set precision mode for all models to FP16
+        config.setRecRunPrecision(RunPrecision.LiteFp16);
+        config.setDetRunPrecision(RunPrecision.LiteFp16);
+        config.setClsRunPrecision(RunPrecision.LiteFp16);
+
+        ocr.initModel(config, new OcrInitCallback() {
+            @Override
+            public void onSuccess() {
+                Log.i(TAG, "init onSuccess");
+            }
+                @Override
+                public void onFail(Throwable e) {
+                    Log.e(TAG, "onFail", e);
+                }
+            });
+
         // start capture handling thread
         new Thread() {
             @Override
@@ -315,9 +504,6 @@ public class ScreenCaptureService extends Service {
                 WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
                 mDisplay = windowManager.getDefaultDisplay();
 
-                // create virtual display depending on device width / height
-                createVirtualDisplay();
-
                 // register orientation change callback
                 mOrientationChangeCallback = new OrientationChangeCallback(this);
                 if (mOrientationChangeCallback.canDetectOrientation()) {
@@ -326,6 +512,9 @@ public class ScreenCaptureService extends Service {
 
                 // register media projection stop callback
                 mMediaProjection.registerCallback(new MediaProjectionStopCallback(), mHandler);
+
+                // create virtual display depending on device width / height
+                createVirtualDisplay();
             }
         }
     }
