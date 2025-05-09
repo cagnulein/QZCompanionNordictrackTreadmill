@@ -33,6 +33,7 @@ public class UDPListenerService extends Service {
     static int y1Speed;      //vertical position of slider at 2.0
     static int y1Inclination;    //vertical position of slider at 0.0
     static double lastReqResistance = 0;
+	static double lastReqInclination = 0;
     static int y1Resistance;
 
     static long lastSwipeMs = 0;
@@ -226,6 +227,7 @@ public class UDPListenerService extends Service {
                 break;                      
             case s27i:
                 lastReqResistance = 1; // Starting from min resistance
+				lastReqInclination = 0; // Starting from min inclination
                 y1Resistance = 803;    // bottomY position for both incline and resistance sliders
                 break;
     
