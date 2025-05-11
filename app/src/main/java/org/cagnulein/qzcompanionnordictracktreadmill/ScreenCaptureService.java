@@ -61,6 +61,13 @@ public class ScreenCaptureService extends Service {
     private static final String STOP = "STOP";
     private static final String SCREENCAP_NAME = "screencap";
 
+    private static final String SPEED_LABEL = "SPEED";
+    private static Rect cachedSpeedLabelBounds = null;
+    private static Rect cachedSpeedValueBounds = null;
+    private static long cacheTimestamp = 0;
+    private static final long CACHE_EXPIRY_MS = 60000;
+
+
     private static int IMAGES_PRODUCED;
 
     private static final String EXTRA_FOREGROUND_SERVICE_TYPE = "FOREGROUND_SERVICE_TYPE";
@@ -133,23 +140,23 @@ public class ScreenCaptureService extends Service {
 
         private String processOcrResults(OcrResult result) {
             final String DEBUG_TAG = "OCRDEBUG_PROCESS"; // Specific tag for debug logs in this method
-            
+
             List<OcrResultModel> outputResults = result.getOutputRawResult();
             StringBuilder processedText = new StringBuilder();
-            
+
             Log.d(DEBUG_TAG, "Starting OCR processing with " + outputResults.size() + " detected text elements");
-            
+
             // Create arrays to store detected text and their bounding boxes
             String[] texts = new String[outputResults.size()];
             Rect[] bounds = new Rect[outputResults.size()];
-            
+
             // First pass: collect all text and their bounds
             for (int i = 0; i < outputResults.size(); i++) {
                 OcrResultModel model = outputResults.get(i);
                 texts[i] = model.getLabel();
-                
+
                 Log.d(DEBUG_TAG, "Text element " + i + ": " + texts[i] + ", confidence: " + model.getConfidence());
-                
+
                 // Create bounding rectangle from points
                 List<Point> points = model.getPoints();
                 if (points.size() >= 4) {
@@ -157,34 +164,46 @@ public class ScreenCaptureService extends Service {
                     int top = Integer.MAX_VALUE;
                     int right = 0;
                     int bottom = 0;
-                    
+
                     for (Point p : points) {
                         left = Math.min(left, p.x);
                         top = Math.min(top, p.y);
                         right = Math.max(right, p.x);
                         bottom = Math.max(bottom, p.y);
                     }
-                    
+
                     bounds[i] = new Rect(left, top, right, bottom);
                     Log.d(DEBUG_TAG, "Bounds for element " + i + ": " + bounds[i].toString());
                 }
             }
-            
+
             // Second pass: categorize text as either a label or a value
             List<Integer> labelIndices = new ArrayList<>();
             List<Integer> valueIndices = new ArrayList<>();
-            
+            boolean speedLabelFound = false;
+            int speedLabelIndex = -1;
+
             for (int i = 0; i < texts.length; i++) {
                 if (bounds[i] == null || texts[i] == null) continue;
-                
+
                 String text = texts[i].trim().toUpperCase();
-                
+
                 // Identify labels - they typically contain these words
-                if (text.contains("INCLINE") || text.contains("SPEED") || 
-                    text.contains("DISTANCE") || text.contains("TIME") || 
-                    text.contains("CALORIES") || text.contains("LAP")) {
+                if (text.contains("INCLINE") || text.contains("SPEED") ||
+                        text.contains("DISTANCE") || text.contains("TIME") ||
+                        text.contains("CALORIES") || text.contains("LAP")) {
                     labelIndices.add(i);
                     Log.d(DEBUG_TAG, "Identified LABEL: " + text + " at index " + i);
+
+                    // Check if this is the speed label
+                    if (text.contains(SPEED_LABEL)) {
+                        speedLabelFound = true;
+                        speedLabelIndex = i;
+                        // Update our cached speed label bounds
+                        cachedSpeedLabelBounds = bounds[i];
+                        cacheTimestamp = System.currentTimeMillis();
+                        Log.d(DEBUG_TAG, "Updated cached SPEED label bounds: " + cachedSpeedLabelBounds);
+                    }
                 }
                 // Identify values - they are typically numeric
                 else if (text.matches(".*[0-9]+.*")) {
@@ -194,75 +213,140 @@ public class ScreenCaptureService extends Service {
                     Log.d(DEBUG_TAG, "Unclassified text: " + text + " at index " + i);
                 }
             }
-            
+
             Log.d(DEBUG_TAG, "Found " + labelIndices.size() + " labels and " + valueIndices.size() + " values");
-            
+
+            // Check if we need to use the cached speed label
+            if (!speedLabelFound && cachedSpeedLabelBounds != null) {
+                long currentTime = System.currentTimeMillis();
+                // Only use cache if it hasn't expired
+                if (currentTime - cacheTimestamp < CACHE_EXPIRY_MS) {
+                    Log.d(DEBUG_TAG, "Speed label not found in current frame. Using cached bounds.");
+                    // Create a dummy index for the cached speed label
+                    speedLabelIndex = texts.length; // Use an index beyond the array size to avoid conflicts
+                    labelIndices.add(speedLabelIndex); // Add to label indices
+
+                    // We don't have the actual text in the current frame, so simulate it
+                    String[] newTexts = new String[texts.length + 1];
+                    System.arraycopy(texts, 0, newTexts, 0, texts.length);
+                    newTexts[speedLabelIndex] = SPEED_LABEL;
+                    texts = newTexts;
+
+                    // Also add the cached bounds
+                    Rect[] newBounds = new Rect[bounds.length + 1];
+                    System.arraycopy(bounds, 0, newBounds, 0, bounds.length);
+                    newBounds[speedLabelIndex] = cachedSpeedLabelBounds;
+                    bounds = newBounds;
+
+                    Log.d(DEBUG_TAG, "Added cached SPEED label at index " + speedLabelIndex);
+                } else {
+                    Log.d(DEBUG_TAG, "Cached speed label has expired. Not using cache.");
+                    // Clear the cache after expiry
+                    cachedSpeedLabelBounds = null;
+                    cachedSpeedValueBounds = null;
+                }
+            }
+
             // Third pass: match each label with the closest value
             for (int labelIdx : labelIndices) {
                 Rect labelBounds = bounds[labelIdx];
+                if (labelBounds == null) continue;
+
                 int closestValueIdx = -1;
                 double closestDistance = Double.MAX_VALUE;
-                
-                Log.d(DEBUG_TAG, "Finding match for label: " + texts[labelIdx]);
-                
-                for (int valueIdx : valueIndices) {
-                    Rect valueBounds = bounds[valueIdx];
-                    
-                    // Calculate distance between centers of rectangles
-                    double labelCenterX = (labelBounds.left + labelBounds.right) / 2.0;
-                    double labelCenterY = (labelBounds.top + labelBounds.bottom) / 2.0;
-                    double valueCenterX = (valueBounds.left + valueBounds.right) / 2.0;
-                    double valueCenterY = (valueBounds.top + valueBounds.bottom) / 2.0;
-                    
-                    // For treadmill displays, values are typically above labels
-                    // So we prioritize values that are above (smaller Y) and aligned horizontally
-                    if (valueCenterY < labelCenterY) { // Value is above the label
-                        // Calculate horizontal distance
-                        double horizontalDist = Math.abs(labelCenterX - valueCenterX);
-                        // Calculate vertical distance
-                        double verticalDist = labelCenterY - valueCenterY;
-                        
-                        // Use a weighted distance that prioritizes horizontal alignment
-                        double distance = horizontalDist * 3 + verticalDist;
-                        
-                        Log.d(DEBUG_TAG, "  Candidate value: " + texts[valueIdx] + 
-                            ", horizontalDist: " + horizontalDist + 
-                            ", verticalDist: " + verticalDist + 
-                            ", weighted distance: " + distance);
-                        
-                        if (distance < closestDistance) {
-                            closestDistance = distance;
+
+                // Check if we have a cached value for the speed label
+                boolean isSpeedLabel = (labelIdx == speedLabelIndex);
+
+                if (isSpeedLabel && cachedSpeedValueBounds != null &&
+                        System.currentTimeMillis() - cacheTimestamp < CACHE_EXPIRY_MS) {
+                    // Try to find if the cached value position still has a value in it
+                    for (int valueIdx : valueIndices) {
+                        Rect valueBounds = bounds[valueIdx];
+                        if (valueBounds != null &&
+                                valueBounds.intersect(cachedSpeedValueBounds) &&
+                                (float)valueBounds.width() * valueBounds.height() /
+                                        (cachedSpeedValueBounds.width() * cachedSpeedValueBounds.height()) > 0.5f) {
+                            // Found a value in approximately the same position as our cached speed value
                             closestValueIdx = valueIdx;
-                            Log.d(DEBUG_TAG, "  New closest value: " + texts[valueIdx] + 
-                                " with distance: " + closestDistance);
+                            Log.d(DEBUG_TAG, "Found value at cached position for SPEED: " + texts[valueIdx]);
+                            break;
                         }
                     }
                 }
-                
+
+                // If we couldn't find a value at the cached position, or this isn't the speed label,
+                // find the closest value normally
+                if (closestValueIdx == -1) {
+                    Log.d(DEBUG_TAG, "Finding match for label: " + texts[labelIdx]);
+
+                    for (int valueIdx : valueIndices) {
+                        Rect valueBounds = bounds[valueIdx];
+                        if (valueBounds == null) continue;
+
+                        // Calculate distance between centers of rectangles
+                        double labelCenterX = (labelBounds.left + labelBounds.right) / 2.0;
+                        double labelCenterY = (labelBounds.top + labelBounds.bottom) / 2.0;
+                        double valueCenterX = (valueBounds.left + valueBounds.right) / 2.0;
+                        double valueCenterY = (valueBounds.top + valueBounds.bottom) / 2.0;
+
+                        // For treadmill displays, values are typically above labels
+                        // So we prioritize values that are above (smaller Y) and aligned horizontally
+                        if (valueCenterY < labelCenterY) { // Value is above the label
+                            // Calculate horizontal distance
+                            double horizontalDist = Math.abs(labelCenterX - valueCenterX);
+                            // Calculate vertical distance
+                            double verticalDist = labelCenterY - valueCenterY;
+
+                            // Use a weighted distance that prioritizes horizontal alignment
+                            double distance = horizontalDist * 3 + verticalDist;
+
+                            Log.d(DEBUG_TAG, "  Candidate value: " + texts[valueIdx] +
+                                    ", horizontalDist: " + horizontalDist +
+                                    ", verticalDist: " + verticalDist +
+                                    ", weighted distance: " + distance);
+
+                            if (distance < closestDistance) {
+                                closestDistance = distance;
+                                closestValueIdx = valueIdx;
+                                Log.d(DEBUG_TAG, "  New closest value: " + texts[valueIdx] +
+                                        " with distance: " + closestDistance);
+                            }
+                        }
+                    }
+                }
+
                 // If we found a matching value
                 if (closestValueIdx >= 0) {
-                    Log.d(DEBUG_TAG, "MATCH FOUND: Label '" + texts[labelIdx] + 
-                        "' matched with value '" + texts[closestValueIdx] + "'");
-                    
+                    Log.d(DEBUG_TAG, "MATCH FOUND: Label '" + texts[labelIdx] +
+                            "' matched with value '" + texts[closestValueIdx] + "'");
+
+                    // If this is the speed label, update our cached value bounds
+                    if (isSpeedLabel) {
+                        cachedSpeedValueBounds = bounds[closestValueIdx];
+                        cacheTimestamp = System.currentTimeMillis();
+                        Log.d(DEBUG_TAG, "Updated cached SPEED value bounds: " + cachedSpeedValueBounds);
+                    }
+
                     processedText.append(texts[closestValueIdx]).append("\n")
                             .append(texts[labelIdx]).append("\n");
                 } else {
                     Log.d(DEBUG_TAG, "No match found for label: " + texts[labelIdx]);
                 }
             }
-            
+
             // Add any remaining important information (like iFIT status, etc.)
             for (int i = 0; i < texts.length; i++) {
-                if (texts[i] != null && 
-                    (texts[i].contains("iFIT") || 
-                    texts[i].contains("Workout") || 
-                    texts[i].contains("END") || 
-                    texts[i].contains("BEGIN"))) {
+                if (texts[i] != null &&
+                        (texts[i].contains("iFIT") ||
+                                texts[i].contains("Workout") ||
+                                texts[i].contains("END") ||
+                                texts[i].contains("BEGIN"))) {
                     Log.d(DEBUG_TAG, "Adding special text: " + texts[i]);
                     processedText.append(texts[i]).append("\n");
                 }
             }
-            
+
             Log.d(DEBUG_TAG, "Final processed text:\n" + processedText.toString());
             return processedText.toString();
         }
