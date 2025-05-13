@@ -61,7 +61,8 @@ public class ScreenCaptureService extends Service {
     private static final String STOP = "STOP";
     private static final String SCREENCAP_NAME = "screencap";
 
-    private static final String SPEED_LABEL = "SPEED";
+    private static final String SPEED_LABEL_BASE = "SPEED";
+    private static String cachedSpeedLabelText = SPEED_LABEL_BASE;
     private static Rect cachedSpeedLabelBounds = null;
     private static Rect cachedSpeedValueBounds = null;
     private static long cacheTimestamp = 0;
@@ -196,13 +197,15 @@ public class ScreenCaptureService extends Service {
                     Log.d(DEBUG_TAG, "Identified LABEL: " + text + " at index " + i);
 
                     // Check if this is the speed label
-                    if (text.contains(SPEED_LABEL)) {
+                    if (text.contains(SPEED_LABEL_BASE)) {
                         speedLabelFound = true;
                         speedLabelIndex = i;
-                        // Update our cached speed label bounds
+                        // Update our cached speed label bounds and the full text
                         cachedSpeedLabelBounds = bounds[i];
+                        cachedSpeedLabelText = text;
                         cacheTimestamp = System.currentTimeMillis();
-                        Log.d(DEBUG_TAG, "Updated cached SPEED label bounds: " + cachedSpeedLabelBounds);
+                        Log.d(DEBUG_TAG, "Updated cached Speed label bounds: " + cachedSpeedLabelBounds);
+                        Log.d(DEBUG_TAG, "Updated cached Speed label text: " + cachedSpeedLabelText);
                     }
                 }
                 // Identify values - they are typically numeric
@@ -226,10 +229,10 @@ public class ScreenCaptureService extends Service {
                     speedLabelIndex = texts.length; // Use an index beyond the array size to avoid conflicts
                     labelIndices.add(speedLabelIndex); // Add to label indices
 
-                    // We don't have the actual text in the current frame, so simulate it
+                    // We don't have the actual text in the current frame, so use the cached text
                     String[] newTexts = new String[texts.length + 1];
                     System.arraycopy(texts, 0, newTexts, 0, texts.length);
-                    newTexts[speedLabelIndex] = SPEED_LABEL;
+                    newTexts[speedLabelIndex] = cachedSpeedLabelText;
                     texts = newTexts;
 
                     // Also add the cached bounds
@@ -238,7 +241,7 @@ public class ScreenCaptureService extends Service {
                     newBounds[speedLabelIndex] = cachedSpeedLabelBounds;
                     bounds = newBounds;
 
-                    Log.d(DEBUG_TAG, "Added cached SPEED label at index " + speedLabelIndex);
+                    Log.d(DEBUG_TAG, "Added cached Speed label at index " + speedLabelIndex + ": " + cachedSpeedLabelText);
                 } else {
                     Log.d(DEBUG_TAG, "Cached speed label has expired. Not using cache.");
                     // Clear the cache after expiry
@@ -269,7 +272,7 @@ public class ScreenCaptureService extends Service {
                                         (cachedSpeedValueBounds.width() * cachedSpeedValueBounds.height()) > 0.5f) {
                             // Found a value in approximately the same position as our cached speed value
                             closestValueIdx = valueIdx;
-                            Log.d(DEBUG_TAG, "Found value at cached position for SPEED: " + texts[valueIdx]);
+                            Log.d(DEBUG_TAG, "Found value at cached position for Speed: " + texts[valueIdx]);
                             break;
                         }
                     }
