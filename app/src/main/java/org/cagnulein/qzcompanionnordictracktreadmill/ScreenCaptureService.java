@@ -150,14 +150,11 @@ public class ScreenCaptureService extends Service {
             // Create arrays to store detected text and their bounding boxes
             String[] texts = new String[outputResults.size()];
             Rect[] bounds = new Rect[outputResults.size()];
-            // Create an array to store confidence values
-            float[] confidences = new float[outputResults.size()];
 
             // First pass: collect all text and their bounds
             for (int i = 0; i < outputResults.size(); i++) {
                 OcrResultModel model = outputResults.get(i);
                 texts[i] = model.getLabel();
-                confidences[i] = model.getConfidence(); // Store the confidence value
 
                 Log.d(DEBUG_TAG, "Text element " + i + ": " + texts[i] + ", confidence: " + model.getConfidence());
 
@@ -243,12 +240,6 @@ public class ScreenCaptureService extends Service {
                     System.arraycopy(bounds, 0, newBounds, 0, bounds.length);
                     newBounds[speedLabelIndex] = cachedSpeedLabelBounds;
                     bounds = newBounds;
-
-                    // Also extend the confidences array for the cached label
-                    float[] newConfidences = new float[confidences.length + 1];
-                    System.arraycopy(confidences, 0, newConfidences, 0, confidences.length);
-                    newConfidences[speedLabelIndex] = 1.0f; // Assume high confidence for cached label
-                    confidences = newConfidences;
 
                     Log.d(DEBUG_TAG, "Added cached Speed label at index " + speedLabelIndex + ": " + cachedSpeedLabelText);
                 } else {
@@ -340,26 +331,8 @@ public class ScreenCaptureService extends Service {
                         Log.d(DEBUG_TAG, "Updated cached SPEED value bounds: " + cachedSpeedValueBounds);
                     }
 
-                    // Check if the label contains "SPEED" or "INCLINE" and apply confidence threshold
-                    String labelText = texts[labelIdx].trim().toUpperCase();
-                    boolean isSpeedOrIncline = labelText.contains("SPEED") || labelText.contains("INCLINE");
-
-                    if (isSpeedOrIncline) {
-                        // For SPEED or INCLINE, only use values with confidence > 0.9
-                        if (closestValueIdx < confidences.length && confidences[closestValueIdx] > 0.9f) {
-                            Log.d(DEBUG_TAG, "Using " + labelText + " value with confidence: " +
-                                    confidences[closestValueIdx]);
-                            processedText.append(texts[closestValueIdx]).append("\n")
-                                    .append(texts[labelIdx]).append("\n");
-                        } else {
-                            Log.d(DEBUG_TAG, "Skipping " + labelText + " value due to low confidence: " +
-                                    (closestValueIdx < confidences.length ? confidences[closestValueIdx] : "unknown"));
-                        }
-                    } else {
-                        // For other labels, add normally without confidence check
-                        processedText.append(texts[closestValueIdx]).append("\n")
-                                .append(texts[labelIdx]).append("\n");
-                    }
+                    processedText.append(texts[closestValueIdx]).append("\n")
+                            .append(texts[labelIdx]).append("\n");
                 } else {
                     Log.d(DEBUG_TAG, "No match found for label: " + texts[labelIdx]);
                 }
