@@ -141,6 +141,7 @@ public class ScreenCaptureService extends Service {
 
         private String processOcrResults(OcrResult result) {
             final String DEBUG_TAG = "OCRDEBUG_PROCESS"; // Specific tag for debug logs in this method
+            final String INCLINE_PATTERN = "-?\\d+\\.\\d+"; // Pattern to match valid incline values (e.g., -15.0 to 30.0)
 
             List<OcrResultModel> outputResults = result.getOutputRawResult();
             StringBuilder processedText = new StringBuilder();
@@ -331,8 +332,37 @@ public class ScreenCaptureService extends Service {
                         Log.d(DEBUG_TAG, "Updated cached SPEED value bounds: " + cachedSpeedValueBounds);
                     }
 
-                    processedText.append(texts[closestValueIdx]).append("\n")
-                            .append(texts[labelIdx]).append("\n");
+                    String valueText = texts[closestValueIdx].trim();
+                    String labelText = texts[labelIdx].trim().toUpperCase();
+
+                    // Add specific validation for incline values
+                    if (labelText.contains("INCLINE")) {
+                        // Check if the value matches our incline pattern (e.g., "5.0", "12.0")
+                        if (valueText.matches(INCLINE_PATTERN)) {
+                            // Valid incline value format
+                            try {
+                                double inclineValue = Double.parseDouble(valueText);
+                                // Check if the value is in a reasonable range (-15.0 to 30.0)
+                                if (inclineValue >= -15.0 && inclineValue <= 30.0) {
+                                    // Valid incline value, add it to the processed text
+                                    processedText.append(valueText).append("\n")
+                                            .append(texts[labelIdx]).append("\n");
+                                    Log.d(DEBUG_TAG, "Valid incline value: " + valueText);
+                                } else {
+                                    Log.d(DEBUG_TAG, "Incline value out of range: " + valueText);
+                                }
+                            } catch (NumberFormatException e) {
+                                Log.d(DEBUG_TAG, "Failed to parse incline value: " + valueText);
+                            }
+                        } else {
+                            Log.d(DEBUG_TAG, "Invalid incline value format: " + valueText +
+                                    " - doesn't match pattern: " + INCLINE_PATTERN);
+                        }
+                    } else {
+                        // For all other labels, just add the value and label
+                        processedText.append(valueText).append("\n")
+                                .append(texts[labelIdx]).append("\n");
+                    }
                 } else {
                     Log.d(DEBUG_TAG, "No match found for label: " + texts[labelIdx]);
                 }
