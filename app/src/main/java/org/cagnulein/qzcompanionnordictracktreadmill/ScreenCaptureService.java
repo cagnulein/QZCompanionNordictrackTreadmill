@@ -550,7 +550,7 @@ public class ScreenCaptureService extends Service {
         config.setRunType(RunType.All);
 
 // Use full CPU power for better performance
-        config.setCpuPowerMode(LitePowerMode.LITE_POWER_HIGH); // Note: LITE_POWER_FULL seems to be missing from enum, using HIGH
+        config.setCpuPowerMode(LitePowerMode.LITE_POWER_FULL);
 
 // Set precision mode for all models to FP16
         config.setRecRunPrecision(RunPrecision.LiteFp16);
