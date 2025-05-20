@@ -384,6 +384,32 @@ public class ScreenCaptureService extends Service {
             return processedText.toString();
         }
 
+        private Bitmap preprocessForOcr(Bitmap input) {
+            // Create a copy to avoid modifying the original
+            Bitmap processed = input.copy(input.getConfig(), true);
+            
+            // Option 1: Increase contrast
+            Canvas canvas = new Canvas(processed);
+            Paint paint = new Paint();
+            ColorMatrix cm = new ColorMatrix();
+            cm.set(new float[] {
+                    1.5f, 0, 0, 0, -50, // Red channel - increase contrast
+                    0, 1.5f, 0, 0, -50, // Green channel - increase contrast
+                    0, 0, 1.5f, 0, -50, // Blue channel - increase contrast
+                    0, 0, 0, 1, 0       // Alpha channel - unchanged
+            });
+            paint.setColorFilter(new ColorMatrixColorFilter(cm));
+            canvas.drawBitmap(processed, 0, 0, paint);
+            
+            // Option 2: Convert to grayscale for better text detection
+            ColorMatrix grayMatrix = new ColorMatrix();
+            grayMatrix.setSaturation(0);
+            paint.setColorFilter(new ColorMatrixColorFilter(grayMatrix));
+            canvas.drawBitmap(processed, 0, 0, paint);
+            
+            return processed;
+        }
+
         @Override
         public void onImageAvailable(ImageReader reader) {
             try (Image image = mImageReader.acquireLatestImage()) {
@@ -409,7 +435,7 @@ public class ScreenCaptureService extends Service {
                     int roiY = fullHeight - roiHeight;
 
                     // Create a new bitmap for the region of interest (upper)                    
-                    Bitmap roiBitmap = Bitmap.createBitmap(fullBitmap, 0, 0, fullWidth, fullHeight / 5);
+                    Bitmap roiBitmap = Bitmap.createBitmap(preprocessForOcr(fullBitmap), 0, 0, fullWidth, fullHeight / 5);
 
                     // Create a new bitmap for the region of interest (bottom)                    
                     //Bitmap roiBitmap = Bitmap.createBitmap(fullBitmap, 0, roiY, fullWidth, roiHeight);
