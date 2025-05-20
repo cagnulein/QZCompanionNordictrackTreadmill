@@ -25,6 +25,11 @@ import android.util.Log;
 import android.view.Display;
 import android.view.OrientationEventListener;
 import android.view.WindowManager;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.ColorFilter;
 
 import java.io.File;
 import java.io.FileOutputStream;
