@@ -596,7 +596,7 @@ public class ScreenCaptureService extends Service {
         config.setClsRunPrecision(RunPrecision.LiteFp16);
         
         // Enable drawing of text position boxes for debugging
-        config.setIsDrwwTextPositionBox(true);
+        config.setDrwwTextPositionBox(true);
 
         ocr.initModel(config, new OcrInitCallback() {
             @Override
