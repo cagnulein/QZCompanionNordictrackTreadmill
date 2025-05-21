@@ -83,32 +83,64 @@ public class ScreenCaptureService extends Service {
     private int mDensity;
     private int mWidth;
     private int mHeight;
-	 private static int mWidthImage;
-	 private static int mHeightImage;
+    private static int mWidthImage;
+    private static int mHeightImage;
     private int mRotation;
     private OrientationChangeCallback mOrientationChangeCallback;
 
     private OCR ocr;
 
-	 private static String lastText = "";
-	 private static String lastTextExtended = "";
-	 private static boolean isRunning = false;
+    private static String lastText = "";
+    private static String lastTextExtended = "";
+    private static boolean isRunning = false;
 
-	 public static String getLastText() {
-		 return lastText;
-	 }
+    /**
+     * Saves a bitmap image for debugging purposes without any compression or quality loss
+     * @param bitmap The bitmap to save
+     * @param prefix The prefix for the filename to identify the source/purpose
+     */
+    private void saveImageForDebug(Bitmap bitmap, String prefix) {
+        try {
+            // Create directory if it doesn't exist
+            File storeDirectory = new File(mStoreDir);
+            if (!storeDirectory.exists()) {
+                boolean success = storeDirectory.mkdirs();
+                if (!success) {
+                    Log.e(TAG, "Failed to create debug directory.");
+                    return;
+                }
+            }
+            
+            // Create file with timestamp to avoid overwriting
+            File file = new File(mStoreDir, prefix + "_" + System.currentTimeMillis() + ".png");
+            
+            // Save as PNG (lossless format) with 100% quality
+            FileOutputStream fos = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.flush();
+            fos.close();
+            
+            Log.d(TAG, "Debug image saved: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to save debug image", e);
+        }
+    }
+
+    public static String getLastText() {
+        return lastText;
+    }
 
     public static String getLastTextExtended() {
-		 return lastTextExtended;
-	 }
+        return lastTextExtended;
+    }
 
     public static int getImageWidth() {
-		 return mWidthImage;
-		}
+        return mWidthImage;
+    }
 
-	 public static int getImageHeight() {
-		 return mHeightImage;
-	 }
+    public static int getImageHeight() {
+        return mHeightImage;
+    }
 
     public static Intent getStartIntent(Context context, int resultCode, Intent data) {
         Intent intent = new Intent(context, ScreenCaptureService.class);
@@ -388,7 +420,7 @@ public class ScreenCaptureService extends Service {
         public void onImageAvailable(ImageReader reader) {
             try (Image image = mImageReader.acquireLatestImage()) {
                 if (image != null && !isRunning) {
-                    Log.i("OCR","running");
+                    Log.i("OCR", "Running OCR processing");
                     Image.Plane[] planes = image.getPlanes();
                     ByteBuffer buffer = planes[0].getBuffer();
                     int pixelStride = planes[0].getPixelStride();
@@ -402,64 +434,70 @@ public class ScreenCaptureService extends Service {
                     int fullHeight = mHeight;
                     Bitmap fullBitmap = Bitmap.createBitmap(fullWidth, fullHeight, Bitmap.Config.ARGB_8888);
                     fullBitmap.copyPixelsFromBuffer(buffer);
+                    
+                    // Save full screen bitmap for debugging
+                    saveImageForDebug(fullBitmap, "full_screen");
 
-                    // Calculate the region of interest (last 100 pixels)
-                    //int roiHeight = Math.min(100, fullHeight);
+                    // Calculate the region of interest
                     int roiHeight = fullHeight;
                     int roiY = fullHeight - roiHeight;
 
-                    // Create a new bitmap for the region of interest (upper)                    
-                    Bitmap roiBitmap = Bitmap.createBitmap(fullBitmap, 0, 0, fullWidth, fullHeight / 5);
+                    // Create a new bitmap for the region of interest (top 20%)
+                    Bitmap topRegion = Bitmap.createBitmap(fullBitmap, 0, 0, fullWidth, fullHeight / 5);
+                    saveImageForDebug(topRegion, "top_region");
+                    
+                    // Use the top region for OCR (as in original code)
+                    Bitmap roiBitmap = topRegion;
 
-                    // Create a new bitmap for the region of interest (bottom)                    
-                    //Bitmap roiBitmap = Bitmap.createBitmap(fullBitmap, 0, roiY, fullWidth, roiHeight);
-		            
-                    // full image
-                    //Bitmap roiBitmap = Bitmap.createBitmap(fullBitmap, 0, 0, fullWidth, fullHeight);
-
-                    // Recycle the full bitmap as we no longer need it
+                    // Recycle the full bitmap and unused regions as we no longer need them
                     fullBitmap.recycle();
 
                     // Use roiBitmap for OCR
-
-                        ocr.run(roiBitmap, new OcrRunCallback() {
-                            @Override
-                            public void onSuccess(OcrResult result) {
-                                lastText = processOcrResults(result);
-                                List<OcrResultModel> outputRawResult = result.getOutputRawResult();
-        
-                                StringBuilder text = new StringBuilder("inferenceTime=" + result.getInferenceTime() + " ms\n");
-                                
-                                for (int index = 0; index < outputRawResult.size(); index++) {
-                                    OcrResultModel ocrResultModel = outputRawResult.get(index);
-                                    // 文字方向 ocrResultModel.clsLabel 可能为 "0" 或 "180"
-                                    text.append(index)
-                                        .append("；confidence ")
-                                        .append(ocrResultModel.getConfidence())
-                                        .append("；points：")
-                                        .append(ocrResultModel.getPoints())
-                                        .append("\n");
-                                }                          
-
-                                Log.d("OCR","processed " + lastText);
-                                Log.d("OCR","rawprocessed " + text);
-                                /*Bitmap imgWithBox = result.getImgWithBox();
-                                long inferenceTime = (long) result.getInferenceTime();
-                                List<OcrResultModel> outputRawResult = result.getOutputRawResult();*/
-                                roiBitmap.recycle();
-                                isRunning = false;
+                    ocr.run(roiBitmap, new OcrRunCallback() {
+                        @Override
+                        public void onSuccess(OcrResult result) {
+                            // Save the OCR result image with bounding boxes
+                            Bitmap imgWithBox = result.getImgWithBox();
+                            if (imgWithBox != null) {
+                                saveImageForDebug(imgWithBox, "ocr_result_with_boxes");
                             }
+                            
+                            // Process OCR results
+                            lastText = processOcrResults(result);
+                            List<OcrResultModel> outputRawResult = result.getOutputRawResult();
+    
+                            StringBuilder text = new StringBuilder("inferenceTime=" + result.getInferenceTime() + " ms\n");
+                            
+                            for (int index = 0; index < outputRawResult.size(); index++) {
+                                OcrResultModel ocrResultModel = outputRawResult.get(index);
+                                // Text orientation ocrResultModel.clsLabel can be "0" or "180"
+                                text.append(index)
+                                    .append("; confidence ")
+                                    .append(ocrResultModel.getConfidence())
+                                    .append("; points: ")
+                                    .append(ocrResultModel.getPoints())
+                                    .append("\n");
+                            }                          
 
-                            @Override
-                            public void onFail(Throwable e) {
-                                Log.e(TAG, "onFail！", e);
-                                isRunning = false;
-                            }
-                        });
+                            Log.d("OCR", "Processed text: " + lastText);
+                            Log.d("OCR", "Raw processed data: " + text);
+                            
+                            // Clean up and reset flag
+                            roiBitmap.recycle();
+                            isRunning = false;
+                        }
+
+                        @Override
+                        public void onFail(Throwable e) {
+                            Log.e(TAG, "OCR processing failed!", e);
+                            // Clean up and reset flag
+                            roiBitmap.recycle();
+                            isRunning = false;
+                        }
+                    });
                 }
             } catch (Exception e) {
-                isRunning = false;
-                e.printStackTrace();
+                Log.e(TAG, "Exception in onImageAvailable", e);
                 isRunning = false;
             }
         }
@@ -535,38 +573,41 @@ public class ScreenCaptureService extends Service {
         ocr = new OCR(getApplicationContext());
 
         OcrConfig config = new OcrConfig();
-// Use the proper Kotlin property access pattern for Java
-// Instead of direct field access, use the setter methods generated by Kotlin
+        // Use the proper Kotlin property access pattern for Java
+        // Instead of direct field access, use the setter methods generated by Kotlin
 
-// Set model path to assets/models/ch_PP-OCRv2
+        // Set model path to assets/models/ch_PP-OCRv2
         config.setModelPath("models/ch_PP-OCRv2"); // Models in assets directory
 
-// Set model file names
+        // Set model file names
         config.setClsModelFileName("cls");
         config.setDetModelFileName("det");
         config.setRecModelFileName("rec");
 
-// Set run type to run all OCR steps
+        // Set run type to run all OCR steps
         config.setRunType(RunType.All);
 
-// Use full CPU power for better performance
+        // Use full CPU power for better performance
         config.setCpuPowerMode(LitePowerMode.LITE_POWER_FULL);
 
-// Set precision mode for all models to FP16
+        // Set precision mode for all models to FP16
         config.setRecRunPrecision(RunPrecision.LiteFp16);
         config.setDetRunPrecision(RunPrecision.LiteFp16);
         config.setClsRunPrecision(RunPrecision.LiteFp16);
+        
+        // Enable drawing of text position boxes for debugging
+        config.setIsDrwwTextPositionBox(true);
 
         ocr.initModel(config, new OcrInitCallback() {
             @Override
             public void onSuccess() {
-                Log.i(TAG, "init onSuccess");
+                Log.i(TAG, "OCR model initialization successful");
             }
-                @Override
-                public void onFail(Throwable e) {
-                    Log.e(TAG, "onFail", e);
-                }
-            });
+            @Override
+            public void onFail(Throwable e) {
+                Log.e(TAG, "OCR model initialization failed", e);
+            }
+        });
 
         // start capture handling thread
         new Thread() {
