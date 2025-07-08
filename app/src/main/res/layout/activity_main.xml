@@ -194,6 +194,12 @@
                         android:text="S22i Bike (NTEX02121.5)" />
 
                     <RadioButton
+                        android:id="@+id/s22i_NTEX02117_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="S22i Bike (NTEX02117.2)" />
+
+                    <RadioButton
                         android:id="@+id/s27i"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

@@ -64,6 +64,7 @@ public class UDPListenerService extends Service {
         NTEX71021,
         c1750_2021,
         s22i_NTEX02121_5,
+        s22i_NTEX02117_2,
         x32i_NTL39221,
         c1750_2020,        
         elite1000,
@@ -147,6 +148,10 @@ public class UDPListenerService extends Service {
             case s22i_NTEX02121_5:
                 lastReqResistance = 0;
                 y1Resistance = 535;
+                break;
+            case s22i_NTEX02117_2:
+                lastReqResistance = 0;
+                y1Resistance = 618;
                 break;
             case tdf10:
                 lastReqResistance = 1;
@@ -269,7 +274,7 @@ public class UDPListenerService extends Service {
 
         writeLog(message);
         String[] amessage = message.split(";");
-        if (device == _device.proform_carbon_e7 || device == _device.proform_carbon_c10 || device == _device.s15i || device == _device.s22i || device == _device.s27i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22) {
+        if (device == _device.proform_carbon_e7 || device == _device.proform_carbon_c10 || device == _device.s15i || device == _device.s22i || device == _device.s27i || device == _device.s22i_NTEX02121_5 || device == _device.s22i_NTEX02117_2 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22) {
 
             // bike inclination
 			//if (amessage.length > 0) {
@@ -304,6 +309,9 @@ public class UDPListenerService extends Service {
                             y1Resistance = 800 - (int) ((QZService.lastInclinationFloat + 10) * 19);
                             //set incline slider to target position
                             y2 = y1Resistance - (int) ((reqResistance - QZService.lastInclinationFloat) * 19);
+                        } else if (device == _device.s22i_NTEX02117_2) {
+                            x1 = 75;
+                            y2 = (int) (616.18 - (17.223 * reqResistance));
                         } else if (device == _device.tdf10) {
 							x1 = 1205;
                             y2 = (int) (619.91 - (15.913 * reqResistance));
@@ -340,10 +348,14 @@ public class UDPListenerService extends Service {
 						}
 
                         String command = "input swipe " + x1 + " " + y1Resistance + " " + x1 + " " + y2 + " 200";
-                        MainActivity.sendCommand(command);
+                        if (device == _device.s22i_NTEX02117_2) {
+                            shellRuntime.exec(command);
+                        } else {
+                            MainActivity.sendCommand(command);
+                        }
                         writeLog(command);
 
-						if (device == _device.proform_carbon_e7 || device == _device.proform_carbon_c10 || device == _device.s15i || device == _device.s22i || device == _device.s27i || device == _device.s22i_NTEX02121_5 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22 || device == _device.NTEX71021)
+						if (device == _device.proform_carbon_e7 || device == _device.proform_carbon_c10 || device == _device.s15i || device == _device.s22i || device == _device.s27i || device == _device.s22i_NTEX02121_5 || device == _device.s22i_NTEX02117_2 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22 || device == _device.NTEX71021)
                             y1Resistance = y2;  //set new vertical position of incline slider
                         lastReqResistance = reqResistance;
                         lastSwipeMs = Calendar.getInstance().getTimeInMillis();
