@@ -315,6 +315,7 @@ public class QZService extends Service {
                 UDPListenerService.device == UDPListenerService._device.c1750_2020 || 
                 UDPListenerService.device == UDPListenerService._device.c1750_2020_kph || 
                 UDPListenerService.device == UDPListenerService._device.x22i ||
+                UDPListenerService.device == UDPListenerService._device.s22i_NTEX02117_2 ||
                 UDPListenerService.device == UDPListenerService._device.x14i ||
                 UDPListenerService.device == UDPListenerService.device.proform_carbon_t14) && !sharedPreferences.getBoolean("ADBLog", false)) {
 					try {
