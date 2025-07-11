@@ -416,7 +416,11 @@ public class UDPListenerService extends Service {
 
                         if (skip == false) {
                             String command = "input swipe " + x1 + " " + y1Resistance + " " + x1 + " " + y2 + " 200";
-                            MainActivity.sendCommand(command);
+                            if (device == _device.s22i_NTEX02117_2) {
+                                shellRuntime.exec(command);
+                            } else {
+                                MainActivity.sendCommand(command);
+                            }
                             writeLog(command);
                             y1Resistance = y2;  //set new vertical position of resistance slider - Added
                             lastReqResistance = reqResistance;
@@ -726,7 +730,7 @@ public class UDPListenerService extends Service {
                         MyAccessibilityService.performSwipe(x1, y1Inclination, x1, y2, 200);
                     } else {
                         String command = " input swipe " + x1 + " " + y1Inclination + " " + x1 + " " + y2 + " 200";
-                        if (device == _device.x22i || device == _device.x14i) {
+                        if (device == _device.x22i || device == _device.x14i || device == _device.s22i_NTEX02117_2) {
                             shellRuntime.exec(command);
                         } else {
                             MainActivity.sendCommand(command);
