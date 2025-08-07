@@ -217,7 +217,7 @@ public class QZService extends Service {
                 }
 
             }
-	   if (lines[i].toLowerCase().contains("cadence") || lines[i].toLowerCase().contains("rpm")) {
+	   if (lines[i].toLowerCase().contains("cadence") || lines[i].toLowerCase().contains("rpm") || lines[i].toLowerCase().contains("strokes per min")) {
                 try {
                     String potentialNumber = lines[i-1].trim();
                     // Try to parse the number to check if it's valid
@@ -276,6 +276,27 @@ public class QZService extends Service {
                 } catch (Exception e) {
                     QZService.lastSpeed = "";
                     QZService.lastSpeedFloat = 0.0f;
+                }
+            }
+            if (lines[i].toLowerCase().contains("500 split") || lines[i].toLowerCase().contains("/500m")) {
+                try {
+                    String secondsStr = lines[i-1].trim();
+                    int totalSeconds = Integer.parseInt(secondsStr);
+                    
+                    // Convert 500m split time to km/h
+                    // Speed (km/h) = (0.5 km) / (time in hours)
+                    // Speed (km/h) = (0.5) / (totalSeconds / 3600)
+                    // Speed (km/h) = (0.5 * 3600) / totalSeconds
+                    // Speed (km/h) = 1800 / totalSeconds
+                    if (totalSeconds > 0) {
+                        float speedKmh = 1800.0f / totalSeconds;
+                        QZService.lastSpeed = "Changed KPH " + String.format("%.1f", speedKmh);
+                        QZService.lastSpeedFloat = speedKmh;
+                        writeLog("OCRlines 500 split speed found: " + secondsStr + "s = " + speedKmh + " km/h");
+                    }
+                } catch (Exception e) {
+                    // If parsing fails, don't update speed
+                    writeLog("OCRlines 500 split parsing failed: " + e.getMessage());
                 }
             }
         }

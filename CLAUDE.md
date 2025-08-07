@@ -90,27 +90,29 @@ if (device == _device.s22i_NTEX02117_2) {
 ## Version Management
 
 ### Files to Update for Each Release
+**ALWAYS update all 3 files for each release:**
+
 1. **app/build.gradle**
-   - `versionCode` (increment +1): `167 → 168`
-   - `versionName` (semantic versioning): `"3.6.15" → "3.6.16"`
+   - `versionCode` (increment +1): `171 → 172`
+   - `versionName` (semantic versioning): `"3.6.19" → "3.6.20"`
 
 2. **AndroidManifest.xml**
-   - `android:versionCode`: `"167" → "168"`
-   - `android:versionName`: `"3.6.15" → "3.6.16"`
+   - `android:versionCode`: `"171" → "172"`
+   - `android:versionName`: `"3.6.19" → "3.6.20"`
 
 3. **.github/workflows/main.yml**
-   - `tag_name`: `3.6.15 → 3.6.16`
+   - `tag_name`: `3.6.19 → 3.6.20`
 
 ### Version Bump Process
 ```bash
 # 1. Patch release (bug fix)
-3.6.15 → 3.6.16
+3.6.19 → 3.6.20
 
 # 2. Minor release (new feature)
-3.6.15 → 3.7.0
+3.6.19 → 3.7.0
 
 # 3. Major release (breaking change)
-3.6.15 → 4.0.0
+3.6.19 → 4.0.0
 ```
 
 ## Device Naming Convention
@@ -149,8 +151,32 @@ if (device == _device.{new_device}) {
 }
 ```
 
+## OCR Pattern Recognition
+
+### Supported OCR Patterns (QZService.java:getOCR())
+
+#### Speed Patterns
+1. **Standard Speed:** `"speed"` - Direct km/h value
+2. **500m Split Time:** `"500 split"` or `"/500m"` - Converts seconds to km/h
+   - Formula: `km/h = 1800 / seconds`
+   - Example: 41 seconds → 43.9 km/h
+
+#### Cadence Patterns
+1. **Standard:** `"cadence"` or `"rpm"`
+2. **Rowing:** `"strokes per min"` - Added for rowing machine support
+
+#### Other Patterns
+- **Incline:** `"incline"`
+- **Resistance:** `"resistance"`
+- **Watts:** `"watt"`
+
+### Code Style Guidelines
+- All comments must be in English
+- Use descriptive variable names
+- Follow existing indentation patterns
+
 ## Latest Implementation
-**Device:** s22i_NTEX02117_2  
-**Version:** 3.6.16 (versionCode 168)  
-**Date:** 2025-07-08  
-**Difference:** Uses shellRuntime.exec() instead of MainActivity.sendCommand()
+**Feature:** OCR pattern support for rowing machines  
+**Version:** 3.6.20 (versionCode 172)  
+**Date:** 2025-08-07  
+**Changes:** Added "STROKES PER MIN" cadence pattern and "500 SPLIT (/500M)" speed conversion
