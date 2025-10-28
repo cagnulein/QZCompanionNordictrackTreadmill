@@ -287,7 +287,13 @@
                         android:id="@+id/elite1000"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Elite 1000 Treadmill" />	
+                        android:text="Elite 1000 Treadmill" />
+
+					<RadioButton
+                        android:id="@+id/proform_pro_2000"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Proform Pro 2000 Treadmill" />
 
 					<RadioButton
                         android:id="@+id/c1750_2021"
