@@ -309,6 +309,8 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                     UDPListenerService.setDevice(UDPListenerService._device.proform_pro_9000);
                 } else if(i == R.id.proform_carbon_e7) {
                     UDPListenerService.setDevice(UDPListenerService._device.proform_carbon_e7);
+                } else if(i == R.id.se9i_elliptical) {
+                    UDPListenerService.setDevice(UDPListenerService._device.se9i_elliptical);
                 } else if(i == R.id.s15i) {
                     UDPListenerService.setDevice(UDPListenerService._device.s15i);
                 } else if(i == R.id.s22i) {
