@@ -158,6 +158,12 @@
                         android:text="Proform Carbon E7 Elliptical" />
 
                     <RadioButton
+                        android:id="@+id/se9i_elliptical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="NordicTrack SE9i Elliptical" />
+
+                    <RadioButton
                         android:id="@+id/proform_pro_9000"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

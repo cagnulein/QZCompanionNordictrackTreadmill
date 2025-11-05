@@ -85,6 +85,7 @@ public class UDPListenerService extends Service {
         s27i,
         c1750_NTL14122_2_MPH,
         proform_pro_2000,
+        se9i_elliptical,
     }
 
     public static _device device;
@@ -238,7 +239,12 @@ public class UDPListenerService extends Service {
                 lastReqResistance = 1; // Starting from min resistance
                 y1Resistance = 803;    // bottomY position for both incline and resistance sliders
                 break;
-    
+            case se9i_elliptical:
+                lastReqResistance = 0;
+                y1Resistance = 858;    // bottomY position for incline slider (minimum incline)
+                y1Inclination = 858;   // bottomY position for resistance slider (minimum resistance)
+                break;
+
             default:
                 break;
         }
@@ -279,7 +285,7 @@ public class UDPListenerService extends Service {
 
         writeLog(message);
         String[] amessage = message.split(";");
-        if (device == _device.proform_carbon_e7 || device == _device.proform_carbon_c10 || device == _device.s15i || device == _device.s22i || device == _device.s27i || device == _device.s22i_NTEX02121_5 || device == _device.s22i_NTEX02117_2 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22) {
+        if (device == _device.proform_carbon_e7 || device == _device.proform_carbon_c10 || device == _device.s15i || device == _device.s22i || device == _device.s27i || device == _device.s22i_NTEX02121_5 || device == _device.s22i_NTEX02117_2 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22 || device == _device.se9i_elliptical) {
 
             // bike inclination
 			//if (amessage.length > 0) {
@@ -347,6 +353,14 @@ public class UDPListenerService extends Service {
                             double incline_scale = (803.0 - 248.0) / 30.0;  // (bottomY - topY) / (max_incline - min_incline)
                             y1Resistance = 803 - (int)((QZService.lastInclinationFloat + 10) * incline_scale);
                             y2 = y1Resistance - (int)((reqResistance - QZService.lastInclinationFloat) * incline_scale);
+                        } else if (device == _device.se9i_elliptical) {
+                            x1 = 57;      // inclineX
+                            // Calculate incline position: 858 (bottom/min) to 208 (top/max)
+                            // Incline range: 0-20, pixel range: 650 pixels (858-208)
+                            double incline_scale = (858.0 - 208.0) / 20.0;  // 32.5 pixels per incline level
+                            writeLog("lastInclinationFloat " + QZService.lastInclinationFloat);
+                            y1Resistance = 858 - (int)(QZService.lastInclinationFloat * incline_scale);
+                            y2 = y1Resistance - (int)((reqResistance - QZService.lastInclinationFloat) * incline_scale);
 						} else {
 							x1 = 1828;
                             y2 = (int) (826.25 - (21.25 * reqResistance));
@@ -360,7 +374,7 @@ public class UDPListenerService extends Service {
                         }
                         writeLog(command);
 
-						if (device == _device.proform_carbon_e7 || device == _device.proform_carbon_c10 || device == _device.s15i || device == _device.s22i || device == _device.s27i || device == _device.s22i_NTEX02121_5 || device == _device.s22i_NTEX02117_2 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22 || device == _device.NTEX71021)
+						if (device == _device.proform_carbon_e7 || device == _device.proform_carbon_c10 || device == _device.s15i || device == _device.s22i || device == _device.s27i || device == _device.s22i_NTEX02121_5 || device == _device.s22i_NTEX02117_2 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22 || device == _device.NTEX71021 || device == _device.se9i_elliptical)
                             y1Resistance = y2;  //set new vertical position of incline slider
                         lastReqResistance = reqResistance;
                         lastSwipeMs = Calendar.getInstance().getTimeInMillis();
@@ -414,6 +428,14 @@ public class UDPListenerService extends Service {
                             // Calculate resistance position
                             double resistance_scale = (803.0 - 248.0) / 23.0;  // (bottomY - topY) / (max_resistance - min_resistance)
                             y1Resistance = 803 - (int)((QZService.lastResistanceFloat - 1) * resistance_scale);
+                            y2 = y1Resistance - (int)((reqResistance - QZService.lastResistanceFloat) * resistance_scale);
+                        } else if (device == _device.se9i_elliptical) {
+                            x1 = 1857;    // resistanceX
+                            // Calculate resistance position: 858 (bottom/min) to 208 (top/max)
+                            // Resistance range: 1-24, pixel range: 650 pixels (858-208)
+                            double resistance_scale = (858.0 - 208.0) / 23.0;  // 28.26 pixels per resistance level
+                            writeLog("lastResistanceFloat " + QZService.lastResistanceFloat);
+                            y1Resistance = 858 - (int)((QZService.lastResistanceFloat - 1) * resistance_scale);
                             y2 = y1Resistance - (int)((reqResistance - QZService.lastResistanceFloat) * resistance_scale);
                         } else {
                             skip = true;
