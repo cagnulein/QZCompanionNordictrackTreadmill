@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.StrictMode;
 import android.util.Log;
+import android.graphics.Rect;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -184,30 +185,62 @@ public class QZService extends Service {
         return  false;
     }
 
+    private static Rect wattRectCache = null;
+
+    private Rect rectFromString(String str) {
+        if (str == null) return null;
+        String replaced = str.replace("Rect(", "").replace(")", "");
+        String[] parts = replaced.split("-");
+        if (parts.length != 2) return null;
+
+        String[] leftTop = parts[0].split(",");
+        if (leftTop.length != 2) return null;
+
+        String[] rightBottom = parts[1].split(",");
+        if (rightBottom.length != 2) return null;
+        
+        try {
+            int left = Integer.parseInt(leftTop[0].trim());
+            int top = Integer.parseInt(leftTop[1].trim());
+            int right = Integer.parseInt(rightBottom[0].trim());
+            int bottom = Integer.parseInt(rightBottom[1].trim());
+            return new Rect(left, top, right, bottom);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
     public String[] getOCR() {
-        String text = ScreenCaptureService.getLastText();
-        String t = text;
-
         String textExtended = ScreenCaptureService.getLastTextExtended();
-        String tt = textExtended;
+        if (textExtended == null || textExtended.isEmpty()) {
+            return new String[2];
+        }
 
-        int w = ScreenCaptureService.getImageWidth();
-        int h = ScreenCaptureService.getImageHeight();
-
-        String tExtended = textExtended;
-
-        String packageName = MediaProjection.getPackageName();
-
-        // Extract incline and speed values
         String[] result = new String[2];
-        String[] lines = t.split("\\$\\$|\\n");
 
         Log.i(LOG_TAG, "getOCR");
 
+        String[] ocrBlocks = textExtended.split("§§");
+        String[] lines = new String[ocrBlocks.length];
+        Rect[] rects = new Rect[ocrBlocks.length];
+
+        for (int i = 0; i < ocrBlocks.length; i++) {
+            String[] parts = ocrBlocks[i].split("\\$\\$");
+            if (parts.length == 2) {
+                lines[i] = parts[0];
+                rects[i] = rectFromString(parts[1]);
+            } else {
+                lines[i] = parts[0];
+                rects[i] = null;
+            }
+        }
+
+        boolean wattFound = false;
+
         for (int i = 1; i < lines.length; i++) {
             writeLog("OCRlines " + i + " " + lines[i]);
-            if (lines[i].toLowerCase().contains("incline")) {                
-                try {                    
+            if (lines[i].toLowerCase().contains("incline")) {
+                try {
                     QZService.lastInclination = "Changed Grade " + lines[i-1].trim().replace(',', '.');
                     QZService.lastInclinationFloat = Float.parseFloat(lines[i-1].trim().replace(',', '.'));
                     writeLog("OCRlines incline found!");
@@ -217,7 +250,7 @@ public class QZService extends Service {
                 }
 
             }
-	   if (lines[i].toLowerCase().contains("cadence") || lines[i].toLowerCase().contains("rpm") || lines[i].toLowerCase().contains("strokes per min")) {
+            if (lines[i].toLowerCase().contains("cadence") || lines[i].toLowerCase().contains("rpm") || lines[i].toLowerCase().contains("strokes per min")) {
                 try {
                     String potentialNumber = lines[i-1].trim();
                     // Try to parse the number to check if it's valid
@@ -242,8 +275,8 @@ public class QZService extends Service {
                 }
 
             }
-	    if (lines[i].toLowerCase().contains("resistance")) {
-                try {                    
+            if (lines[i].toLowerCase().contains("resistance")) {
+                try {
                     QZService.lastResistance = "Changed Resistance " + lines[i-1].trim();
                     QZService.lastResistanceFloat = Float.parseFloat(lines[i-1].trim());
                     writeLog("OCRlines resistance found!");
@@ -253,8 +286,8 @@ public class QZService extends Service {
                 }
 
             }
-	    if (lines[i].toLowerCase().contains("watt")) {
-                try {                    
+            if (lines[i].toLowerCase().contains("watt")) {
+                try {
                     String numberStr = lines[i-1].trim().replaceAll("[^0-9]", " ").trim();
                     String[] numbers = numberStr.split("\\s+");
                     if (numbers.length > 0) {
@@ -262,6 +295,11 @@ public class QZService extends Service {
                         if(watts > 20) {
                             QZService.lastWattage = "Changed Watts " + watts;
                             writeLog("OCRlines watts found!");
+                            wattFound = true;
+                            if (rects[i-1] != null) {
+                                wattRectCache = rects[i-1];
+                                writeLog("OCRlines watts rect cached!");
+                            }
                         }
                     }
                 } catch (Exception e) {
@@ -269,7 +307,7 @@ public class QZService extends Service {
 
             }
             if (lines[i].toLowerCase().contains("speed")) {
-                try {                    
+                try {
                     QZService.lastSpeed = "Changed KPH " + lines[i-1].trim();
                     QZService.lastSpeedFloat = Float.parseFloat(lines[i-1].trim());
                     writeLog("OCRlines speed found!");
@@ -283,11 +321,6 @@ public class QZService extends Service {
                     String secondsStr = lines[i-1].trim();
                     int totalSeconds = Integer.parseInt(secondsStr);
                     
-                    // Convert 500m split time to km/h
-                    // Speed (km/h) = (0.5 km) / (time in hours)
-                    // Speed (km/h) = (0.5) / (totalSeconds / 3600)
-                    // Speed (km/h) = (0.5 * 3600) / totalSeconds
-                    // Speed (km/h) = 1800 / totalSeconds
                     if (totalSeconds > 0) {
                         float speedKmh = 1800.0f / totalSeconds;
                         QZService.lastSpeed = "Changed KPH " + String.format("%.1f", speedKmh);
@@ -295,11 +328,32 @@ public class QZService extends Service {
                         writeLog("OCRlines 500 split speed found: " + secondsStr + "s = " + speedKmh + " km/h");
                     }
                 } catch (Exception e) {
-                    // If parsing fails, don't update speed
                     writeLog("OCRlines 500 split parsing failed: " + e.getMessage());
                 }
             }
         }
+
+        if (!wattFound && wattRectCache != null) {
+            writeLog("OCRlines watts not found, trying with cache");
+            for (int i = 0; i < lines.length; i++) {
+                if (rects[i] != null && wattRectCache.contains(rects[i])) {
+                     try {
+                        String numberStr = lines[i].trim().replaceAll("[^0-9]", " ").trim();
+                        String[] numbers = numberStr.split("\\s+");
+                        if (numbers.length > 0) {
+                            int watts = Integer.parseInt(numbers[numbers.length - 1]);
+                            if(watts > 20) {
+                                QZService.lastWattage = "Changed Watts " + watts;
+                                writeLog("OCRlines watts found with cache!");
+                            }
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        }
+
+
         try {
             if(!QZService.lastSpeed.equals(""))
                 sendBroadcast(QZService.lastSpeed);
