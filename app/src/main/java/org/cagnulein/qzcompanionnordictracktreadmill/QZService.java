@@ -335,8 +335,13 @@ public class QZService extends Service {
 
         if (!wattFound && wattRectCache != null) {
             writeLog("OCRlines watts not found, trying with cache");
+            // Expand cached rect by 50% to handle different digit counts (97 vs 104)
+            int expandedWidth = (int)(wattRectCache.width() * 1.5);
+            int expandedLeft = wattRectCache.left - (expandedWidth - wattRectCache.width()) / 2;
+            Rect expandedCache = new Rect(expandedLeft, wattRectCache.top, expandedLeft + expandedWidth, wattRectCache.bottom);
+
             for (int i = 0; i < lines.length; i++) {
-                if (rects[i] != null && wattRectCache.contains(rects[i])) {
+                if (rects[i] != null && Rect.intersects(expandedCache, rects[i])) {
                      try {
                         String numberStr = lines[i].trim().replaceAll("[^0-9]", " ").trim();
                         String[] numbers = numberStr.split("\\s+");
