@@ -155,6 +155,13 @@ with medium confidence](media/image2.png)
         _Important note: Double clicking this file will cause MacOS to throw
         a security warning, you must use one of the methods above._
 
+    **If you are using linux:**
+    #assumes adb is installed. For example in Ubuntu, sudo apt isntall adb
+    Using your favorite terminal, g to the extracted folder and cd to InstallPackage.
+    chmod +x QZ-Companion-LinuxInstall.sh            #make the script executable
+    (optional) chmod +x adb-screenshot-linux.sh      #make the script executable
+    ./QZ-Companion-LinuxInstall.sh                   #run the script
+
     When prompted to enter the treadmill or bikes IP address,
     enter the same IP as noted in previous Step 3 and hit enter. The
     script will ping the IP address first to ensure it is reachable on
@@ -166,7 +173,7 @@ with medium confidence](media/image2.png)
     in the background. You need to bring QZ Companion to the foreground for a one-time setup. You should still have access 
     to the Android system by swiping up from the bottom of the screen to see the Android navigation bar. If you don't see 
     the navigation bar, you will need to enable Privileged mode again (see Step #3 above), however Privileged mode should be permanently enabled as part of the
-    `QZ-Companion.bat` or `QZ-Companion-MacOS` installation script. The Android navigation bar displays 3 navigation controls: Back, Home, and App Overview. 
+    `QZ-Companion.bat`, `QZ-Companion-MacOS` or `QZ-Companion-linux` installation script. The Android navigation bar displays 3 navigation controls: Back, Home, and App Overview. 
     Hit the App Overview button and swipe over to QZ Companion. In the QZ Companion screen, select your specific exercise machine (e.g. "NordicTrack C2950").
     Once again, swipe up from the bottom of the screen to display the Android navigation bar, select App Overview, and swipe over to iFit. Note that in 
     some cases, you may need to reboot your treadmill or bike once more for the QZ Companion selection to work.
@@ -178,7 +185,7 @@ with medium confidence](media/image2.png)
     If it reads all 0's, try going to the treadmill's Settings > Apps > QZ Companion app > Permissions, and enabling all permissions.
 
 ![](media/image3.png)
-    Run `QZ-Companion.bat` or `QZ-Companion-MacOS` script on a WiFi connected computer
+    Run `QZ-Companion.bat`, `QZ-Companion-MacOS` or `QZ-Companion-linux` script on a WiFi connected computer
 
 **QZ Installation Method 2: Via the treadmill or bikes build-in web browser.**
 
@@ -217,7 +224,7 @@ QZ Companion will proceed to install. You will get a confirmation screen when do
 -   Proceed to login to iFit. At this point, QZ Companion is running in the background and is ready to transmit treadmill speed (or resistance) and incline data to QZ.
   
 -   If you wish to have Zwift control incline of your treadmill or bike (auto-incline), and speed (auto-speed), or in the case of a bike, auto-resistance, you must first have Privileged mode
-    and USB debugging turned on. Note that Privileged mode is permanently enabled as part of the `QZ-Companion.bat` or `QZ-Companion-MacOS` installation script in Method #1. However, for Method #2,
+    and USB debugging turned on. Note that Privileged mode is permanently enabled as part of the `QZ-Companion.bat`, `QZ-Companion-MacOS` or `QZ-Companion-linux` installation script in Method #1. However, for Method #2,
     unfortunately you must manually enable them first as they will get disabled on every treadmill or bike reboot. Once you have Privileged mode and USB debugging turned on, you must enable the
     onscreen treadmill speed and incline sliders; for a bike it is the onscreen resistance and incline sliders. To enable these sliders, start a manual workout. Once you see the manual workout
     screen, tap on any empty area of the screen. This will bring up the "Controls" option. Tap on Controls and you will now see the onscreen sliders on each side of the
@@ -288,6 +295,9 @@ generated](media/image6.png)
 
 -   `QZ-Companion-MacOS` (shell script used to install QZ Companion via
     ADB on MacOS).
+
+-   `QZ-Companion-linux` (shell script used to install QZ Companion via
+    ADB on linux).
 
 -   `QZ-Companion-simple.bat` (alternative batch script to use if you wish
     to run the commands separately for debugging and troubleshooting
