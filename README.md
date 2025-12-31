@@ -155,6 +155,13 @@ with medium confidence](media/image2.png)
         _Important note: Double clicking this file will cause MacOS to throw
         a security warning, you must use one of the methods above._
 
+    **If you are using linux:**
+    #assumes adb is installed. For example in Ubuntu, sudo apt isntall adb
+    Using your favorite terminal, g to the extracted folder and cd to InstallPackage.
+    chmod +x QZ-Companion-LinuxInstall.sh            #make the script executable
+    (optional) chmod +x adb-screenshot-linux.sh      #make the script executable
+    ./QZ-Companion-LinuxInstall.sh                   #run the script
+
     When prompted to enter the treadmill or bikes IP address,
     enter the same IP as noted in previous Step 3 and hit enter. The
     script will ping the IP address first to ensure it is reachable on
