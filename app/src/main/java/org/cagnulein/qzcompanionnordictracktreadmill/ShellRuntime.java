@@ -19,7 +19,7 @@ public class ShellRuntime {
     }
 
     public Process exec(String command) throws IOException {
-        String[] cmd = {getSh(), "-c", " " + command + " 2>&1"};
+        String[] cmd = {getSh(), "-c", " " + command};
         return runtime.exec(cmd);
     }
 
