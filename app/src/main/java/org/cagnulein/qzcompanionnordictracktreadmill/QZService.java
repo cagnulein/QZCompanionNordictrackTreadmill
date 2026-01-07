@@ -546,12 +546,12 @@ public class QZService extends Service {
                             throw new RuntimeException(e);
                         }                                                        			                    
 				} else {		
-                    boolean speedFound = false;			
+                    boolean speedFound = true;			
 					InputStream speedInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed KPH\" | tail -n1");
 					if(!speed(speedInputStream)) {
 						InputStream speed2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed KPH\" " + file + "  | tail -n1");
-						if(!speed(speed2InputStream)) {
-                            speedFound = true;
+						if(!speed(speed2InputStream)) {                            
+                            speedFound = false;
 							sendBroadcast(lastSpeed);
 						}
 						speed2InputStream.close();
@@ -563,10 +563,13 @@ public class QZService extends Service {
                         if(!speed(speedInputStream2)) {
                             InputStream speed2InputStream2 = shellRuntime.execAndGetOutput("grep -a \"Changed Actual KPH\" " + file + "  | tail -n1");
                             if(!speed(speed2InputStream2)) {
-                                speedFound = true;
                                 sendBroadcast(lastSpeed);
+                            } else {
+                                speedFound = true;
                             }
                             speed2InputStream2.close();
+                        } else {
+                            speedFound = true;
                         }
                         speedInputStream2.close();
                     }
