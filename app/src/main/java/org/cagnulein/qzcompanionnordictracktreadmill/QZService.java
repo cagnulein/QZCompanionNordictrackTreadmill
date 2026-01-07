@@ -559,16 +559,16 @@ public class QZService extends Service {
 					speedInputStream.close();
 
                     if(!speedFound) {
-                        InputStream speedInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed Actual KPH\" | tail -n1");
-                        if(!speed(speedInputStream)) {
-                            InputStream speed2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed Actual KPH\" " + file + "  | tail -n1");
-                            if(!speed(speed2InputStream)) {
+                        InputStream speedInputStream2 = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed Actual KPH\" | tail -n1");
+                        if(!speed(speedInputStream2)) {
+                            InputStream speed2InputStream2 = shellRuntime.execAndGetOutput("grep -a \"Changed Actual KPH\" " + file + "  | tail -n1");
+                            if(!speed(speed2InputStream2)) {
                                 speedFound = true;
                                 sendBroadcast(lastSpeed);
                             }
-                            speed2InputStream.close();
+                            speed2InputStream2.close();
                         }
-                        speedInputStream.close();
+                        speedInputStream2.close();
                     }
 
                     String sIncline = "Grade";
