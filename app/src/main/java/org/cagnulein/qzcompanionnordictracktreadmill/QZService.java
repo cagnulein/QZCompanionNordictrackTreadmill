@@ -545,16 +545,32 @@ public class QZService extends Service {
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }                                                        			                    
-				} else {					
+				} else {		
+                    boolean speedFound = false;			
 					InputStream speedInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed KPH\" | tail -n1");
 					if(!speed(speedInputStream)) {
 						InputStream speed2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed KPH\" " + file + "  | tail -n1");
 						if(!speed(speed2InputStream)) {
+                            speedFound = true;
 							sendBroadcast(lastSpeed);
 						}
 						speed2InputStream.close();
 					}
 					speedInputStream.close();
+
+                    if(!speedFound) {
+                        InputStream speedInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed Actual KPH\" | tail -n1");
+                        if(!speed(speedInputStream)) {
+                            InputStream speed2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed Actual KPH\" " + file + "  | tail -n1");
+                            if(!speed(speed2InputStream)) {
+                                speedFound = true;
+                                sendBroadcast(lastSpeed);
+                            }
+                            speed2InputStream.close();
+                        }
+                        speedInputStream.close();
+                    }
+
                     String sIncline = "Grade";
                     if(ifit_v2)
                         sIncline = "INCLINE";
