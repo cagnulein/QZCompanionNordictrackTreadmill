@@ -104,17 +104,22 @@ public class QZService extends Service {
         BufferedReader is = new BufferedReader(new InputStreamReader(in));
         String line;
         while ((line = is.readLine()) != null) {
+            writeLog("speed line: " + line);
             String[] b = line.split(" ");
-            line = line.replaceAll(",", ".");
-            if(ifit_v2) {                
-                lastSpeed = "Changed KPH " + b[b.length-2];
-                lastSpeedFloat = Float.parseFloat(b[b.length-2]);
-            } else {
-                lastSpeed = line;
-                lastSpeedFloat = Float.parseFloat(b[b.length-1]);
+            try {
+                if(ifit_v2) {
+                    lastSpeed = "Changed KPH " + b[b.length-2];
+                    lastSpeedFloat = Float.parseFloat(b[b.length-2].replaceAll(",", "."));
+                } else {
+                    lastSpeed = line;
+                    lastSpeedFloat = Float.parseFloat(b[b.length-1].replaceAll(",", "."));
+                }
+                writeLog("speed parsed: " + lastSpeed + " (" + lastSpeedFloat + ")");
+                sendBroadcast(lastSpeed);
+                return true;
+            } catch (Exception e) {
+                writeLog("speed parsing error: " + e.getMessage() + " for line: " + line);
             }
-            sendBroadcast(lastSpeed);
-            return true;
         }
         return  false;
     }
@@ -546,11 +551,14 @@ public class QZService extends Service {
                             throw new RuntimeException(e);
                         }                                                        			                    
 				} else {		
-                    boolean speedFound = true;			
+                    boolean speedFound = true;
+                    writeLog("Checking KPH...");
 					InputStream speedInputStream = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed KPH\" | tail -n1");
 					if(!speed(speedInputStream)) {
+                        writeLog("KPH not found in tail, checking full file...");
 						InputStream speed2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed KPH\" " + file + "  | tail -n1");
-						if(!speed(speed2InputStream)) {                            
+						if(!speed(speed2InputStream)) {
+                            writeLog("KPH not found in full file.");
                             speedFound = false;
 							sendBroadcast(lastSpeed);
 						}
@@ -559,10 +567,13 @@ public class QZService extends Service {
 					speedInputStream.close();
 
                     if(!speedFound) {
+                        writeLog("Checking Actual KPH...");
                         InputStream speedInputStream2 = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed Actual KPH\" | tail -n1");
                         if(!speed(speedInputStream2)) {
+                            writeLog("Actual KPH not found in tail, checking full file...");
                             InputStream speed2InputStream2 = shellRuntime.execAndGetOutput("grep -a \"Changed Actual KPH\" " + file + "  | tail -n1");
                             if(!speed(speed2InputStream2)) {
+                                writeLog("Actual KPH not found in full file.");
                                 sendBroadcast(lastSpeed);
                             } else {
                                 speedFound = true;
@@ -631,6 +642,7 @@ public class QZService extends Service {
 				}
             } catch (Exception ex) {
                 ex.printStackTrace();
+                writeLog("Parse error: " + ex.getMessage());
                 return;
             }
             socket.close();
