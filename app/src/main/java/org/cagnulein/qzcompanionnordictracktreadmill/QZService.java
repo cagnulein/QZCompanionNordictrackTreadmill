@@ -130,15 +130,23 @@ public class QZService extends Service {
     private boolean incline(InputStream in) throws IOException {
         BufferedReader is = new BufferedReader(new InputStreamReader(in));
         String line;
+        boolean found = false;
         while ((line = is.readLine()) != null) {
-            String[] b = line.split(" ");
-            if(ifit_v2) {  
-                lastInclination = "Changed Grade " + b[b.length-2];
-                lastInclinationFloat = Float.parseFloat(b[b.length-2]);
-            } else {
-                lastInclination = line;
-                lastInclinationFloat = Float.parseFloat(b[b.length-1]);                
+            try {
+                String[] b = line.split(" ");
+                if(ifit_v2) {
+                    lastInclination = "Changed Grade " + b[b.length-2];
+                    lastInclinationFloat = Float.parseFloat(b[b.length-2]);
+                } else {
+                    lastInclination = line;
+                    lastInclinationFloat = Float.parseFloat(b[b.length-1]);
+                }
+                found = true;
+            } catch (Exception e) {
+                writeLog("Error parsing incline: " + e.getMessage());
             }
+        }
+        if(found) {
             sendBroadcast(lastInclination);
             return true;
         }
@@ -577,7 +585,11 @@ public class QZService extends Service {
 					if(!incline(inclineInputStream)) {
 						InputStream incline2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed " + sIncline + "\" " + file + "  | tail -n1");
 						if(!incline(incline2InputStream)) {
-							sendBroadcast(lastInclination);
+                            InputStream incline3InputStream = shellRuntime.execAndGetOutput("cat " + file + " | grep -a \"Changed " + sIncline + "\"");
+                            if(!incline(incline3InputStream)) {
+							    sendBroadcast(lastInclination);
+                            }
+                            incline3InputStream.close();
 						}
 						incline2InputStream.close();
 					}
