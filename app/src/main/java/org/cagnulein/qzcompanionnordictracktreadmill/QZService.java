@@ -105,15 +105,19 @@ public class QZService extends Service {
         String line;
         boolean found = false;
         while ((line = is.readLine()) != null) {
-            String[] b = line.split(" ");
-            line = line.replaceAll(",", ".");
-            found = true;
-            if(ifit_v2) {                
-                lastSpeed = "Changed KPH " + b[b.length-2];
-                lastSpeedFloat = Float.parseFloat(b[b.length-2]);
-            } else {
-                lastSpeed = line;
-                lastSpeedFloat = Float.parseFloat(b[b.length-1]);
+            try {
+                String[] b = line.split(" ");
+                line = line.replaceAll(",", ".");
+                if (ifit_v2) {
+                    lastSpeed = "Changed KPH " + b[b.length - 2];
+                    lastSpeedFloat = Float.parseFloat(b[b.length - 2]);
+                } else {
+                    lastSpeed = line;
+                    lastSpeedFloat = Float.parseFloat(b[b.length - 1]);
+                }
+                found = true;
+            } catch (Exception e) {
+                writeLog("Error parsing speed: " + e.getMessage());
             }
         }
         if(found) {
