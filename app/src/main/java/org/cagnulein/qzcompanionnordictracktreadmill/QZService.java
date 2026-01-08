@@ -103,9 +103,11 @@ public class QZService extends Service {
     private boolean speed(InputStream in) throws IOException {
         BufferedReader is = new BufferedReader(new InputStreamReader(in));
         String line;
+        boolean found = false;
         while ((line = is.readLine()) != null) {
             String[] b = line.split(" ");
             line = line.replaceAll(",", ".");
+            found = true;
             if(ifit_v2) {                
                 lastSpeed = "Changed KPH " + b[b.length-2];
                 lastSpeedFloat = Float.parseFloat(b[b.length-2]);
@@ -113,6 +115,8 @@ public class QZService extends Service {
                 lastSpeed = line;
                 lastSpeedFloat = Float.parseFloat(b[b.length-1]);
             }
+        }
+        if(found) {
             sendBroadcast(lastSpeed);
             return true;
         }
@@ -551,28 +555,16 @@ public class QZService extends Service {
 					if(!speed(speedInputStream)) {
 						InputStream speed2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed KPH\" " + file + "  | tail -n1");
 						if(!speed(speed2InputStream)) {                            
-                            speedFound = false;
-							sendBroadcast(lastSpeed);
+                            InputStream speed3InputStream = shellRuntime.execAndGetOutput("cat " + file + " | grep -a \"Changed KPH\"");
+                            if(!speed(speed3InputStream)) {
+                                speedFound = false;
+                                sendBroadcast(lastSpeed);
+                            }
+                            speed3InputStream.close();
 						}
 						speed2InputStream.close();
 					}
 					speedInputStream.close();
-
-                    if(!speedFound) {
-                        InputStream speedInputStream2 = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed Actual KPH\" | tail -n1");
-                        if(!speed(speedInputStream2)) {
-                            InputStream speed2InputStream2 = shellRuntime.execAndGetOutput("grep -a \"Changed Actual KPH\" " + file + "  | tail -n1");
-                            if(!speed(speed2InputStream2)) {
-                                sendBroadcast(lastSpeed);
-                            } else {
-                                speedFound = true;
-                            }
-                            speed2InputStream2.close();
-                        } else {
-                            speedFound = true;
-                        }
-                        speedInputStream2.close();
-                    }
 
                     String sIncline = "Grade";
                     if(ifit_v2)
