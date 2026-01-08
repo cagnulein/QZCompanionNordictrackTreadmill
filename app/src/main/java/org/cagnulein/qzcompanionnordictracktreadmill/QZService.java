@@ -103,16 +103,24 @@ public class QZService extends Service {
     private boolean speed(InputStream in) throws IOException {
         BufferedReader is = new BufferedReader(new InputStreamReader(in));
         String line;
+        boolean found = false;
         while ((line = is.readLine()) != null) {
-            String[] b = line.split(" ");
-            line = line.replaceAll(",", ".");
-            if(ifit_v2) {                
-                lastSpeed = "Changed KPH " + b[b.length-2];
-                lastSpeedFloat = Float.parseFloat(b[b.length-2]);
-            } else {
-                lastSpeed = line;
-                lastSpeedFloat = Float.parseFloat(b[b.length-1]);
+            try {
+                String[] b = line.split(" ");
+                line = line.replaceAll(",", ".");
+                if (ifit_v2) {
+                    lastSpeed = "Changed KPH " + b[b.length - 2];
+                    lastSpeedFloat = Float.parseFloat(b[b.length - 2]);
+                } else {
+                    lastSpeed = line;
+                    lastSpeedFloat = Float.parseFloat(b[b.length - 1]);
+                }
+                found = true;
+            } catch (Exception e) {
+                writeLog("Error parsing speed: " + e.getMessage());
             }
+        }
+        if(found) {
             sendBroadcast(lastSpeed);
             return true;
         }
@@ -122,15 +130,23 @@ public class QZService extends Service {
     private boolean incline(InputStream in) throws IOException {
         BufferedReader is = new BufferedReader(new InputStreamReader(in));
         String line;
+        boolean found = false;
         while ((line = is.readLine()) != null) {
-            String[] b = line.split(" ");
-            if(ifit_v2) {  
-                lastInclination = "Changed Grade " + b[b.length-2];
-                lastInclinationFloat = Float.parseFloat(b[b.length-2]);
-            } else {
-                lastInclination = line;
-                lastInclinationFloat = Float.parseFloat(b[b.length-1]);                
+            try {
+                String[] b = line.split(" ");
+                if(ifit_v2) {
+                    lastInclination = "Changed Grade " + b[b.length-2];
+                    lastInclinationFloat = Float.parseFloat(b[b.length-2]);
+                } else {
+                    lastInclination = line;
+                    lastInclinationFloat = Float.parseFloat(b[b.length-1]);
+                }
+                found = true;
+            } catch (Exception e) {
+                writeLog("Error parsing incline: " + e.getMessage());
             }
+        }
+        if(found) {
             sendBroadcast(lastInclination);
             return true;
         }
@@ -551,28 +567,16 @@ public class QZService extends Service {
 					if(!speed(speedInputStream)) {
 						InputStream speed2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed KPH\" " + file + "  | tail -n1");
 						if(!speed(speed2InputStream)) {                            
-                            speedFound = false;
-							sendBroadcast(lastSpeed);
+                            InputStream speed3InputStream = shellRuntime.execAndGetOutput("cat " + file + " | grep -a \"Changed KPH\"");
+                            if(!speed(speed3InputStream)) {
+                                speedFound = false;
+                                sendBroadcast(lastSpeed);
+                            }
+                            speed3InputStream.close();
 						}
 						speed2InputStream.close();
 					}
 					speedInputStream.close();
-
-                    if(!speedFound) {
-                        InputStream speedInputStream2 = shellRuntime.execAndGetOutput("tail -n500 " + file + " | grep -a \"Changed Actual KPH\" | tail -n1");
-                        if(!speed(speedInputStream2)) {
-                            InputStream speed2InputStream2 = shellRuntime.execAndGetOutput("grep -a \"Changed Actual KPH\" " + file + "  | tail -n1");
-                            if(!speed(speed2InputStream2)) {
-                                sendBroadcast(lastSpeed);
-                            } else {
-                                speedFound = true;
-                            }
-                            speed2InputStream2.close();
-                        } else {
-                            speedFound = true;
-                        }
-                        speedInputStream2.close();
-                    }
 
                     String sIncline = "Grade";
                     if(ifit_v2)
@@ -581,7 +585,11 @@ public class QZService extends Service {
 					if(!incline(inclineInputStream)) {
 						InputStream incline2InputStream = shellRuntime.execAndGetOutput("grep -a \"Changed " + sIncline + "\" " + file + "  | tail -n1");
 						if(!incline(incline2InputStream)) {
-							sendBroadcast(lastInclination);
+                            InputStream incline3InputStream = shellRuntime.execAndGetOutput("cat " + file + " | grep -a \"Changed " + sIncline + "\"");
+                            if(!incline(incline3InputStream)) {
+							    sendBroadcast(lastInclination);
+                            }
+                            incline3InputStream.close();
 						}
 						incline2InputStream.close();
 					}
