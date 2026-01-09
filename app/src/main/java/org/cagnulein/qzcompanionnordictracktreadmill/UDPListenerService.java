@@ -66,9 +66,10 @@ public class UDPListenerService extends Service {
         s22i_NTEX02121_5,
         s22i_NTEX02117_2,
         x32i_NTL39221,
-        c1750_2020,        
+        c1750_2020,
         elite1000,
         x14i,
+        x9i,
         nordictrack_2450,
         c1750_2020_kph,
         tdf10_inclination,
@@ -114,6 +115,10 @@ public class UDPListenerService extends Service {
             case x14i:
                 y1Speed = 785;      //vertical position of slider at 2.0
                 y1Inclination = 645;    //vertical position of slider at 0.0
+                break;
+            case x9i:
+                y1Speed = 332;      //vertical position of slider at 1.0
+                y1Inclination = 332;    //vertical position of slider at -6.0
                 break;                
             case nordictrack_2950:
             case nordictrack_2950_maxspeed22:
@@ -495,7 +500,10 @@ public class UDPListenerService extends Service {
                             x1 = 1845;     //middle of slider
                             y1Speed = 807 - (int) ((QZService.lastSpeedFloat - 1) * 31);
                             //set speed slider to target position
-                            y2 = y1Speed - (int) ((reqSpeed - QZService.lastSpeedFloat) * 31);                                                
+                            y2 = y1Speed - (int) ((reqSpeed - QZService.lastSpeedFloat) * 31);
+                        } else if (device == _device.x9i) {
+                            x1 = 725;
+                            y2 = (int) (345.6315 - (13.6315 * reqSpeed));
                         } else if (device == _device.x32i) {
                             x1 = 1845;
                             y2 = (int) (834.85 - (26.946 * reqSpeed));
@@ -611,7 +619,7 @@ public class UDPListenerService extends Service {
                             MyAccessibilityService.performSwipe(x1, y1Speed, x1, y2, 200);
                         } else {
                             String command = "input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
-                            if (device == _device.x22i || device == _device.x14i) {
+                            if (device == _device.x22i || device == _device.x14i || device == _device.x9i) {
                                 shellRuntime.exec(command);
                             } else {
                                 MainActivity.sendCommand(command);
@@ -619,7 +627,7 @@ public class UDPListenerService extends Service {
                             writeLog(command);
                         }
 
-                        if (device == _device.x11i || device == _device.proform_carbon_t14 || device == _device.nordictrack_2450 || device == _device.x14i || device == _device.x22i || device == _device.x22i_v2 || device == _device.x22i_noadb || device == _device.elite1000 || device == _device.proform_pro_2000 || device == _device.c1750 || device == _device.c1750_2021 || device == _device.c1750_2020 || device == _device.c1750_2020_kph || device == _device.proform_2000 || device == _device.proform_pro_9000 || device == _device.t85s || device == _device.t95s || device == _device.t65s || device == _device.grand_tour_pro || device == _device.t75s || device == _device.s40 || device == _device.exp7i || device == _device.x32i || device == _device.x32i_NTL39019 || device == _device.x32i_NTL39221)
+                        if (device == _device.x11i || device == _device.proform_carbon_t14 || device == _device.nordictrack_2450 || device == _device.x14i || device == _device.x9i || device == _device.x22i || device == _device.x22i_v2 || device == _device.x22i_noadb || device == _device.elite1000 || device == _device.proform_pro_2000 || device == _device.c1750 || device == _device.c1750_2021 || device == _device.c1750_2020 || device == _device.c1750_2020_kph || device == _device.proform_2000 || device == _device.proform_pro_9000 || device == _device.t85s || device == _device.t95s || device == _device.t65s || device == _device.grand_tour_pro || device == _device.t75s || device == _device.s40 || device == _device.exp7i || device == _device.x32i || device == _device.x32i_NTL39019 || device == _device.x32i_NTL39221)
                             y1Speed = y2;  //set new vertical position of speed slider
                         lastSwipeMs = Calendar.getInstance().getTimeInMillis();
                         reqCachedSpeed = -1;
@@ -673,6 +681,9 @@ public class UDPListenerService extends Service {
                         x1 = 75;
                         y1Inclination = x14i_inclination_lookuptable(QZService.lastInclinationFloat);
                         y2 = x14i_inclination_lookuptable(reqInclination);
+                    } else if (device == _device.x9i) {
+                        x1 = 73;
+                        y2 = (int) (311.91 - (3.3478 * reqInclination));
                     } else if (device == _device.x32i) {
                         x1 = 76;
                         y2 = (int) (734.07 - (12.297 * reqInclination));
@@ -768,7 +779,7 @@ public class UDPListenerService extends Service {
                         MyAccessibilityService.performSwipe(x1, y1Inclination, x1, y2, 200);
                     } else {
                         String command = " input swipe " + x1 + " " + y1Inclination + " " + x1 + " " + y2 + " 200";
-                        if (device == _device.x22i || device == _device.x14i || device == _device.s22i_NTEX02117_2) {
+                        if (device == _device.x22i || device == _device.x14i || device == _device.x9i || device == _device.s22i_NTEX02117_2) {
                             shellRuntime.exec(command);
                         } else {
                             MainActivity.sendCommand(command);
@@ -776,7 +787,7 @@ public class UDPListenerService extends Service {
                         writeLog(command);
                     }
 
-                    if (device == _device.x11i || device == _device.nordictrack_2450 || device == _device.elite1000 || device == _device.proform_pro_2000 || device == _device.x22i || device == _device.x22i_v2 || device == _device.x22i_noadb || device == _device.x14i || device == _device.c1750 || device == _device.c1750_2021 || device == _device.c1750_2020  || device == _device.c1750_2020_kph || device == _device.proform_2000 || device == _device.proform_pro_9000 || device == _device.t85s  || device == _device.t95s || device == _device.t65s || device == _device.t75s || device == _device.grand_tour_pro || device == _device.s40 || device == _device.exp7i || device == _device.x32i || device == _device.x32i_NTL39221)
+                    if (device == _device.x11i || device == _device.nordictrack_2450 || device == _device.elite1000 || device == _device.proform_pro_2000 || device == _device.x22i || device == _device.x22i_v2 || device == _device.x22i_noadb || device == _device.x14i || device == _device.x9i || device == _device.c1750 || device == _device.c1750_2021 || device == _device.c1750_2020  || device == _device.c1750_2020_kph || device == _device.proform_2000 || device == _device.proform_pro_9000 || device == _device.t85s  || device == _device.t95s || device == _device.t65s || device == _device.t75s || device == _device.grand_tour_pro || device == _device.s40 || device == _device.exp7i || device == _device.x32i || device == _device.x32i_NTL39221)
                         y1Inclination = y2;  //set new vertical position of inclination slider
                     lastSwipeMs = Calendar.getInstance().getTimeInMillis();
 					reqCachedInclination = -100;

@@ -110,6 +110,12 @@
                         android:text="X22i Treadmill (No Adb)" />
 
                     <RadioButton
+                        android:id="@+id/x9i"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="X9i Treadmill" />
+
+                    <RadioButton
                         android:id="@+id/t85s"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
