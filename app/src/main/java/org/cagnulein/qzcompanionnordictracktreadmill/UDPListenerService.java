@@ -480,7 +480,7 @@ public class UDPListenerService extends Service {
                 try {
                     reqSpeed = Double.parseDouble(rSpeed);
                 } catch (NumberFormatException e) {
-                    rSpeed = rSpeed.replace(',', ".");
+                    rSpeed = rSpeed.replace(',', '.');
                     reqSpeed = Double.parseDouble(rSpeed);
                 }
 
@@ -657,7 +657,7 @@ public class UDPListenerService extends Service {
                 try {
                     reqInclination = Double.parseDouble(rInclination);
                 } catch (NumberFormatException e) {
-                    rInclination = rInclination.replace(',', ".");
+                    rInclination = rInclination.replace(',', '.');
                     reqInclination = Double.parseDouble(rInclination);
                 }
 
