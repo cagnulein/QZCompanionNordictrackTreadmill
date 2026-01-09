@@ -475,7 +475,15 @@ public class UDPListenerService extends Service {
                     rSpeed = rSpeed.replace('.', decimalSeparator);
                 }
 
-                double reqSpeed = Double.parseDouble(rSpeed);
+                double reqSpeed = 0;
+
+                try {
+                    reqSpeed = Double.parseDouble(rSpeed);
+                } catch (NumberFormatException e) {
+                    rSpeed = rSpeed.replace(',', ".");
+                    reqSpeed = Double.parseDouble(rSpeed);
+                }
+
                 reqSpeed = Math.round((reqSpeed) * 10) / 10.0;
                 writeLog("requestSpeed: " + reqSpeed + " lastSpeed:" + QZService.lastSpeedFloat + " cachedSpeed:" + reqCachedSpeed);
 
@@ -644,7 +652,15 @@ public class UDPListenerService extends Service {
                 if (decimalSeparator != '.') {
                     rInclination = rInclination.replace('.', decimalSeparator);
                 }
-                double reqInclination = roundToHalf(Double.parseDouble(rInclination));
+
+                double reqInclination = 0;
+                try {
+                    reqInclination = Double.parseDouble(rInclination);
+                } catch (NumberFormatException e) {
+                    rInclination = rInclination.replace(',', ".");
+                    reqInclination = Double.parseDouble(rInclination);
+                }
+
                 writeLog("requestInclination: " + reqInclination + " " + reqCachedInclination);				
 				Boolean need = reqInclination != -100;
 				if (!need && reqCachedInclination != -100) {

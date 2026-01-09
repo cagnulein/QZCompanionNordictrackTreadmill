@@ -134,6 +134,7 @@ public class QZService extends Service {
         while ((line = is.readLine()) != null) {
             try {
                 String[] b = line.split(" ");
+                line = line.replaceAll(",", ".");
                 if(ifit_v2) {
                     lastInclination = "Changed Grade " + b[b.length-2];
                     lastInclinationFloat = Float.parseFloat(b[b.length-2]);
