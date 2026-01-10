@@ -627,7 +627,7 @@ public class UDPListenerService extends Service {
                             MyAccessibilityService.performSwipe(x1, y1Speed, x1, y2, 200);
                         } else {
                             String command = "input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
-                            if (device == _device.x22i || device == _device.x14i || device == _device.x9i) {
+                            if (device == _device.x22i || device == _device.x14i) {
                                 shellRuntime.exec(command);
                             } else {
                                 MainActivity.sendCommand(command);
@@ -795,7 +795,7 @@ public class UDPListenerService extends Service {
                         MyAccessibilityService.performSwipe(x1, y1Inclination, x1, y2, 200);
                     } else {
                         String command = " input swipe " + x1 + " " + y1Inclination + " " + x1 + " " + y2 + " 200";
-                        if (device == _device.x22i || device == _device.x14i || device == _device.x9i || device == _device.s22i_NTEX02117_2) {
+                        if (device == _device.x22i || device == _device.x14i || device == _device.s22i_NTEX02117_2) {
                             shellRuntime.exec(command);
                         } else {
                             MainActivity.sendCommand(command);
