@@ -373,11 +373,20 @@ public class UDPListenerService extends Service {
 
                         String command = "input swipe " + x1 + " " + y1Resistance + " " + x1 + " " + y2 + " 200";
                         if (device == _device.s22i_NTEX02117_2) {
-                            shellRuntime.exec(command);
+                            try {
+                                shellRuntime.exec(command);
+                                writeLog("[RESISTANCE] shellRuntime.exec: " + command);
+                            } catch (Exception e) {
+                                writeLog("[RESISTANCE] shellRuntime.exec FAILED: " + e.getMessage());
+                            }
                         } else {
-                            MainActivity.sendCommand(command);
+                            try {
+                                MainActivity.sendCommand(command);
+                                writeLog("[RESISTANCE] MainActivity.sendCommand: " + command);
+                            } catch (Exception e) {
+                                writeLog("[RESISTANCE] MainActivity.sendCommand FAILED: " + e.getMessage());
+                            }
                         }
-                        writeLog(command);
 
 						if (device == _device.proform_carbon_e7 || device == _device.proform_carbon_c10 || device == _device.s15i || device == _device.s22i || device == _device.s27i || device == _device.s22i_NTEX02121_5 || device == _device.s22i_NTEX02117_2 || device == _device.tdf10 || device == _device.tdf10_inclination || device == _device.proform_studio_bike_pro22 || device == _device.NTEX71021 || device == _device.se9i_elliptical)
                             y1Resistance = y2;  //set new vertical position of incline slider
@@ -449,11 +458,20 @@ public class UDPListenerService extends Service {
                         if (skip == false) {
                             String command = "input swipe " + x1 + " " + y1Resistance + " " + x1 + " " + y2 + " 200";
                             if (device == _device.s22i_NTEX02117_2) {
-                                shellRuntime.exec(command);
+                                try {
+                                    shellRuntime.exec(command);
+                                    writeLog("[BIKE_RESISTANCE] shellRuntime.exec: " + command);
+                                } catch (Exception e) {
+                                    writeLog("[BIKE_RESISTANCE] shellRuntime.exec FAILED: " + e.getMessage());
+                                }
                             } else {
-                                MainActivity.sendCommand(command);
+                                try {
+                                    MainActivity.sendCommand(command);
+                                    writeLog("[BIKE_RESISTANCE] MainActivity.sendCommand: " + command);
+                                } catch (Exception e) {
+                                    writeLog("[BIKE_RESISTANCE] MainActivity.sendCommand FAILED: " + e.getMessage());
+                                }
                             }
-                            writeLog(command);
                             y1Resistance = y2;  //set new vertical position of resistance slider - Added
                             lastReqResistance = reqResistance;
                             lastSwipeMs = Calendar.getInstance().getTimeInMillis();
@@ -625,14 +643,24 @@ public class UDPListenerService extends Service {
 
                         if (device == _device.x22i_noadb || device == _device.t95s) {
                             MyAccessibilityService.performSwipe(x1, y1Speed, x1, y2, 200);
+                            writeLog("[TREADMILL_SPEED] AccessibilityService.performSwipe: (" + x1 + " " + y1Speed + " -> " + x1 + " " + y2 + ")");
                         } else {
                             String command = "input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
                             if (device == _device.x22i || device == _device.x14i) {
-                                shellRuntime.exec(command);
+                                try {
+                                    shellRuntime.exec(command);
+                                    writeLog("[TREADMILL_SPEED] shellRuntime.exec: " + command);
+                                } catch (Exception e) {
+                                    writeLog("[TREADMILL_SPEED] shellRuntime.exec FAILED: " + e.getMessage());
+                                }
                             } else {
-                                MainActivity.sendCommand(command);
+                                try {
+                                    MainActivity.sendCommand(command);
+                                    writeLog("[TREADMILL_SPEED] MainActivity.sendCommand: " + command);
+                                } catch (Exception e) {
+                                    writeLog("[TREADMILL_SPEED] MainActivity.sendCommand FAILED: " + e.getMessage());
+                                }
                             }
-                            writeLog(command);
                         }
 
                         if (device == _device.x11i || device == _device.proform_carbon_t14 || device == _device.nordictrack_2450 || device == _device.x14i || device == _device.x9i || device == _device.x22i || device == _device.x22i_v2 || device == _device.x22i_noadb || device == _device.elite1000 || device == _device.proform_pro_2000 || device == _device.c1750 || device == _device.c1750_2021 || device == _device.c1750_2020 || device == _device.c1750_2020_kph || device == _device.proform_2000 || device == _device.proform_pro_9000 || device == _device.t85s || device == _device.t95s || device == _device.t65s || device == _device.grand_tour_pro || device == _device.t75s || device == _device.s40 || device == _device.exp7i || device == _device.x32i || device == _device.x32i_NTL39019 || device == _device.x32i_NTL39221)
@@ -793,14 +821,24 @@ public class UDPListenerService extends Service {
 
                     if (device == _device.x22i_noadb || device == _device.t95s) {
                         MyAccessibilityService.performSwipe(x1, y1Inclination, x1, y2, 200);
+                        writeLog("[TREADMILL_INCLINE] AccessibilityService.performSwipe: (" + x1 + " " + y1Inclination + " -> " + x1 + " " + y2 + ")");
                     } else {
-                        String command = " input swipe " + x1 + " " + y1Inclination + " " + x1 + " " + y2 + " 200";
+                        String command = "input swipe " + x1 + " " + y1Inclination + " " + x1 + " " + y2 + " 200";
                         if (device == _device.x22i || device == _device.x14i || device == _device.s22i_NTEX02117_2) {
-                            shellRuntime.exec(command);
+                            try {
+                                shellRuntime.exec(command);
+                                writeLog("[TREADMILL_INCLINE] shellRuntime.exec: " + command);
+                            } catch (Exception e) {
+                                writeLog("[TREADMILL_INCLINE] shellRuntime.exec FAILED: " + e.getMessage());
+                            }
                         } else {
-                            MainActivity.sendCommand(command);
+                            try {
+                                MainActivity.sendCommand(command);
+                                writeLog("[TREADMILL_INCLINE] MainActivity.sendCommand: " + command);
+                            } catch (Exception e) {
+                                writeLog("[TREADMILL_INCLINE] MainActivity.sendCommand FAILED: " + e.getMessage());
+                            }
                         }
-                        writeLog(command);
                     }
 
                     if (device == _device.x11i || device == _device.nordictrack_2450 || device == _device.elite1000 || device == _device.proform_pro_2000 || device == _device.x22i || device == _device.x22i_v2 || device == _device.x22i_noadb || device == _device.x14i || device == _device.x9i || device == _device.c1750 || device == _device.c1750_2021 || device == _device.c1750_2020  || device == _device.c1750_2020_kph || device == _device.proform_2000 || device == _device.proform_pro_9000 || device == _device.t85s  || device == _device.t95s || device == _device.t65s || device == _device.t75s || device == _device.grand_tour_pro || device == _device.s40 || device == _device.exp7i || device == _device.x32i || device == _device.x32i_NTL39221)
