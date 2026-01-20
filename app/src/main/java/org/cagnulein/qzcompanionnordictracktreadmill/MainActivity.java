@@ -117,7 +117,9 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 
     @Override
     public void receivedData(DeviceConnection devConn, byte[] data, int offset, int length) {
-        Log.i(LOG_TAG, data.toString());
+        String dataStr = new String(data, offset, length);
+        Log.i(LOG_TAG, "ADB Received: " + dataStr);
+        QZService.sendBroadcast("ADB Received: " + dataStr);
     }
 
     @Override
@@ -523,6 +525,8 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
 
     static public void sendCommand(String command) {
         if(ADBConnected) {
+            Log.i(LOG_TAG, "Queueing command: " + command);
+            QZService.sendBroadcast("ADB Queueing: " + command);
             StringBuilder commandBuffer = new StringBuilder();
 
             commandBuffer.append(command);
