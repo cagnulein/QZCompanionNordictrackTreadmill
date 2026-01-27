@@ -641,7 +641,7 @@ public class UDPListenerService extends Service {
                             y2 = (int) ((-19.921 * reqSpeed) + 631.03);
                         }
 
-                        if (device == _device.x22i_noadb || device == _device.t95s) {
+                        if (device == _device.x22i_noadb || device == _device.t95s || device == _device.x9i) {
                             MyAccessibilityService.performSwipe(x1, y1Speed, x1, y2, 200);
                             writeLog("[TREADMILL_SPEED] AccessibilityService.performSwipe: (" + x1 + " " + y1Speed + " -> " + x1 + " " + y2 + ")");
                         } else {
@@ -819,7 +819,7 @@ public class UDPListenerService extends Service {
                         y2 = (int) ((-21.804 * reqInclination) + 520.11);
                     }
 
-                    if (device == _device.x22i_noadb || device == _device.t95s) {
+                    if (device == _device.x22i_noadb || device == _device.t95s || device == _device.x9i) {
                         MyAccessibilityService.performSwipe(x1, y1Inclination, x1, y2, 200);
                         writeLog("[TREADMILL_INCLINE] AccessibilityService.performSwipe: (" + x1 + " " + y1Inclination + " -> " + x1 + " " + y2 + ")");
                     } else {

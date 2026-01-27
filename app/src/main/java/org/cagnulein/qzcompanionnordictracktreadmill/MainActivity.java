@@ -288,6 +288,10 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
                 } else if(i == R.id.x14i) {
                     UDPListenerService.setDevice(UDPListenerService._device.x14i);
                 } else if(i == R.id.x9i) {
+                    if (!isAccessibilityServiceEnabled(getApplicationContext(), MyAccessibilityService.class)) {
+                        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                        startActivity(intent);
+                    }
                     UDPListenerService.setDevice(UDPListenerService._device.x9i);
 				} else if(i == R.id.t85s) {
                     UDPListenerService.setDevice(UDPListenerService._device.t85s);
@@ -391,7 +395,7 @@ public class MainActivity extends AppCompatActivity  implements DeviceConnection
             public void onClick(View view) {
                 int device = sharedPreferences.getInt("device", R.id.other);
                 // test
-                if(device == R.id.x22i_noadb || device == R.id.t95s)
+                if(device == R.id.x22i_noadb || device == R.id.t95s || device == R.id.x9i)
                     MyAccessibilityService.performSwipe(600, 600, 300, 400, 100);
 
 
