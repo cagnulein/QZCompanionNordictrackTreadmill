@@ -175,8 +175,25 @@ if (device == _device.{new_device}) {
 - Use descriptive variable names
 - Follow existing indentation patterns
 
+## Android 5.1 Compatibility
+
+### Foreground Service for Input Commands
+On Android 5.1, `input swipe` shell commands only work when the app is in foreground. To ensure commands work in background on all Android versions (5.1+), UDPListenerService runs as a foreground service with a persistent notification.
+
+**Implementation:**
+- Service starts with `startForeground()` in `onCreate()`
+- Creates notification channel for Android 8+
+- Shows low-priority notification: "QZ Companion - Running in background"
+- Tapping notification opens MainActivity
+- Required permission: `FOREGROUND_SERVICE` (already in manifest)
+
+**Code Location:** UDPListenerService.java
+- `createNotificationChannel()` - Creates notification channel (Android 8+)
+- `createNotification()` - Builds foreground service notification
+- `onCreate()` - Calls `startForeground(NOTIFICATION_ID, createNotification())`
+
 ## Latest Implementation
-**Feature:** OCR pattern support for rowing machines  
-**Version:** 3.6.20 (versionCode 172)  
-**Date:** 2025-08-07  
-**Changes:** Added "STROKES PER MIN" cadence pattern and "500 SPLIT (/500M)" speed conversion
+**Feature:** Foreground service for Android 5.1 input command compatibility
+**Version:** 3.6.30 (versionCode 182)
+**Date:** 2026-02-08
+**Changes:** Converted UDPListenerService to foreground service to ensure `input swipe` commands work on Android 5.1 even when app is in background

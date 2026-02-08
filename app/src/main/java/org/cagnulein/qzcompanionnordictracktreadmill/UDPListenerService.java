@@ -17,6 +17,11 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
 import android.widget.TextView;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.os.Build;
 
 /*
  * Linux command to send UDP:
@@ -24,6 +29,8 @@ import android.widget.TextView;
  */
 public class UDPListenerService extends Service {
     private static final String LOG_TAG = "QZ:UDPListenerService";
+    private static final String CHANNEL_ID = "QZCompanionServiceChannel";
+    private static final int NOTIFICATION_ID = 1;
 
     static String UDP_BROADCAST = "UDPBroadcast";
 
@@ -882,9 +889,52 @@ public class UDPListenerService extends Service {
         socket.close();
     }
 
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel serviceChannel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "QZ Companion Service",
+                    NotificationManager.IMPORTANCE_LOW
+            );
+            serviceChannel.setDescription("Keeps QZ Companion running to control your fitness device");
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            if (manager != null) {
+                manager.createNotificationChannel(serviceChannel);
+            }
+        }
+    }
+
+    private Notification createNotification() {
+        createNotificationChannel();
+
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        int flags = PendingIntent.FLAG_IMMUTABLE;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            flags = 0;
+        }
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, flags);
+
+        Notification.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            builder = new Notification.Builder(this, CHANNEL_ID);
+        } else {
+            builder = new Notification.Builder(this);
+        }
+
+        return builder
+                .setContentTitle("QZ Companion")
+                .setContentText("Running in background")
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentIntent(pendingIntent)
+                .build();
+    }
+
     @Override
     public void onCreate() {
         sharedPreferences = getSharedPreferences("QZ",MODE_PRIVATE);
+
+        // Start as foreground service to ensure input commands work on Android 5.1
+        startForeground(NOTIFICATION_ID, createNotification());
     }
 
     @Override
