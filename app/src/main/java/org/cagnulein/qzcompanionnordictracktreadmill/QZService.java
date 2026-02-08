@@ -11,6 +11,8 @@ import android.os.IBinder;
 import android.os.StrictMode;
 import android.util.Log;
 import android.graphics.Rect;
+import android.app.Notification;
+import androidx.core.util.Pair;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -690,8 +692,12 @@ public class QZService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        // Start foreground service with notification for Android 5.0+
+        Pair<Integer, Notification> notification = NotificationUtils.getNotification(this);
+        startForeground(notification.first, notification.second);
+
         writeLog("Service started");
-      
+
         return START_STICKY;
     }
     @Override

@@ -17,6 +17,8 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
 import android.widget.TextView;
+import android.app.Notification;
+import androidx.core.util.Pair;
 
 /*
  * Linux command to send UDP:
@@ -895,6 +897,10 @@ public class UDPListenerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        // Start foreground service with notification for Android 5.0+
+        Pair<Integer, Notification> notification = NotificationUtils.getNotification(this);
+        startForeground(notification.first, notification.second);
+
         shouldRestartSocketListen = true;
         startListenForUDPBroadcast();
         writeLog("Service started");
