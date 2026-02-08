@@ -908,9 +908,9 @@ public class UDPListenerService extends Service {
         createNotificationChannel();
 
         Intent notificationIntent = new Intent(this, MainActivity.class);
-        int flags = PendingIntent.FLAG_IMMUTABLE;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            flags = 0;
+        int flags = 0;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            flags = 0x04000000; // PendingIntent.FLAG_IMMUTABLE (API 23+)
         }
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, flags);
 
@@ -924,7 +924,7 @@ public class UDPListenerService extends Service {
         return builder
                 .setContentTitle("QZ Companion")
                 .setContentText("Running in background")
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentIntent(pendingIntent)
                 .build();
     }
