@@ -43,6 +43,7 @@ public class UDPListenerService extends Service {
     static double reqCachedInclination = -100;
 
     static SharedPreferences sharedPreferences;
+    private PowerManager.WakeLock permanentWakeLock;
 
     public enum _device {
         x11i,
@@ -887,11 +888,27 @@ public class UDPListenerService extends Service {
     @Override
     public void onCreate() {
         sharedPreferences = getSharedPreferences("QZ",MODE_PRIVATE);
+
+        // Acquire a permanent wakelock to keep CPU running for input commands
+        // This is necessary on Android 5.1 to ensure input swipe commands work in background
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        permanentWakeLock = powerManager.newWakeLock(
+            PowerManager.PARTIAL_WAKE_LOCK,
+            "QZCompanion::UDPListenerWakelock"
+        );
+        permanentWakeLock.acquire();
+        writeLog("Permanent wakelock acquired");
     }
 
     @Override
     public void onDestroy() {
         stopListen();
+
+        // Release the permanent wakelock when service is destroyed
+        if (permanentWakeLock != null && permanentWakeLock.isHeld()) {
+            permanentWakeLock.release();
+            writeLog("Permanent wakelock released");
+        }
     }
 
 
