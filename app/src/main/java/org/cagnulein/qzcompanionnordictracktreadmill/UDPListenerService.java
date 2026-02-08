@@ -22,6 +22,10 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.os.Build;
+import android.graphics.PixelFormat;
+import android.view.View;
+import android.view.WindowManager;
+import android.provider.Settings;
 
 /*
  * Linux command to send UDP:
@@ -48,6 +52,10 @@ public class UDPListenerService extends Service {
     static double reqCachedInclination = -100;
 
     static SharedPreferences sharedPreferences;
+
+    // Overlay window for Android 5.1 compatibility
+    private WindowManager windowManager;
+    private View overlayView;
 
     public enum _device {
         x11i,
@@ -929,17 +937,70 @@ public class UDPListenerService extends Service {
                 .build();
     }
 
+    private void createOverlayWindow() {
+        // Only needed on Android 5.1 (API 21-22) where input commands require foreground
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            return;
+        }
+
+        // Check if permission is granted
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            Log.w(LOG_TAG, "SYSTEM_ALERT_WINDOW permission not granted, overlay not created");
+            return;
+        }
+
+        try {
+            windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+            overlayView = new View(this);
+
+            WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                1, // 1px width
+                1, // 1px height
+                WindowManager.LayoutParams.TYPE_PHONE, // Works on API 21-22
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE |
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                PixelFormat.TRANSLUCENT
+            );
+
+            // Position in top-left corner
+            params.x = 0;
+            params.y = 0;
+
+            windowManager.addView(overlayView, params);
+            Log.i(LOG_TAG, "Overlay window created for Android 5.1 compatibility");
+        } catch (Exception e) {
+            Log.e(LOG_TAG, "Failed to create overlay window: " + e.getMessage());
+        }
+    }
+
+    private void removeOverlayWindow() {
+        if (overlayView != null && windowManager != null) {
+            try {
+                windowManager.removeView(overlayView);
+                overlayView = null;
+                Log.i(LOG_TAG, "Overlay window removed");
+            } catch (Exception e) {
+                Log.e(LOG_TAG, "Failed to remove overlay window: " + e.getMessage());
+            }
+        }
+    }
+
     @Override
     public void onCreate() {
         sharedPreferences = getSharedPreferences("QZ",MODE_PRIVATE);
 
         // Start as foreground service to ensure input commands work on Android 5.1
         startForeground(NOTIFICATION_ID, createNotification());
+
+        // Create transparent overlay window on Android 5.1 to maintain foreground state
+        createOverlayWindow();
     }
 
     @Override
     public void onDestroy() {
         stopListen();
+        removeOverlayWindow();
     }
 
 

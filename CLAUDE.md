@@ -177,20 +177,29 @@ if (device == _device.{new_device}) {
 
 ## Android 5.1 Compatibility
 
-### Foreground Service for Input Commands
-On Android 5.1, `input swipe` shell commands only work when the app is in foreground. To ensure commands work in background on all Android versions (5.1+), UDPListenerService runs as a foreground service with a persistent notification.
+### Foreground Service + Overlay Window for Input Commands
+On Android 5.1, `input swipe` shell commands only work when the app is in foreground. To ensure commands work in background, UDPListenerService uses TWO strategies:
 
-**Implementation:**
+#### 1. Foreground Service (All Android versions)
 - Service starts with `startForeground()` in `onCreate()`
 - Creates notification channel for Android 8+
 - Shows low-priority notification: "QZ Companion - Running in background"
 - Tapping notification opens MainActivity
-- Required permission: `FOREGROUND_SERVICE` (already in manifest)
+- Required permission: `FOREGROUND_SERVICE`
+
+#### 2. Transparent Overlay Window (Android 5.1 only)
+- Creates 1x1 pixel transparent overlay window to maintain "foreground" status
+- Only active on Android 5.0-5.1 (API 21-22)
+- Uses `SYSTEM_ALERT_WINDOW` permission (already in manifest)
+- Flags: `FLAG_NOT_TOUCHABLE | FLAG_NOT_FOCUSABLE` - doesn't interfere with user interaction
+- Automatically removed when service stops
 
 **Code Location:** UDPListenerService.java
 - `createNotificationChannel()` - Creates notification channel (Android 8+)
 - `createNotification()` - Builds foreground service notification
-- `onCreate()` - Calls `startForeground(NOTIFICATION_ID, createNotification())`
+- `createOverlayWindow()` - Creates 1x1px transparent overlay (API 21-22 only)
+- `removeOverlayWindow()` - Removes overlay in onDestroy()
+- `onCreate()` - Calls startForeground() and createOverlayWindow()
 
 ## Latest Implementation
 **Feature:** Foreground service for Android 5.1 input command compatibility
