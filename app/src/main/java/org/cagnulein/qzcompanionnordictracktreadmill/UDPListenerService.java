@@ -26,6 +26,8 @@ import android.graphics.PixelFormat;
 import android.view.View;
 import android.view.WindowManager;
 import android.provider.Settings;
+import java.io.FileWriter;
+import java.io.File;
 
 /*
  * Linux command to send UDP:
@@ -35,6 +37,7 @@ public class UDPListenerService extends Service {
     private static final String LOG_TAG = "QZ:UDPListenerService";
     private static final String CHANNEL_ID = "QZCompanionServiceChannel";
     private static final int NOTIFICATION_ID = 1;
+    private static final String COMMAND_FILE = "/tmp/qz_swipe_cmd";
 
     static String UDP_BROADCAST = "UDPBroadcast";
 
@@ -388,7 +391,7 @@ public class UDPListenerService extends Service {
 
                         String command = "input swipe " + x1 + " " + y1Resistance + " " + x1 + " " + y2 + " 200";
                         if (device == _device.s22i_NTEX02117_2) {
-                            shellRuntime.exec(command);
+                            writeCommandToFile(command);
                         } else {
                             MainActivity.sendCommand(command);
                         }
@@ -464,7 +467,7 @@ public class UDPListenerService extends Service {
                         if (skip == false) {
                             String command = "input swipe " + x1 + " " + y1Resistance + " " + x1 + " " + y2 + " 200";
                             if (device == _device.s22i_NTEX02117_2) {
-                                shellRuntime.exec(command);
+                                writeCommandToFile(command);
                             } else {
                                 MainActivity.sendCommand(command);
                             }
@@ -643,7 +646,7 @@ public class UDPListenerService extends Service {
                         } else {
                             String command = "input swipe " + x1 + " " + y1Speed + " " + x1 + " " + y2 + " 200";
                             if (device == _device.x22i || device == _device.x14i || device == _device.x9i) {
-                                shellRuntime.exec(command);
+                                writeCommandToFile(command);
                             } else {
                                 MainActivity.sendCommand(command);
                             }
@@ -811,7 +814,7 @@ public class UDPListenerService extends Service {
                     } else {
                         String command = " input swipe " + x1 + " " + y1Inclination + " " + x1 + " " + y2 + " 200";
                         if (device == _device.x22i || device == _device.x14i || device == _device.x9i || device == _device.s22i_NTEX02117_2) {
-                            shellRuntime.exec(command);
+                            writeCommandToFile(command);
                         } else {
                             MainActivity.sendCommand(command);
                         }
@@ -982,6 +985,25 @@ public class UDPListenerService extends Service {
                 Log.i(LOG_TAG, "Overlay window removed");
             } catch (Exception e) {
                 Log.e(LOG_TAG, "Failed to remove overlay window: " + e.getMessage());
+            }
+        }
+    }
+
+    // Write command to file for external bash script execution
+    // Bash script: while true; do [ -f /tmp/qz_swipe_cmd ] && { sh /tmp/qz_swipe_cmd && rm /tmp/qz_swipe_cmd; }; sleep 0.5; done
+    private static void writeCommandToFile(String command) {
+        try {
+            FileWriter writer = new FileWriter(COMMAND_FILE, false);
+            writer.write(command);
+            writer.close();
+            Log.d(LOG_TAG, "Command written to file: " + command);
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "Failed to write command to file: " + e.getMessage());
+            // Fallback to direct execution if file write fails
+            try {
+                Runtime.getRuntime().exec(command);
+            } catch (IOException ex) {
+                Log.e(LOG_TAG, "Fallback execution also failed: " + ex.getMessage());
             }
         }
     }
