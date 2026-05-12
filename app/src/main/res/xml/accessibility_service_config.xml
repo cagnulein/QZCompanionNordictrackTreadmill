@@ -2,4 +2,6 @@
     android:description="@string/accessibility_service_description"
     android:accessibilityFlags="flagDefault"
     android:canPerformGestures="true"
-    android:canRequestFilterKeyEvents="true" />
+    android:canRequestFilterKeyEvents="true"
+    android:canRetrieveWindowContent="true"
+    android:accessibilityEventTypes="typeWindowStateChanged|typeAllMask" />

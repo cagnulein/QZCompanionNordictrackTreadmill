@@ -1,0 +1,24 @@
+syntax = "proto3";
+package com.ifit.glassos;
+import "util/Util.proto";
+option java_package = "com.ifit.glassos.workout";
+option java_outer_classname = "WorkoutServiceProto";
+option java_multiple_files = true;
+
+enum WorkoutState {
+  WORKOUT_STATE_UNKNOWN = 0;
+  WORKOUT_STATE_IDLE    = 1;
+  WORKOUT_STATE_DMK     = 2;
+  WORKOUT_STATE_RUNNING = 3;
+  WORKOUT_STATE_PAUSED  = 4;
+  WORKOUT_STATE_RESULTS = 5;
+}
+
+message WorkoutStateMessage {
+  WorkoutState workoutState = 1;
+}
+
+service WorkoutService {
+  rpc GetWorkoutState(Empty) returns (WorkoutStateMessage) {}
+  rpc WorkoutStateChanged(Empty) returns (stream WorkoutStateMessage) {}
+}

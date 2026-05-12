@@ -1,0 +1,28 @@
+syntax = "proto3";
+package com.ifit.glassos;
+import "util/Util.proto";
+import "workout/WorkoutResult.proto";
+option java_package = "com.ifit.glassos.workout";
+option java_outer_classname = "InclineServiceProto";
+option java_multiple_files = true;
+
+message InclineMetric {
+  string workoutID = 1;
+  int32 timeSeconds = 2;
+  double lastInclinePercent = 3;
+  double maxInclinePercent = 4;
+  double avgInclinePercent = 5;
+  double minInclinePercent = 6;
+}
+
+message InclineRequest {
+  double percent = 1;
+}
+
+service InclineService {
+  rpc CanRead(Empty) returns (AvailabilityResponse) {}
+  rpc CanWrite(Empty) returns (AvailabilityResponse) {}
+  rpc GetIncline(Empty) returns (InclineMetric) {}
+  rpc SetIncline(InclineRequest) returns (WorkoutResult) {}
+  rpc InclineSubscription(Empty) returns (stream InclineMetric) {}
+}

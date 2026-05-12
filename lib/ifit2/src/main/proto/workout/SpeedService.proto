@@ -1,0 +1,28 @@
+syntax = "proto3";
+package com.ifit.glassos;
+import "util/Util.proto";
+import "workout/WorkoutResult.proto";
+option java_package = "com.ifit.glassos.workout";
+option java_outer_classname = "SpeedServiceProto";
+option java_multiple_files = true;
+
+message SpeedMetric {
+  string workoutID = 1;
+  int32 timeSeconds = 2;
+  double lastKph = 3;
+  double maxKph = 4;
+  double avgKph = 5;
+  double minKph = 6;
+}
+
+message SpeedRequest {
+  double kph = 1;
+}
+
+service SpeedService {
+  rpc CanRead(Empty) returns (AvailabilityResponse) {}
+  rpc CanWrite(Empty) returns (AvailabilityResponse) {}
+  rpc GetSpeed(Empty) returns (SpeedMetric) {}
+  rpc SetSpeed(SpeedRequest) returns (WorkoutResult) {}
+  rpc SpeedSubscription(Empty) returns (stream SpeedMetric) {}
+}

@@ -1,0 +1,40 @@
+name: Bug Report
+description: Something isn't working correctly
+labels: ["bug"]
+body:
+  - type: input
+    id: device
+    attributes:
+      label: Device model
+      placeholder: "e.g. NordicTrack Commercial X22i"
+    validations:
+      required: true
+  - type: input
+    id: app_version
+    attributes:
+      label: QZ Companion version
+      placeholder: "e.g. 3.6.30 (build 214)"
+    validations:
+      required: true
+  - type: input
+    id: qz_version
+    attributes:
+      label: QZ version
+      placeholder: "e.g. 3.10.5"
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logcat output (optional)
+      render: shell

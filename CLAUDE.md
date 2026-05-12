@@ -1,107 +1,131 @@
 # QZ Companion NordicTrack Treadmill - Claude Documentation
 
 ## Project Structure
-Android app for controlling NordicTrack and ProForm fitness devices via ADB/shell commands.
+Android app for controlling NordicTrack and ProForm fitness devices through QZ Companion's two iFit integration paths: preferred iFit2 / GlassOS gRPC control, and legacy iFit1 / AccessibilityService gesture control.
 
-### Main Files
-- `app/src/main/java/org/cagnulein/qzcompanionnordictracktreadmill/UDPListenerService.java` - Core UDP listener and device management
-- `app/src/main/java/org/cagnulein/qzcompanionnordictracktreadmill/MainActivity.java` - Main UI and device selection handling
-- `app/src/main/res/layout/activity_main.xml` - UI layout with radio buttons for device selection
-- `app/build.gradle` - Android build configuration
-- `app/src/main/AndroidManifest.xml` - Android manifest
-- `.github/workflows/main.yml` - GitHub Actions CI/CD
+The build is a multi-module Gradle project. Business logic lives in three library modules under `lib/`; the `app/` module is a thin Android shell (services, platform, UI).
 
-## S22i Device Implementation
+### Gradle Modules
 
-### S22i Standard Pattern
-S22i devices are bike devices that control resistance/inclination via simulated touch coordinates.
+| Module | Role |
+|--------|------|
+| `app/` | Android shell — UDP services, UI, platform receivers. Depends on all three lib modules. |
+| `lib/core/` | Platform-agnostic domain layer — command model, telemetry bus, abstract `Device`. No Android imports; JVM-testable without Robolectric. |
+| `lib/ifit1/` | Legacy gesture-based compatibility for iFit1 consoles. Depends on `lib:core`. Requires `AccessibilityService` at runtime. |
+| `lib/ifit2/` | Preferred gRPC-based integration for iFit2 / GlassOS consoles. Depends on `lib:core` + gRPC stack. |
 
-#### 1. Device Enum (UDPListenerService.java:45-86)
+Each module has a `README.md` with its dependency rules and entry points.
+
+### Key Files
+
+**app/**
+- `qz/QZCommandListenerService.java` — UDP listener (port 8003); calls `QZCommandSubscriber.onPacket()` for each datagram
+- `qz/QZTelemetryUnicastingService.java` — subscribes to `TelemetryHub`, encodes and unicasts QZ metric packets on port 8002
+- `ui/MainActivity.java` — main UI; sectioned device list, status chip, requirements card, overflow debug menu
+- `app/src/main/res/layout/activity_main.xml` — sectioned RecyclerView UI
+- `app/build.gradle` — Android build configuration
+- `app/src/main/AndroidManifest.xml` — Android manifest
+- `.github/workflows/main.yml` — GitHub Actions CI/CD
+
+**lib/core/**
+- `device/Device.java` — abstract base class for all fitness devices
+- `device/DeviceController.java` — owns `Device` + `CommandDispatcher` + telemetry subscription; the seam between command packets, telemetry, and the device layer
+
+**lib/ifit1/**
+- `console/ifit1/GestureService.java` — performs swipe gestures via the Android Accessibility API
+- `device/ifit1/DeviceRegistry.java` — `DeviceId` enum + `EnumMap` of all supported devices
+- `device/ifit1/DeviceCalibration.java` — loads `qz-calibration.json` at startup
+
+### Package Layout
+
+All modules share the root package `org.cagnulein.qzcompanionnordictracktreadmill`.
+
+```
+app/
+├── qz/               QZCommandListenerService, QZTelemetryUnicastingService
+├── platform/         IFitPlatform; boot/restart receivers and crash handling
+│   ├── crash/        CrashHandler
+│   └── receiver/     BootReceiver, ServiceRestartReceiver
+└── ui/               MainActivity, CalibrationActivity, DeviceAdapter
+
+lib/core/
+├── qz/               QZCommandPacket, QZMetricPacket, QZCommandSubscriber, QZTelemetryEncoder
+├── command/          Command, CommandDispatcher, SpeedCommand, InclineCommand,
+│                     ResistanceCommand, GearCommand, RawSwipeCommand
+├── telemetry/        TelemetryHub, TelemetryReader, Telemetry, SpeedTelemetry,
+│                     InclineTelemetry, ResistanceTelemetry, GearTelemetry
+└── device/           Device, DeviceController
+
+lib/ifit1/
+├── console/ifit1/    GestureService, MonoStdoutTelemetryReader
+│   └── calibration/  CalibrationRunner and supporting classes
+└── device/ifit1/     GestureDevice, GestureBikeDevice, GestureTreadmillDevice, DeviceRegistry,
+                      DeviceCalibration, ScreenProfile, SnapToOriginCommand
+    ├── bike/          One class per bike device (S22iDevice, S15iDevice, …)
+    ├── treadmill/     One class per treadmill device (X11iDevice, X32iDevice, …)
+    └── slider/        Slider, InclineSlider, SpeedSlider, ResistanceSlider, GearSlider
+
+lib/ifit2/
+├── console/ifit2/    GrpcTelemetryReader, GrpcCommandTransport, GrpcCredentials, CommandTransport
+└── device/ifit2/     GrpcDevice, GrpcBikeDevice, GrpcTreadmillDevice
+```
+
+---
+
+## New Device Implementation Pattern
+
+All devices are self-contained classes. There is no enum switch or coordinate lookup table. New integration work should target iFit2 first when the device runs GlassOS. Add or modify iFit1 gesture devices only when supporting older iFit1 hardware that cannot use the gRPC path.
+
+### 1. Create the device class
+
+Bike device (`lib/ifit1/src/main/java/.../device/ifit1/bike/MyNewDevice.java`):
 ```java
-public enum _device {
-    s22i,                    // Standard S22i
-    s22i_NTEX02121_5,       // Existing variant
-    s22i_NTEX02117_2,       // New device added
+package org.cagnulein.qzcompanionnordictracktreadmill.device.ifit1.bike;
+import org.cagnulein.qzcompanionnordictracktreadmill.device.ifit1.GestureBikeDevice;
+import org.cagnulein.qzcompanionnordictracktreadmill.device.ifit1.ScreenProfile;
+import org.cagnulein.qzcompanionnordictracktreadmill.device.ifit1.slider.InclineSlider;
+
+public class MyNewDevice extends GestureBikeDevice {
+    private static final int ORIGIN_INCLINE_THUMBY = /* formula intercept */;
+
+    public MyNewDevice() {
+        super(
+            new InclineSlider(ScreenProfile.W1920.leftTrackX, ORIGIN_INCLINE_THUMBY, MyNewDevice::offsetInclineThumbY),
+            null  // second slot: ResistanceSlider, GearSlider, or null
+        );
+    }
+    @Override public String displayName() { return "My New Device"; }
+
+    private static int offsetInclineThumbY(double v) { return ORIGIN_INCLINE_THUMBY - (int)(/* scale */ * v); }
 }
 ```
 
-#### 2. Coordinate Configuration (UDPListenerService.java:139-155)
+Treadmill device: extend `GestureTreadmillDevice` and pass `(incline, speed)` as `InclineSlider` and `SpeedSlider`. Bike devices pass `(incline, resistance)` where the resistance slot accepts `InclineSlider`, `ResistanceSlider`, or `GearSlider` depending on the physical axis. All devices use `AccessibilityService` by default — no `requiresAdb()` or `requiresAccessibility()` overrides needed. When `currentThumbY`, `quantize`, or `hysteresisPixels` need overriding, use an anonymous typed-slider subclass combining the formula constructor with the override body. Use `InclineSlider.live()` / `SpeedSlider.live()` / `ResistanceSlider.live()` / `GearSlider.live()` when the slider should derive its current thumb position from the live metric feed.
+
+### 2. Register the device
+
+Add a `DeviceId` value to `DeviceRegistry.DeviceId`, then add an entry in `DeviceRegistry.DEVICES`:
 ```java
-case s22i:
-    lastReqResistance = 0;
-    y1Resistance = 618;     // Base Y coordinate
-    break;
-case s22i_NTEX02117_2:
-    lastReqResistance = 0;
-    y1Resistance = 618;     // Same coordinates as standard s22i
-    break;
+.put(DeviceId.my_new_device, new MyNewDevice())
 ```
 
-#### 3. Resistance Control Calculation (UDPListenerService.java:303-314)
-```java
-} else if (device == _device.s22i) {
-    x1 = 75;
-    y2 = (int) (616.18 - (17.223 * reqResistance));
-} else if (device == _device.s22i_NTEX02117_2) {
-    x1 = 75;
-    y2 = (int) (616.18 - (17.223 * reqResistance)); // Identical formula
-}
-```
+### 3. Add to the UI
 
-#### 4. UI Selection (activity_main.xml:196-200)
-```xml
-<RadioButton
-    android:id="@+id/s22i_NTEX02117_2"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="S22i Bike (NTEX02117.2)" />
-```
+Add the `DeviceId` to the appropriate category in `ui/DeviceAdapter` (items are built from `DeviceRegistry.Category` automatically).
 
-#### 5. Selection Handling (MainActivity.java:320-321)
-```java
-} else if(i == R.id.s22i_NTEX02117_2) {
-    UDPListenerService.setDevice(UDPListenerService._device.s22i_NTEX02117_2);
-```
-
-#### 6. Bike Device Conditions (UDPListenerService.java:277, 358)
-Add `|| device == _device.s22i_NTEX02117_2` to existing conditions.
-
-### Key Difference: Command Execution
-
-#### MainActivity.sendCommand() (Default for S22i)
-- Uses ADB connection (`connection.queueCommand()`)
-- Requires active ADB connection
-- Pattern for most devices
-
-#### shellRuntime.exec() (For S22i_NTEX02117_2)
-- Direct shell execution via `Runtime.getRuntime()`
-- Does not require ADB connection
-- Pattern used by x22i and x14i
-
-```java
-String command = "input swipe " + x1 + " " + y1Resistance + " " + x1 + " " + y2 + " 200";
-if (device == _device.s22i_NTEX02117_2) {
-    shellRuntime.exec(command);
-} else {
-    MainActivity.sendCommand(command);
-}
-```
+---
 
 ## Version Management
 
 ### Files to Update for Each Release
-**ALWAYS update all 3 files for each release:**
+**Update ONE value only:**
 
-1. **app/build.gradle**
-   - `versionCode` (increment +1): `171 → 172`
-   - `versionName` (semantic versioning): `"3.6.19" → "3.6.20"`
+1. **version.properties** (root of repo)
+   - `versionName` (semantic versioning): `3.6.29 → 3.6.30`
 
-2. **AndroidManifest.xml**
-   - `android:versionCode`: `"171" → "172"`
-   - `android:versionName`: `"3.6.19" → "3.6.20"`
+`versionCode` is set automatically from the GitHub Actions run number — never edit it manually. `build.gradle` reads `versionName` from `version.properties`. `AndroidManifest.xml` no longer carries version fields — AGP injects them at build time. CI publishes the release as `3.6.30 (build 214)` automatically.
 
-3. **.github/workflows/main.yml**
-   - `tag_name`: `3.6.19 → 3.6.20`
+Local debug builds show `dev-<git-hash>` in the action bar subtitle instead of a build number.
 
 ### Version Bump Process
 ```bash
@@ -115,68 +139,34 @@ if (device == _device.s22i_NTEX02117_2) {
 3.6.19 → 4.0.0
 ```
 
+---
+
 ## Device Naming Convention
-- Pattern: `{series}{model}_{variant}` (e.g. `s22i_NTEX02117_2`)
-- UI Text: `"{Series} Bike ({Model})"` (e.g. `"S22i Bike (NTEX02117.2)"`)
-- NO strings.xml usage, text hardcoded directly in layout
+- `DeviceId` enum value: `{series}{model}_{variant}` (e.g. `s22i_NTEX02117_2`)
+- `displayName()`: `"{Series} {Type} ({Model})"` (e.g. `"S22i Bike (NTEX02117.2)"`)
+- Class name: `{Series}{Model}Device.java` (e.g. `S22iNtex02117Device.java`)
+- No strings.xml — display names are hardcoded in `displayName()`
 
-## S22i Coordinates and Formulas
-### S22i Standard and NTEX02117_2
-- X: `75`
-- Base Y: `618`
-- Y Formula: `(int) (616.18 - (17.223 * reqResistance))`
+---
 
-### S22i NTEX02121_5 (Special Variant)
-- X: `75`
-- Base Y: `535`
-- Dynamic Y formula based on current inclination
+## Documentation
 
-## New Device Implementation Pattern
+Most docs live in `docs/`. A few live adjacent to the code they describe:
 
-### 1. Standard Device (ADB)
-1. Add enum in `UDPListenerService._device`
-2. Configure coordinates in switch case
-3. Add control calculation
-4. Add radio button UI
-5. Add selection handling
-6. Add to bike/treadmill conditions
+- `lib/core/README.md`, `lib/ifit1/README.md`, `lib/ifit2/README.md` — module boundary contracts (purpose, dependency rules, entry points); edit when module responsibilities change
+- `docs/ifit1-device-reference.md` — iFit1 per-device pixel formulas, ScreenProfile table, validator notes; edit alongside iFit1 gesture device classes
+- `app/src/test/java/.../testing-methodology.md` — test file inventory, swipe assertion patterns, how to add tests for a new device; edit alongside test files
 
-### 2. Shell Device (Non-ADB)
-Follow pattern above + modify command execution:
-```java
-if (device == _device.{new_device}) {
-    shellRuntime.exec(command);
-} else {
-    MainActivity.sendCommand(command);
-}
-```
+---
 
-## OCR Pattern Recognition
+## Code Exploration
 
-### Supported OCR Patterns (QZService.java:getOCR())
+Prefer the `LSP` tool (JDTLS) over `grep`/`find` when exploring Java code — it resolves symbols, finds references, and navigates the type hierarchy accurately without reading irrelevant files.
 
-#### Speed Patterns
-1. **Standard Speed:** `"speed"` - Direct km/h value
-2. **500m Split Time:** `"500 split"` or `"/500m"` - Converts seconds to km/h
-   - Formula: `km/h = 1800 / seconds`
-   - Example: 41 seconds → 43.9 km/h
+---
 
-#### Cadence Patterns
-1. **Standard:** `"cadence"` or `"rpm"`
-2. **Rowing:** `"strokes per min"` - Added for rowing machine support
-
-#### Other Patterns
-- **Incline:** `"incline"`
-- **Resistance:** `"resistance"`
-- **Watts:** `"watt"`
-
-### Code Style Guidelines
+## Code Style Guidelines
 - All comments must be in English
 - Use descriptive variable names
 - Follow existing indentation patterns
-
-## Latest Implementation
-**Feature:** OCR pattern support for rowing machines  
-**Version:** 3.6.20 (versionCode 172)  
-**Date:** 2025-08-07  
-**Changes:** Added "STROKES PER MIN" cadence pattern and "500 SPLIT (/500M)" speed conversion
+- No comments explaining what the code does — only why (non-obvious constraints, workarounds)

@@ -12,16 +12,32 @@ jobs:
    runs-on: ubuntu-latest
    steps:
    - uses: actions/checkout@v2
-     
-   - name: Use Java8
-     uses: actions/setup-java@v1
+
+   - name: Validate AsyncAPI spec
+     run: npx --yes @asyncapi/cli validate asyncapi.yaml
+
+   - name: Use Java 17
+     uses: actions/setup-java@v4
      with:
-         java-version: 11
+         java-version: 17
+         distribution: 'temurin'
    - name: Get the version
      id: get_version
-     run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+     run: |
+       VERSION_NAME=$(grep versionName version.properties | cut -d= -f2)
+       echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_OUTPUT
+       echo "VERSION_CODE=${{ github.run_number }}" >> $GITHUB_OUTPUT
+   - name: Run unit tests
+     run: ./gradlew testDebugUnitTest -PversionCode=${{ github.run_number }}
+   - name: Archive performance report
+     if: always()
+     uses: actions/upload-artifact@v4
+     with:
+       name: ride-performance-report
+       path: app/build/reports/perf/
+       if-no-files-found: warn
    - name: Build release apk
-     run: chmod a+x gradlew && ./gradlew clean assembleRelease -q
+     run: ./gradlew assembleRelease -q -PversionCode=${{ github.run_number }}
    - name: Setup build tool version variable
      shell: bash
      run: |
@@ -42,7 +58,7 @@ jobs:
    - uses: r0adkll/sign-android-release@v1
      name: Sign app APK (For trusted sources)
      id: sign_app
-     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || steps.check_permission.outputs.IS_REPO_OWNER == 'true'
+     if: github.repository == 'cagnulein/QZCompanionNordictrackTreadmill' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || steps.check_permission.outputs.IS_REPO_OWNER == 'true')
      with:
        releaseDirectory: app/build/outputs/apk/release/
        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
@@ -53,7 +69,7 @@ jobs:
        BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
        
    - name: Find unsigned APK
-     if: github.event_name == 'pull_request' && steps.check_permission.outputs.IS_REPO_OWNER != 'true'
+     if: github.repository != 'cagnulein/QZCompanionNordictrackTreadmill' || steps.sign_app.outcome == 'skipped'
      id: find_apk
      run: |
        APK_PATH=$(find app/build/outputs/apk/release/ -name "*.apk" | head -n 1)
@@ -83,7 +99,8 @@ jobs:
      env:
          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
      with:
-       tag_name: 3.6.29 #${{ steps.get_version.outputs.VERSION }}
+       tag_name: ${{ steps.get_version.outputs.VERSION_NAME }}
+       release_name: ${{ steps.get_version.outputs.VERSION_NAME }} (build ${{ steps.get_version.outputs.VERSION_CODE }})
        asset_path: ${{steps.sign_app.outputs.signedReleaseFile}}
        asset_name: QZCompanionNordictrackTreadmill.apk
        asset_content_type: application/zip

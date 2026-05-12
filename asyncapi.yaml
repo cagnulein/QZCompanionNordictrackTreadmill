@@ -1,0 +1,268 @@
+asyncapi: 3.0.0
+
+info:
+  title: QZ Companion – NordicTrack/ProForm UDP Bridge
+  version: 4.0.0
+  description: |
+    Two-channel UDP bridge between the QZ/Zwift app and NordicTrack/ProForm
+    iFit treadmills and bikes. QZ sends control targets over UDP; QZ Companion
+    dispatches them through the preferred iFit2 / GlassOS gRPC path when
+    available, or through the legacy iFit1 AccessibilityService gesture path.
+
+    The Android device listens on port 8003 for control commands and unicasts
+    metric updates to the QZ app on port 8002.  Both endpoints run on the same
+    LAN; the QZ app's IP is discovered dynamically from its heartbeat packets.
+
+servers:
+  androidDevice:
+    host: "{deviceIp}:8003"
+    protocol: udp
+    description: Android device running QZ Companion — subscribes to inbound commands
+    variables:
+      deviceIp:
+        description: LAN IP of the Android device (static or DHCP)
+
+  qzApp:
+    host: "{qzIp}:8002"
+    protocol: udp
+    description: |
+      QZ app — subscribes to outbound metric updates.
+      IP is learned from the first heartbeat packet (-100;N); falls back to LAN
+      broadcast (255.255.255.x) until discovered.
+    variables:
+      qzIp:
+        description: LAN IP of the QZ app host, discovered via heartbeat
+
+channels:
+  commands:
+    address: "0.0.0.0:8003"
+    description: |
+      Inbound control channel. QZ app publishes; Android device subscribes.
+      One UDP datagram per command. Field delimiter is semicolon (;).
+      Sentinel values: -100 = no command for this field, -1 = no resistance / end-of-ride marker.
+    servers:
+      - $ref: "#/servers/androidDevice"
+    messages:
+      treadmillCommand:
+        $ref: "#/components/messages/TreadmillCommand"
+      bikeCommand:
+        $ref: "#/components/messages/BikeCommand"
+      heartbeat:
+        $ref: "#/components/messages/Heartbeat"
+      endOfRide:
+        $ref: "#/components/messages/EndOfRide"
+      calSwipe:
+        $ref: "#/components/messages/CalSwipe"
+
+  metrics:
+    address: "{qzIp}:8002"
+    description: |
+      Outbound metric channel. Android device publishes; QZ app subscribes.
+      One metric per datagram (delta encoding — only changed values are sent).
+    servers:
+      - $ref: "#/servers/qzApp"
+    messages:
+      speedUpdate:
+        $ref: "#/components/messages/SpeedUpdate"
+      gradeUpdate:
+        $ref: "#/components/messages/GradeUpdate"
+      rpmUpdate:
+        $ref: "#/components/messages/RpmUpdate"
+      resistanceUpdate:
+        $ref: "#/components/messages/ResistanceUpdate"
+      wattsUpdate:
+        $ref: "#/components/messages/WattsUpdate"
+      gearUpdate:
+        $ref: "#/components/messages/GearUpdate"
+      heartRateUpdate:
+        $ref: "#/components/messages/HeartRateUpdate"
+
+operations:
+  receiveCommand:
+    action: receive
+    channel:
+      $ref: "#/channels/commands"
+    description: |
+      Android device receives and dispatches inbound UDP commands.
+      Implemented by CommandListenerService (port 8003).
+      Commands are throttled (500 ms window) and de-duplicated before dispatch
+      through the active platform path: iFit2 gRPC or iFit1 gesture injection.
+    messages:
+      - $ref: "#/channels/commands/messages/treadmillCommand"
+      - $ref: "#/channels/commands/messages/bikeCommand"
+      - $ref: "#/channels/commands/messages/heartbeat"
+      - $ref: "#/channels/commands/messages/endOfRide"
+      - $ref: "#/channels/commands/messages/calSwipe"
+
+  publishMetric:
+    action: send
+    channel:
+      $ref: "#/channels/metrics"
+    description: |
+      Android device publishes changed metric values to the QZ app.
+      Implemented by QZTelemetryUnicastingService (port 8002).
+      Metrics are read from the active platform reader: iFit2 gRPC subscriptions
+      or iFit1 MonoStdout logcat. Values are unicast only when they change
+      (delta encoding).
+    messages:
+      - $ref: "#/channels/metrics/messages/speedUpdate"
+      - $ref: "#/channels/metrics/messages/gradeUpdate"
+      - $ref: "#/channels/metrics/messages/rpmUpdate"
+      - $ref: "#/channels/metrics/messages/resistanceUpdate"
+      - $ref: "#/channels/metrics/messages/wattsUpdate"
+      - $ref: "#/channels/metrics/messages/gearUpdate"
+      - $ref: "#/channels/metrics/messages/heartRateUpdate"
+
+components:
+  messages:
+
+    # ── Inbound (QZ → Android) ────────────────────────────────────────────────
+
+    TreadmillCommand:
+      name: TreadmillCommand
+      contentType: text/plain
+      description: |
+        Two-field speed and incline targets for treadmill devices.
+        Sentinel -100 in either field means "no command for this field".
+        Sentinel -1 in the speed field appears only in the EndOfRide message.
+        Values are rounded to one decimal place before dispatch.
+      payload:
+        type: string
+        pattern: '^-?[0-9]+(\.[0-9])?;-?[0-9]+(\.[0-9])?$'
+        examples:
+          - "8.0;3.0"
+          - "-100.0;5.0"
+          - "12.5;0.0"
+
+    BikeCommand:
+      name: BikeCommand
+      contentType: text/plain
+      description: |
+        Control command for bike devices. Two variants:
+          - 2-part (inclinePct;resistanceLvl): used when the QZ app sends both fields
+          - 1-part (resistanceLvl): used when only resistance is being set
+        Sentinel -100 = no command; -1 = no resistance.
+        Values are rounded to one decimal place before dispatch.
+      payload:
+        oneOf:
+          - description: "inclinePct;resistanceLvl"
+            type: string
+            pattern: '^-?[0-9]+(\.[0-9])?;-?[0-9]+(\.[0-9])?$'
+          - description: resistanceLvl only
+            type: string
+            pattern: '^-?[0-9]+(\.[0-9])?$'
+
+    Heartbeat:
+      name: Heartbeat
+      contentType: text/plain
+      description: |
+        Sent by the QZ app approximately every 1 second to keep the Android
+        device informed of the QZ app's IP address. The counter N increments
+        with each packet. Receiving this packet refreshes the 30-second
+        heartbeat timeout; no device command is issued.
+      payload:
+        type: string
+        pattern: '^-100;[0-9]+$'
+        examples:
+          - "-100;1"
+          - "-100;42"
+
+    EndOfRide:
+      name: EndOfRide
+      contentType: text/plain
+      description: |
+        Sent by the QZ app at the end of a workout session.
+        Clears the remembered QZ app IP and resets heartbeat state.
+      payload:
+        type: string
+        const: "-1;-100"
+
+    CalSwipe:
+      name: CalSwipe
+      contentType: text/plain
+      description: |
+        iFit1 calibration swipe command. Instructs the Android device to perform
+        a raw AccessibilityService swipe at the given pixel coordinates.
+        Used by tools/discover-device.py during iFit1 slider formula derivation.
+        Format: CALSWIPE:x:fromY:toY
+      payload:
+        type: string
+        pattern: '^CALSWIPE:[0-9]+:[0-9]+:[0-9]+$'
+        examples:
+          - "CALSWIPE:108:800:700"
+          - "CALSWIPE:75:622:436"
+
+    # ── Outbound (Android → QZ) ───────────────────────────────────────────────
+
+    SpeedUpdate:
+      name: SpeedUpdate
+      contentType: text/plain
+      description: Current belt speed in km/h, read from iFit2 gRPC or iFit1 MonoStdout logcat.
+      payload:
+        type: string
+        pattern: '^Changed KPH [0-9]+(\.[0-9]+)?$'
+        examples:
+          - "Changed KPH 12.5"
+          - "Changed KPH 0.0"
+
+    GradeUpdate:
+      name: GradeUpdate
+      contentType: text/plain
+      description: Current incline percentage (negative = decline), read from iFit2 gRPC or iFit1 MonoStdout logcat.
+      payload:
+        type: string
+        pattern: '^Changed Grade -?[0-9]+(\.[0-9]+)?$'
+        examples:
+          - "Changed Grade 5.0"
+          - "Changed Grade -2.0"
+          - "Changed Grade 0.0"
+
+    RpmUpdate:
+      name: RpmUpdate
+      contentType: text/plain
+      description: Current cadence in RPM, read from iFit2 gRPC or iFit1 MonoStdout logcat.
+      payload:
+        type: string
+        pattern: '^Changed RPM [0-9]+(\.[0-9]+)?$'
+        examples:
+          - "Changed RPM 85.3"
+
+    ResistanceUpdate:
+      name: ResistanceUpdate
+      contentType: text/plain
+      description: Current resistance level, read from iFit2 gRPC or iFit1 MonoStdout logcat.
+      payload:
+        type: string
+        pattern: '^Changed Resistance [0-9]+(\.[0-9]+)?$'
+        examples:
+          - "Changed Resistance 15.0"
+
+    WattsUpdate:
+      name: WattsUpdate
+      contentType: text/plain
+      description: Current power output in watts (integer, truncated), read from iFit2 gRPC or iFit1 MonoStdout logcat.
+      payload:
+        type: string
+        pattern: '^Changed Watts [0-9]+$'
+        examples:
+          - "Changed Watts 180"
+
+    GearUpdate:
+      name: GearUpdate
+      contentType: text/plain
+      description: Current gear level, read from iFit2 gRPC or iFit1 MonoStdout logcat.
+      payload:
+        type: string
+        pattern: '^Changed CurrentGear [0-9]+(\.[0-9]+)?$'
+        examples:
+          - "Changed CurrentGear 3.0"
+
+    HeartRateUpdate:
+      name: HeartRateUpdate
+      contentType: text/plain
+      description: Current heart rate in BPM (integer, truncated), read from iFit2 gRPC or iFit1 MonoStdout logcat.
+      payload:
+        type: string
+        pattern: '^HeartRateDataUpdate [0-9]+$'
+        examples:
+          - "HeartRateDataUpdate 142"

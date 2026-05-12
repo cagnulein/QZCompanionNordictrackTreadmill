@@ -1,350 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:orientation="vertical">
 
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="2dp">
+
+        <TextView
+            android:id="@+id/statusChip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:textSize="13sp"
+            android:gravity="center" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/requirementsCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="1dp">
+
+        <LinearLayout
+            android:id="@+id/requirementsList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/devicePickerCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="2dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <Button
-                android:id="@+id/dumplog"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Dump Log" />
-
-            <TextView
-                android:id="@+id/dumplog_tv"
-                android:layout_width="fill_parent"
-                android:layout_height="300px"
-                android:scrollbars="vertical"
-                android:textSize="14px"
-                android:textIsSelectable="true"
-                android:focusable="true"
-                android:longClickable="true"
-                android:typeface="serif" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
-
-                <CheckBox
-                    android:id="@+id/debuglog"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Debug Log" />
-
-                <CheckBox
-                    android:id="@+id/checkOCR"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="OCR" />
-
-                <CheckBox
-                    android:id="@+id/checkADBLog"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Use ADB Log" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Select your device:" />
+                    android:text="SELECT YOUR DEVICE"
+                    android:textSize="11sp"
+                    android:textAllCaps="true"
+                    android:letterSpacing="0.1"
+                    android:textStyle="bold"
+                    android:textColor="#FF80CBC4" />
 
-                <RadioGroup
-                    android:id="@+id/radiogroupDevice"
+                <TextView
+                    android:id="@+id/selectedDeviceLabel"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:paddingTop="2dp"
+                    android:text="No device selected" />
 
-                    <RadioButton
-                        android:id="@+id/x11i"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="X11i Treadmill" />
-
-                    <RadioButton
-                        android:id="@+id/x14i"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="X14i Treadmill" />
-
-                    <RadioButton
-                        android:id="@+id/x22i"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="X22i Treadmill" />
-
-                    <RadioButton
-                        android:id="@+id/x22i_v2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="X22i Treadmill v2" />
-
-                    <RadioButton
-                        android:id="@+id/x22i_noadb"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="X22i Treadmill (No Adb)" />
-
-                    <RadioButton
-                        android:id="@+id/x9i"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="X9i Treadmill" />
-
-                    <RadioButton
-                        android:id="@+id/t85s"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="T8.5s Treadmill" />
-
-                    <RadioButton
-                        android:id="@+id/t95s"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="T9.5s Treadmill (No Adb)" />
-
-                    <RadioButton
-                        android:id="@+id/s40"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="S40 Treadmill" />
-
-                    <RadioButton
-                        android:id="@+id/nordictrack_2450"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Nordictrack 2450 Treadmill" />
-
-                    <RadioButton
-                        android:id="@+id/nordictrack_2950"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Nordictrack 2950 Treadmill (max speed 19)" />
-
-                    <RadioButton
-                        android:id="@+id/nordictrack_2950_maxspeed22"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Nordictrack 2950 Treadmill (max speed 22)" />
-
-                    <RadioButton
-                        android:id="@+id/proform_2000"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Proform 2000 Treadmill" />
-
-                    <RadioButton
-                        android:id="@+id/proform_carbon_e7"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Proform Carbon E7 Elliptical" />
-
-                    <RadioButton
-                        android:id="@+id/se9i_elliptical"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="NordicTrack SE9i Elliptical" />
-
-                    <RadioButton
-                        android:id="@+id/proform_pro_9000"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Proform Pro 9000 Treadmill" />
-
-                    <RadioButton
-                        android:id="@+id/proform_carbon_c10"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Proform Carbon C10" />
-
-                    <RadioButton
-                        android:id="@+id/proform_carbon_t14"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Proform Carbon T14 Treadmill" />
-
-                    <RadioButton
-                        android:id="@+id/s15i"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="S15i Bike" />
-
-                    <RadioButton
-                        android:id="@+id/s22i"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="S22i Bike" />
-
-                    <RadioButton
-                        android:id="@+id/s22i_NTEX02121_5"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="S22i Bike (NTEX02121.5)" />
-
-                    <RadioButton
-                        android:id="@+id/s22i_NTEX02117_2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="S22i Bike (NTEX02117.2)" />
-
-                    <RadioButton
-                        android:id="@+id/s27i"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="S27i Bike" />                        
-
-                    <RadioButton
-                        android:id="@+id/tdf10"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Tour De France 10.0 Bike" />
-
-                    <RadioButton
-                        android:id="@+id/tdf10_inclination"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Tour De France 10.0 Bike (Inclination)" />
-
-                    <RadioButton
-                        android:id="@+id/exp7i"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="EXP 7i Treadmill" />
-
-                    <RadioButton
-                        android:id="@+id/other"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Other" />
-
-                    <RadioButton
-                        android:id="@+id/x32i"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="X32i ETNT39221-INT.0 Treadmill" />
-
-                    <RadioButton
-                        android:id="@+id/x32i_NTL39019"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="X32i NTL39019 Treadmill" />              
-
-                    <RadioButton
-                        android:id="@+id/x32i_NTL39221"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="X32i NTL39221 Treadmill" />                                          
-						
-					<RadioButton
-                        android:id="@+id/c1750"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="C1750 Treadmill" />	
-
-					<RadioButton
-                        android:id="@+id/c1750_2020"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="C1750 2020 Treadmill" />	
-
-					<RadioButton
-                        android:id="@+id/c1750_2020_kph"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="C1750 2020 Treadmill (Kph)" />	
-
-					<RadioButton
-                        android:id="@+id/c1750_mph_minus3grade"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="C1750 Treadmill (Mph) with -3% Inc." />	
-
-                    <RadioButton
-                        android:id="@+id/c1750_NTL14122_2_MPH"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="C1750 NTL14122.2 Treadmill (Mph) with -3% Inc." />	                        
-
-					<RadioButton
-                        android:id="@+id/elite900"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Elite 900 Treadmill" />	
-
-					<RadioButton
-                        android:id="@+id/elite1000"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Elite 1000 Treadmill" />
-
-					<RadioButton
-                        android:id="@+id/proform_pro_2000"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Proform Pro 2000 Treadmill" />
-
-					<RadioButton
-                        android:id="@+id/c1750_2021"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="C1750 2021 Treadmill" />	
-
-					<RadioButton
-                        android:id="@+id/t65s"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="T6.5s Treadmill" />	                        					
-
-					<RadioButton
-                        android:id="@+id/t75s"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="T7.5s Treadmill" />	                        					                        
-                    
-                    <RadioButton
-                        android:id="@+id/grand_tour_pro"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Grand Tour Pro Bike" />	
-
-                    <RadioButton
-                        android:id="@+id/proform_studio_bike_pro22"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Proform Studio Bike Pro 22" />	
-
-                    <RadioButton
-                        android:id="@+id/NTEX71021"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Nordic Track Studio Bike - NTEX71021" />	                    
-                </RadioGroup>				
             </LinearLayout>
-        </ScrollView>
+
+            <ImageView
+                android:id="@+id/devicePickerChevron"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_expand_more"
+                android:contentDescription="Expand device list" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <LinearLayout
+        android:id="@+id/deviceListContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/deviceList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="12dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancelDeviceSelection"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="Cancel" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSaveDeviceSelection"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Save" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

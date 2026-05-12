@@ -1,0 +1,21 @@
+syntax = "proto3";
+package com.ifit.glassos;
+import "util/Util.proto";
+option java_package = "com.ifit.glassos.workout";
+option java_outer_classname = "HeartRateServiceProto";
+option java_multiple_files = true;
+
+message HeartRateMetric {
+  string workoutID = 1;
+  int32 timeSeconds = 2;
+  double lastBpm = 3;
+  double maxBpm = 4;
+  double avgBpm = 5;
+  double minBpm = 6;
+}
+
+service HeartRateService {
+  rpc CanRead(Empty) returns (AvailabilityResponse) {}
+  rpc GetHeartRate(Empty) returns (HeartRateMetric) {}
+  rpc HeartRateSubscription(Empty) returns (stream HeartRateMetric) {}
+}

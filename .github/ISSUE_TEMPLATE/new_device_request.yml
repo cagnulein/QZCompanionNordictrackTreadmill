@@ -1,0 +1,31 @@
+name: New Device Request
+description: Request support for a new treadmill or bike model
+labels: ["new device"]
+body:
+  - type: input
+    id: device
+    attributes:
+      label: Device model and series
+      placeholder: "e.g. NordicTrack Commercial X14i"
+    validations:
+      required: true
+  - type: input
+    id: firmware
+    attributes:
+      label: iFit firmware version
+      placeholder: "e.g. NTL14122.1"
+  - type: dropdown
+    id: has_coords
+    attributes:
+      label: Do you have pixel coordinate data?
+      description: Have you run tools/discover-device.py to capture slider positions?
+      options:
+        - "Yes — I can provide coordinates"
+        - "No — I need help capturing them"
+        - "Not sure"
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes

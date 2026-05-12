@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="org.cagnulein.qzcompanionnordictracktreadmill"  android:versionName="3.6.29" android:versionCode="181" >
+>
+    <queries>
+        <package android:name="com.ifit.rivendell" />
+        <package android:name="com.ifit.glassos_service" />
+    </queries>
+
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -9,13 +14,11 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-	 <uses-permission android:name="android.permission.GET_TASKS" />
-	 <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
-	     tools:ignore="ProtectedPermissions" />    
 
     <application
         android:allowBackup="true"
@@ -24,16 +27,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.QZCompanionNordictrackTreadmill">
-        <service android:name=".QZService"/>
-        <service android:name=".UDPListenerService"/>
-
-        <service android:name="com.cgutman.androidremotedebugger.service.ShellService"
-            android:enabled="true"
-            android:exported="false" >
-        </service>
+        <service android:name=".qz.QZTelemetryUnicastingService"/>
+        <service android:name=".qz.QZCommandListenerService"/>
+        <service android:name=".dircon.ZwiftDirectConnectService"/>
 
         <service
-            android:name=".MyAccessibilityService"
+            android:name=".console.ifit1.GestureService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
             android:exported="false">
             <intent-filter>
@@ -44,8 +43,8 @@
                 android:resource="@xml/accessibility_service_config" />
         </service>
 
-        <receiver android:name=".AlarmReceiver" android:process=":remote" />
-        <receiver android:enabled="true" android:name=".BootUpReceiver"
+        <receiver android:name=".platform.receiver.ServiceRestartReceiver" android:process=":remote" />
+        <receiver android:enabled="true" android:name=".platform.receiver.BootReceiver"
             android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
             android:exported="true">
             <intent-filter>
@@ -53,7 +52,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
-        <activity android:name=".MainActivity"
+        <activity android:name=".ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -61,12 +60,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-            <service
-        android:name=".ScreenCaptureService"
-        android:foregroundServiceType="mediaProjection" />
-        <meta-data
-        android:name="com.google.mlkit.vision.DEPENDENCIES"
-        android:value="ocr" />        
+        <activity android:name=".ui.CalibrationActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

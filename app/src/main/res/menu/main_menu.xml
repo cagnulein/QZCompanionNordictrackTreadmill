@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_verbose_logging"
+        android:title="Verbose Logging"
+        android:checkable="true"
+        android:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_direct_connect"
+        android:title="Zwift Direct Connect"
+        android:checkable="true"
+        android:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_calibrate"
+        android:title="Calibrate"
+        android:showAsAction="never"
+        android:visible="false" />
+
+    <item
+        android:id="@+id/menu_debug_incline_calibration"
+        android:title="Debug Incline Calibration"
+        android:showAsAction="never"
+        android:visible="false" />
+
+</menu>

@@ -1,0 +1,75 @@
+name: Performance
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 9 * * *'
+
+jobs:
+  jvm-performance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: temurin
+
+      - name: Run deterministic ride replay, stress suite, and chaos suite
+        run: ./gradlew testDebugUnitTest --tests '*RidePerformanceReplayTest' --tests '*RideStressReplayTest' --tests '*RideChaosReplayTest' -PversionCode=${{ github.run_number }}
+
+      - name: Archive JVM performance artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jvm-ride-performance
+          path: |
+            app/build/reports/perf/
+            app/build/test-results/testDebugUnitTest/
+            app/build/reports/tests/testDebugUnitTest/
+          if-no-files-found: warn
+
+  api25-emulator:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: temurin
+
+      - name: Enable KVM access
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run API 25 connected smoke tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 25
+          target: default
+          arch: x86
+          profile: Nexus 5
+          script: |
+            set +e
+            ./gradlew connectedDebugAndroidTest -PversionCode=${{ github.run_number }}
+            status=$?
+            adb logcat -d -v time > api25-logcat.txt || true
+            exit $status
+
+      - name: Archive API 25 artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api25-emulator-performance
+          path: |
+            api25-logcat.txt
+            app/build/reports/androidTests/connected/
+            app/build/outputs/androidTest-results/connected/
+          if-no-files-found: warn

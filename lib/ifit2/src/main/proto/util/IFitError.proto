@@ -1,0 +1,8 @@
+syntax = "proto3";
+package com.ifit.glassos;
+option java_package = "com.ifit.glassos.util";
+option java_outer_classname = "IFitErrorProto";
+option java_multiple_files = true;
+
+message IFitError {
+}

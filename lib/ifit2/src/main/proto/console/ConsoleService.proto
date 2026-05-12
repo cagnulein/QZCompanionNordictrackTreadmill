@@ -1,0 +1,33 @@
+syntax = "proto3";
+package com.ifit.glassos;
+import "util/Util.proto";
+option java_package = "com.ifit.glassos.console";
+option java_outer_classname = "ConsoleServiceProto";
+option java_multiple_files = true;
+
+service ConsoleService {
+  rpc GetKnownConsoleInfo(Empty) returns (KnownConsoleInfo);
+}
+
+message KnownConsoleInfo {
+  int32 model_number      = 1;
+  int32 part_number       = 2;
+  int32 software_version  = 3;
+  int32 hardware_version  = 4;
+  string firmware_version = 5;
+  int32 serial_number     = 6;
+  MachineType machine_type = 7;
+}
+
+enum MachineType {
+  CONSOLE_TYPE_UNKNOWN  = 0;
+  TREADMILL             = 1;
+  INCLINE_TRAINER       = 2;
+  ELLIPTICAL            = 3;
+  BIKE                  = 4;
+  STRIDER               = 5;
+  FREE_STRIDER          = 6;
+  VERTICAL_ELLIPTICAL   = 7;
+  SPIN_BIKE             = 8;
+  ROWER                 = 9;
+}

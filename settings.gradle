@@ -1,2 +1,5 @@
 include ':app'
+include ':lib:core'
+include ':lib:ifit1'
+include ':lib:ifit2'
 rootProject.name = "QZ Companion Nordictrack Treadmill"

@@ -9,6 +9,7 @@
 /.idea/assetWizardSettings.xml
 .DS_Store
 /build
+**/build/
 /captures
 .externalNativeBuild
 .cxx
@@ -17,3 +18,31 @@ local.properties
 .idea/deploymentTargetDropDown.xml
 /.idea
 /.vscode
+*.jks
+*.p12
+*.keystore
+Thursday.rtf
+download-build.sh~
+download-build.sh
+signapk.sh
+QZCompanionNordictrackTreadmill/
+/.claude/
+
+# Calibration and research artifacts
+/calibration/
+/ifit/
+/build-download/
+Dockerfile.ilspy
+qz-calibration.json
+*.code-workspace
+tools/decompile-sindarin.sh
+app/src/androidTest/
+app/src/main/java/com/cgutman/
+app/src/main/java/com/rvalerio/
+
+# IDE / local Eclipse metadata
+.project
+.settings/
+app/.classpath
+app/.project
+app/.settings/

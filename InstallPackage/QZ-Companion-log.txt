@@ -1,0 +1,15 @@
+Log generated at Sun Apr 26 16:28:03 EDT 2026 for IP 192.168.1.213
+
+Pinging 192.168.1.213 ...
+PING 192.168.1.213 (192.168.1.213) 56(84) bytes of data.
+64 bytes from 192.168.1.213: icmp_seq=1 ttl=63 time=137 ms
+
+--- 192.168.1.213 ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 137.070/137.070/137.070/0.000 ms
+
+Connecting to treadmill via ADB ...
+
+./QZ-Companion-MacOS: line 39: ./adb: cannot execute binary file: Exec format error
+./QZ-Companion-MacOS: line 40: ./adb: cannot execute binary file: Exec format error
+./QZ-Companion-MacOS: line 41: ./adb: cannot execute binary file: Exec format error
